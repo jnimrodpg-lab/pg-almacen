@@ -84,11 +84,23 @@
   .highlight{ fill:#fbbf24 !important; stroke:#f97316 !important; stroke-width:4; } /* búsqueda */
   .hover{ fill:#93c5fd !important; stroke:#2563eb !important; stroke-width:4; }     /* mouse */
 
-  .estante rect, .repisa rect, .nivel rect{ fill:#ffffff; stroke:#444; stroke-width:2; transition:.18s; }
-  .highlight-slot rect{ fill:#fb7185 !important; stroke:#be123c !important; stroke-width:3; }
-  .highlight-level rect{ fill:#fda4af !important; stroke:#9f1239 !important; stroke-width:3; }
-  .hover-slot rect{ fill:#a7f3d0 !important; stroke:#059669 !important; stroke-width:3; }
-  .hover-level rect{ fill:#86efac !important; stroke:#15803d !important; stroke-width:3; }
+  /* ===== ESTANTES CON IMAGEN (SVG) ===== */
+  .estante-img { cursor:pointer; }
+  .estante-img image { opacity:.98; transition:.18s; }
+  .highlight-slot image{ filter: drop-shadow(0 0 10px rgba(249,115,22,.55)); }
+  .hover-slot image{ filter: drop-shadow(0 0 10px rgba(37,99,235,.55)); }
+
+  .nivel-mark{
+    fill: rgba(251,191,36,.35);
+    stroke: rgba(249,115,22,.95);
+    stroke-width: 2;
+    rx: 10; ry: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: .18s;
+  }
+  .highlight-level .nivel-mark{ opacity: 1; }
+  .hover-level .nivel-mark{ opacity: 1; fill: rgba(147,197,253,.30); stroke: rgba(37,99,235,.95); }
 
   .map-info{
     padding:12px 14px; border-top:1px solid var(--border);
@@ -200,7 +212,7 @@
     outline:2px solid rgba(245, 158, 11, .35);
   }
 
-  /* ===== Vista estante (con imagen base) ===== */
+  /* ===== Vista estante (IMG + franja overlay) ===== */
   .shelf-image-wrap{
     position:relative;
     width:100%;
@@ -218,16 +230,17 @@
     user-select:none;
     pointer-events:none;
   }
-  .shelf-level-box{
+  .shelf-level-overlay{
     position:absolute;
     left:14%;
     width:72%;
-    border:2px solid rgba(17,24,39,.35);
-    background:rgba(255,255,255,.2);
+    border:2px solid rgba(249,115,22,.95);
+    background:rgba(251,191,36,.35);
     border-radius:10px;
+    box-shadow:0 0 0 3px rgba(249,115,22,.15) inset;
     transition:.18s;
   }
-  .shelf-level-box .level-tag{
+  .shelf-level-overlay .level-tag{
     position:absolute;
     left:-52px;
     top:50%;
@@ -239,11 +252,6 @@
     border:1px solid var(--border);
     border-radius:999px;
     padding:2px 8px;
-  }
-  .shelf-level-box.level-highlight{
-    background:rgba(251,191,36,.38);
-    border-color:#f97316;
-    box-shadow:0 0 0 3px rgba(249,115,22,.2) inset;
   }
 
   #reader{ display:none; padding:0 14px 14px 14px; }
@@ -388,14 +396,12 @@
         <rect id="Z3" class="zona" x="100" y="460" width="300" height="300"/>
         <text x="250" y="650" text-anchor="middle" font-size="16">ZONA 3</text>
 
-        <!-- EJEMPLO de un estante real dibujado en Z1 -->
-        <g id="Z1-E2" class="estante"><rect x="140" y="35" width="70" height="90" rx="6"/></g>
-        <g id="Z1-E2-N1" class="nivel"><rect x="146" y="42" width="58" height="22" rx="5"/></g>
-        <g id="Z1-E2-N2" class="nivel"><rect x="146" y="68" width="58" height="22" rx="5"/></g>
-        <g id="Z1-E2-N3" class="nivel"><rect x="146" y="94" width="58" height="22" rx="5"/></g>
+        <!-- ESTANTE EJEMPLO CON IMAGEN -->
+        <g id="Z1-E2" class="estante-img" data-levels="6" transform="translate(140 35)">
+          <image href="assets/estantes/estante-mod1.png" width="70" height="90" />
+          <rect class="nivel-mark" x="0" y="0" width="70" height="15" />
+        </g>
         <text x="175" y="30" font-size="10" text-anchor="middle" fill="#6b7280">E2</text>
-
-        <!-- (Puedes ir agregando aquí más estantes/niveles con IDs Z?-E?-N?) -->
       </svg>
     </div>
 
@@ -433,6 +439,10 @@
 /* ===== CONFIG ===== */
 const sheetID   = "1IU4wMdVImmEbl93kgcCCQAGPiTc28uQdNNaq0bgTF2o";
 const sheetName = "Mujer";
+
+/* rutas imágenes */
+const IMG_EST_MAPA  = "assets/estantes/estante-mod1.png";
+const IMG_EST_VISTA = "assets/estantes_vista/estante-mod1-vista1.png";
 
 /* ===== UI refs ===== */
 const tabla = document.getElementById("tabla");
@@ -476,7 +486,7 @@ let resultadosDetallado = [];
 let resultadosReducido = [];
 let resultadosActuales = [];
 let indiceActual = 0;
-let modo = "reducido"; // 'reducido' | 'detallado'
+let modo = "reducido"; // ✅ por defecto
 
 /* ===== Feedback ===== */
 let audioCtx = null;
@@ -513,78 +523,104 @@ function escapeHtml(str){
     .replaceAll("'","&#039;");
 }
 
-/* ===== Parse ubicación (Z1..Z4) ===== */
+/* ===== Parse ubicación ===== */
 function parseUbicacion(raw){
   const s = String(raw || "").trim().toUpperCase();
-  // acepta: Z1-E2-N3, Z4-E10-N8, etc.
   const m = s.match(/^(Z[1234])(?:-(E\d+))?(?:-(N\d+))?$/);
-  if (!m) return { zonaId: "", estanteId: "", nivelId: "", pretty: s };
+  if (!m) return { zonaId: "", estanteId: "", nivelId: "", pretty: s, nivelNum: 0 };
   const zonaId = m[1] || "";
   const e = m[2] || "";
   const n = m[3] || "";
   const estanteId = (zonaId && e) ? `${zonaId}-${e}` : "";
   const nivelId   = (estanteId && n) ? `${estanteId}-${n}` : "";
-  return { zonaId, estanteId, nivelId, pretty: s };
+  const nivelNum = n ? Number(n.replace("N","")) : 0;
+  return { zonaId, estanteId, nivelId, pretty: s, nivelNum };
 }
 
-/* ===== Mapeo de zona para el SVG general ===== */
+/* ===== zona mapa ===== */
 function zonaMapaId(zonaId){
-  // En el plano general, Z4 se llama A
   if (zonaId === "Z4") return "A";
   return zonaId;
+}
+
+/* ===== Overlay nivel en SVG ===== */
+function setShelfLevelMark(estanteId, nivelNum, mode){
+  const g = document.getElementById(estanteId);
+  if (!g) return;
+
+  const img = g.querySelector("image");
+  if (img) img.setAttribute("href", IMG_EST_MAPA);
+
+  const mark = g.querySelector(".nivel-mark");
+  if (!mark) return;
+
+  const levels = Number(g.dataset.levels || 6);
+  const w = Number(img?.getAttribute("width") || 60);
+  const h = Number(img?.getAttribute("height") || 90);
+
+  const n = Math.max(1, Math.min(levels, Number(nivelNum || 1)));
+  const bandH = h / levels;
+  const y = (n - 1) * bandH;
+
+  mark.setAttribute("x", 0);
+  mark.setAttribute("y", y);
+  mark.setAttribute("width", w);
+  mark.setAttribute("height", bandH);
+
+  g.classList.toggle("hover-level", mode === "hover");
+  g.classList.toggle("highlight-level", mode === "search");
 }
 
 /* ===== Highlight ===== */
 function clearHover(){
   document.querySelectorAll(".zona").forEach(z => z.classList.remove("hover"));
-  document.querySelectorAll(".estante,.repisa").forEach(e => e.classList.remove("hover-slot"));
-  document.querySelectorAll(".nivel").forEach(n => n.classList.remove("hover-level"));
+  document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("hover-slot","hover-level"));
 }
 function clearSearchHighlight(){
   document.querySelectorAll(".zona").forEach(z => z.classList.remove("highlight"));
-  document.querySelectorAll(".estante,.repisa").forEach(e => e.classList.remove("highlight-slot"));
-  document.querySelectorAll(".nivel").forEach(n => n.classList.remove("highlight-level"));
+  document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("highlight-slot","highlight-level"));
 }
 function applyHover(zonaId, estanteId, nivelId){
   clearHover();
   if (zonaId) document.getElementById(zonaId)?.classList.add("hover");
-  if (estanteId) document.getElementById(estanteId)?.classList.add("hover-slot");
-  if (nivelId) document.getElementById(nivelId)?.classList.add("hover-level");
+  if (estanteId){
+    const g = document.getElementById(estanteId);
+    g?.classList.add("hover-slot");
+    const n = (nivelId || "").match(/-N(\d+)$/i);
+    const nivelNum = n ? Number(n[1]) : 1;
+    if (g?.classList.contains("estante-img")) setShelfLevelMark(estanteId, nivelNum, "hover");
+  }
 }
 function applySearchHighlight(zonaId, estanteId, nivelId){
   clearSearchHighlight();
   if (zonaId) document.getElementById(zonaId)?.classList.add("highlight");
-  if (estanteId) document.getElementById(estanteId)?.classList.add("highlight-slot");
-  if (nivelId) document.getElementById(nivelId)?.classList.add("highlight-level");
+  if (estanteId){
+    const g = document.getElementById(estanteId);
+    g?.classList.add("highlight-slot");
+    const n = (nivelId || "").match(/-N(\d+)$/i);
+    const nivelNum = n ? Number(n[1]) : 1;
+    if (g?.classList.contains("estante-img")) setShelfLevelMark(estanteId, nivelNum, "search");
+  }
 }
 
-/* ===== Vista estante (imagen + niveles de abajo hacia arriba) ===== */
-function generarVistaEstanteConImagen(estanteId, nivelId, totalNiveles = 8){
-  const levelParts = [];
-  const safeNivelId = String(nivelId || "");
+/* ===== Vista estante (IMG + overlay) ===== */
+function generarVistaEstanteConImagen(estanteId, nivelNum, totalNiveles){
+  const n = Math.max(1, Math.min(totalNiveles, Number(nivelNum || 1)));
+  const usable = 76, start = 10;
+  const band = usable / totalNiveles;
 
-  // N1 queda ABAJO y los niveles suben (N2, N3...)
-  for (let i = 1; i <= totalNiveles; i++){
-    const bottomPct = ((i - 1) * (76 / totalNiveles)) + 10;
-    const hPct = (76 / totalNiveles) - 1.2;
-    const currentId = `${estanteId}-N${i}`;
-    const activeClass = currentId === safeNivelId ? " level-highlight" : "";
-
-    levelParts.push(`
-      <div class="shelf-level-box${activeClass}" style="bottom:${bottomPct}%;height:${hPct}%;" data-level-id="${currentId}">
-        <span class="level-tag">N${i}</span>
-      </div>
-    `);
-  }
+  const bottomPct = start + ((n - 1) * band);
+  const hPct = band - 1.2;
 
   return `
     <div class="shelf-image-wrap" aria-label="${estanteId}">
-      <img class="shelf-image" src="assets/shelf-base.svg" alt="Imagen de estante" />
-      ${levelParts.join("")}
+      <img class="shelf-image" src="${IMG_EST_VISTA}" alt="Vista de estante" />
+      <div class="shelf-level-overlay" style="bottom:${bottomPct}%;height:${hPct}%;">
+        <span class="level-tag">N${n}</span>
+      </div>
     </div>
   `;
 }
-
 function mostrarVistaEstante(estanteId, nivelId){
   if (!estanteId){
     shelfLabel.textContent = "—";
@@ -593,12 +629,12 @@ function mostrarVistaEstante(estanteId, nivelId){
     </div>`;
     return;
   }
-
-  // Z4 = almacén (8 niveles). Otras zonas por defecto 6.
+  const n = (nivelId || "").match(/-N(\d+)$/i);
+  const nivelNum = n ? Number(n[1]) : 1;
   const totalNiveles = estanteId.startsWith("Z4-") ? 8 : 6;
 
   shelfLabel.textContent = estanteId;
-  shelfPreview.innerHTML = generarVistaEstanteConImagen(estanteId, nivelId, totalNiveles);
+  shelfPreview.innerHTML = generarVistaEstanteConImagen(estanteId, nivelNum, totalNiveles);
 }
 
 /* ===== Normalización búsqueda ===== */
@@ -622,7 +658,7 @@ function matchAll(textoNorm, qTokens){
   return true;
 }
 function hasTallaNumero(nvNorm, num){
-  return new RegExp(`\btalla\s*${num}\b`).test(nvNorm);
+  return new RegExp(`\\btalla\\s*${num}\\b`).test(nvNorm);
 }
 
 /* ===== Agrupar por nombre (reducido) ===== */
@@ -646,7 +682,6 @@ function agruparPorNombre(listaDetallada){
   for (const g of map.values()){
     reducido.push({
       ...g.representante,
-      // en tabla reducimos variante para indicar “x variantes”
       variante: `${g.count} variantes`,
       _grupo: g.grupo,
       _count: g.count,
@@ -654,7 +689,8 @@ function agruparPorNombre(listaDetallada){
     });
   }
 
-  reducido.sort((a,b) => (b._score||0) - (a._score||0));
+  // aquí no tenemos score inicial, así que ordenamos alfabético para vista inicial
+  reducido.sort((a,b) => String(a.nombre||"").localeCompare(String(b.nombre||""), "es"));
   return reducido;
 }
 
@@ -743,15 +779,12 @@ function aplicarResultadoActivo(triggerFeedback = false){
   if (indiceActual >= total) indiceActual = total - 1;
 
   const filaActiva = resultadosActuales[indiceActual];
-
-  // detalle real (si reducido: usar el representante)
   const activo = (modo === "reducido" && filaActiva._representante)
     ? filaActiva._representante
     : filaActiva;
 
   renderTabla(resultadosActuales, indiceActual);
 
-  // highlight en mapa general
   applySearchHighlight(activo._zonaMapaId, activo.estanteId, activo.nivelId);
 
   mapBadge.textContent = (activo._zonaMapaId === "A") ? "ZONA 4" : (activo._zonaMapaId || "—");
@@ -774,7 +807,6 @@ function aplicarResultadoActivo(triggerFeedback = false){
   kvNivel.textContent = activo.nivelId || "—";
   kvReserva.textContent = activo.almacen || "—";
 
-  // Vista estante (panel)
   mostrarVistaEstante(activo.estanteId, activo.nivelId);
 
   setPickerState();
@@ -792,14 +824,17 @@ function setModo(nuevo){
     indiceActual = 0;
     aplicarResultadoActivo(false);
   } else {
-    resultadosActuales = [];
+    // ✅ SIN búsqueda, igual mostramos por defecto REDUCIDO
+    resultadosActuales = (modo === "reducido") ? resultadosReducido : resultadosDetallado;
     indiceActual = 0;
-    renderTabla(productos);
+    renderTabla(resultadosActuales);
     resultCard.style.display = "none";
     clearSearchHighlight();
     mostrarVistaEstante("", "");
     metaResults.textContent = "0 resultados";
     resultCountPill.textContent = "0";
+    badgeDetallado.textContent = String(resultadosDetallado.length || 0);
+    badgeReducido.textContent = String(resultadosReducido.length || 0);
   }
 }
 chipReducido.addEventListener("click", () => setModo("reducido"));
@@ -808,15 +843,10 @@ chipDetallado.addEventListener("click", () => setModo("detallado"));
 /* ===== Limpiar ===== */
 function limpiarBusqueda(){
   buscador.value = "";
-  resultadosDetallado = [];
-  resultadosReducido = [];
-  resultadosActuales = [];
   indiceActual = 0;
 
   metaResults.textContent = "0 resultados";
   resultCountPill.textContent = "0";
-  badgeDetallado.textContent = "0";
-  badgeReducido.textContent = "0";
 
   resultCard.style.display = "none";
   clearSearchHighlight();
@@ -827,10 +857,17 @@ function limpiarBusqueda(){
 
   mostrarVistaEstante("", "");
 
-  renderTabla(productos);
+  // ✅ Volver a lista por defecto (REDUCIDO)
+  modo = "reducido";
+  chipReducido.classList.add("active");
+  chipDetallado.classList.remove("active");
+
+  resultadosActuales = resultadosReducido;
+  renderTabla(resultadosActuales);
+
   buscador.focus();
 }
-btnClear.addEventListener("click", limpiarBusqueda);
+document.getElementById("btnClear").addEventListener("click", limpiarBusqueda);
 
 /* ===== Buscar ===== */
 function recalcularResultados(triggerFeedback=false){
@@ -868,12 +905,12 @@ function recalcularResultados(triggerFeedback=false){
 }
 buscador.addEventListener("input", () => recalcularResultados(false));
 
-btnPrev.addEventListener("click", () => {
+document.getElementById("btnPrev").addEventListener("click", () => {
   if (resultadosActuales.length <= 1) return;
   indiceActual = (indiceActual - 1 + resultadosActuales.length) % resultadosActuales.length;
   aplicarResultadoActivo(true);
 });
-btnNext.addEventListener("click", () => {
+document.getElementById("btnNext").addEventListener("click", () => {
   if (resultadosActuales.length <= 1) return;
   indiceActual = (indiceActual + 1) % resultadosActuales.length;
   aplicarResultadoActivo(true);
@@ -901,7 +938,6 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
 
       const parsed = parseUbicacion(ubicRaw);
 
-      // Si “Almacén” tiene algo, se considera reserva/almacén (zona 4)
       const zonaId = almacen ? "Z4" : (parsed.zonaId || "");
       const estanteId = almacen ? "" : (parsed.estanteId || "");
       const nivelId = almacen ? "" : (parsed.nivelId || "");
@@ -917,7 +953,6 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
         estanteId,
         nivelId,
 
-        // id real del mapa general (Z4 => A)
         _zonaMapaId: zonaMapaId(zonaId)
       };
 
@@ -933,7 +968,22 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
     }
 
     metaCount.textContent = `${productos.length} productos`;
-    renderTabla(productos);
+
+    // ✅ POR DEFECTO: la tabla se muestra en "reducido" agrupado por nombre
+    resultadosDetallado = productos;
+    resultadosReducido = agruparPorNombre(productos);
+    resultadosActuales = resultadosReducido;
+
+    badgeDetallado.textContent = String(resultadosDetallado.length || 0);
+    badgeReducido.textContent = String(resultadosReducido.length || 0);
+
+    renderTabla(resultadosActuales);
+
+    // UI
+    modo = "reducido";
+    chipReducido.classList.add("active");
+    chipDetallado.classList.remove("active");
+
     setStatus("ok", `Listo • ${productos.length} productos cargados`);
   })
   .catch(() => setStatus("bad", "Error cargando la hoja. Revisa permisos del Sheet."));
