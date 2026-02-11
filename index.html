@@ -7,159 +7,105 @@
 
 <style>
   :root{
-    --bg:#f6f6f6;
-    --card:#ffffff;
-    --text:#111827;
-    --muted:#6b7280;
-    --border:#e5e7eb;
-    --primary:#2563eb;
-    --danger:#dc2626;
-    --warn:#f59e0b;
-    --ok:#16a34a;
-    --shadow:0 10px 25px rgba(0,0,0,.08);
+    --bg:#f6f6f6; --card:#ffffff; --text:#111827; --muted:#6b7280;
+    --border:#e5e7eb; --primary:#2563eb; --danger:#dc2626;
+    --warn:#f59e0b; --ok:#16a34a; --shadow:0 10px 25px rgba(0,0,0,.08);
     --radius:14px;
   }
   *{ box-sizing:border-box; }
-  body{
-    margin:0;
-    font-family: Arial, sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    padding:20px;
-  }
+  body{ margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text); padding:20px; }
 
-  /* ===== HEADER BRAND ===== */
+  /* ===== HEADER ===== */
   .topbar{
-    max-width:1200px;
-    margin:0 auto 16px auto;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
+    max-width:1200px; margin:0 auto 16px auto;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
   }
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:12px;
-  }
+  .brand{ display:flex; align-items:center; gap:12px; }
   .logoMark{
-    width:44px;
-    height:44px;
-    border-radius:14px;
+    width:44px;height:44px;border-radius:14px;
     background: linear-gradient(135deg, #111827, #374151);
-    box-shadow: var(--shadow);
-    position:relative;
-    overflow:hidden;
+    box-shadow: var(--shadow); position:relative; overflow:hidden;
   }
-  .logoMark::before,
-  .logoMark::after{
-    content:"";
-    position:absolute;
-    top:10px;
-    width:10px;
-    height:24px;
-    border-radius:6px;
-    background: rgba(255,255,255,.85);
-    opacity:.9;
+  .logoMark::before,.logoMark::after{
+    content:""; position:absolute; top:10px; width:10px; height:24px;
+    border-radius:6px; background: rgba(255,255,255,.85); opacity:.9;
   }
-  .logoMark::before{ left:12px; }
-  .logoMark::after{ right:12px; }
+  .logoMark::before{ left:12px; } .logoMark::after{ right:12px; }
   .logoBase{
-    position:absolute;
-    left:10px;
-    right:10px;
-    bottom:8px;
-    height:4px;
-    border-radius:999px;
-    background: rgba(255,255,255,.75);
+    position:absolute; left:10px; right:10px; bottom:8px;
+    height:4px; border-radius:999px; background: rgba(255,255,255,.75);
   }
-
-  .brandText{
-    display:flex;
-    flex-direction:column;
-    line-height:1.05;
-  }
-  .brandText .title{
-    font-size:18px;
-    font-weight:900;
-    letter-spacing:.5px;
-    margin:0;
-  }
-  .brandText .subtitle{
-    font-size:12px;
-    color:var(--muted);
-    margin-top:4px;
-  }
+  .brandText{ display:flex; flex-direction:column; line-height:1.05; }
+  .brandText .title{ font-size:18px; font-weight:900; letter-spacing:.5px; margin:0; }
+  .brandText .subtitle{ font-size:12px; color:var(--muted); margin-top:4px; }
   .brandText .tag{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    margin-top:6px;
-    font-size:11px;
-    color:#111827;
-    border:1px solid var(--border);
-    background:#fff;
-    padding:6px 10px;
-    border-radius:999px;
-    width:max-content;
+    display:inline-flex; align-items:center; gap:6px;
+    margin-top:6px; font-size:11px;
+    border:1px solid var(--border); background:#fff;
+    padding:6px 10px; border-radius:999px; width:max-content;
   }
 
   .status{
     display:flex; align-items:center; gap:8px;
-    padding:10px 12px;
-    border:1px solid var(--border);
-    border-radius:999px;
-    background:var(--card);
+    padding:10px 12px; border:1px solid var(--border);
+    border-radius:999px; background:var(--card);
     box-shadow:0 6px 18px rgba(0,0,0,.05);
-    white-space:nowrap;
-    font-size:13px;
-    color:var(--muted);
+    white-space:nowrap; font-size:13px; color:var(--muted);
   }
   .dot{ width:10px;height:10px;border-radius:999px;background:var(--warn); }
-  .dot.ok{ background:var(--ok); }
-  .dot.bad{ background:var(--danger); }
+  .dot.ok{ background:var(--ok); } .dot.bad{ background:var(--danger); }
 
   /* ===== LAYOUT ===== */
   .layout{
-    max-width:1200px;
-    margin:0 auto;
-    display:grid;
-    grid-template-columns: 1.1fr .9fr;
-    gap:16px;
-    align-items:start;
+    max-width:1200px; margin:0 auto; display:grid;
+    grid-template-columns: 1.1fr .9fr; gap:16px; align-items:start;
   }
   @media (max-width: 980px){
     .layout{ grid-template-columns:1fr; }
-    .right{ position:static !important; }
+    .sticky{ position:static !important; }
   }
 
   .card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    overflow:hidden;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
   }
-
   .card-header{
-    padding:14px 14px 10px 14px;
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
+    padding:14px 14px 10px 14px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
   }
   .card-header h2{ font-size:14px; margin:0; }
   .meta{ font-size:12px; color:var(--muted); }
 
+  /* ===== MAPA ===== */
+  .sticky{ position: sticky; top: 20px; }
+  #mapa{ width:100%; border:1px solid var(--border); border-radius:12px; background:#fff; }
+
+  .zona{ fill:#e8eef7; stroke:#333; stroke-width:2; transition:.18s; }
+  .highlight{ fill:#fbbf24 !important; stroke:#f97316 !important; stroke-width:4; } /* búsqueda */
+  .hover{ fill:#93c5fd !important; stroke:#2563eb !important; stroke-width:4; }     /* mouse */
+
+  .estante rect, .repisa rect, .nivel rect{ fill:#ffffff; stroke:#444; stroke-width:2; transition:.18s; }
+  .highlight-slot rect{ fill:#fb7185 !important; stroke:#be123c !important; stroke-width:3; }
+  .highlight-level rect{ fill:#fda4af !important; stroke:#9f1239 !important; stroke-width:3; }
+  .hover-slot rect{ fill:#a7f3d0 !important; stroke:#059669 !important; stroke-width:3; }
+  .hover-level rect{ fill:#86efac !important; stroke:#15803d !important; stroke-width:3; }
+
+  .map-info{
+    padding:12px 14px; border-top:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+  }
+  .map-info .msg{ font-size:13px; color:var(--muted); line-height:1.4; }
+  .pill{
+    padding:6px 10px; border-radius:999px;
+    font-size:12px; border:1px solid var(--border);
+    background:#fff; color:var(--muted); white-space:nowrap;
+  }
+
+  /* ===== FORM + TABLA ===== */
   .controls{ padding:14px; display:grid; gap:10px; }
   .search input{
-    width:100%;
-    padding:12px 12px;
-    font-size:15px;
-    border:1px solid var(--border);
-    border-radius:12px;
-    outline:none;
+    width:100%; padding:12px; font-size:15px;
+    border:1px solid var(--border); border-radius:12px; outline:none;
   }
   .search input:focus{
     border-color: rgba(37, 99, 235, .6);
@@ -168,92 +114,83 @@
 
   .btnrow{ display:flex; gap:10px; flex-wrap:wrap; }
   .btn{
-    flex:1; min-width:140px;
-    border:none; border-radius:12px;
-    padding:12px 12px;
-    font-size:14px; cursor:pointer;
-    color:#fff;
+    flex:1; min-width:140px; border:none; border-radius:12px;
+    padding:12px; font-size:14px; cursor:pointer; color:#fff;
     display:flex; align-items:center; justify-content:center; gap:8px;
   }
   .btn.primary{ background:var(--primary); }
   .btn.danger{ background:var(--danger); }
   .btn.dark{ background:#111827; }
 
+  /* ===== CHIPS ===== */
+  .chiprow{ display:flex; gap:8px; flex-wrap:wrap; }
+  .chip{
+    border:1px solid var(--border);
+    background:#fff; color:#111827;
+    border-radius:999px;
+    padding:8px 10px;
+    font-size:12px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    user-select:none;
+  }
+  .chip .badge{
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#f9fafb;
+    color:var(--muted);
+  }
+  .chip.active{
+    border-color: rgba(37,99,235,.35);
+    box-shadow: 0 0 0 4px rgba(37,99,235,.10);
+  }
+  .chip.active .badge{
+    border-color: rgba(37,99,235,.35);
+    background: rgba(37,99,235,.08);
+    color: #1f3b8f;
+  }
+
   .hint{ font-size:12px; color:var(--muted); line-height:1.4; }
 
   .result-card{
-    margin-top:6px;
-    padding:12px;
-    border:1px dashed var(--border);
-    border-radius:12px;
-    background:#fafafa;
-    display:none;
+    margin-top:6px; padding:12px; border:1px dashed var(--border);
+    border-radius:12px; background:#fafafa; display:none;
   }
   .result-title{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .pill{
-    padding:6px 10px; border-radius:999px;
-    font-size:12px; border:1px solid var(--border);
-    background:#fff; color:var(--muted);
-    white-space:nowrap;
-  }
   .bigloc{ margin-top:8px; font-size:22px; font-weight:800; letter-spacing:.5px; }
   .sub{ margin-top:6px; font-size:12px; color:var(--muted); }
 
-  .kv{
-    margin-top:10px;
-    display:grid;
-    gap:8px;
-  }
+  .kv{ margin-top:10px; display:grid; gap:8px; }
   .kv-row{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    padding:10px 12px;
-    border:1px solid var(--border);
-    border-radius:12px;
-    background:#fff;
-    font-size:12px;
+    display:flex; justify-content:space-between; gap:10px;
+    padding:10px 12px; border:1px solid var(--border);
+    border-radius:12px; background:#fff; font-size:12px;
   }
   .kv-row b{ color:#111827; }
   .kv-row span{ color:var(--muted); text-align:right; }
 
-  .picker{
-    margin-top:10px;
-    display:flex;
-    gap:10px;
-    align-items:center;
-  }
+  .picker{ margin-top:10px; display:flex; gap:10px; align-items:center; }
   .picker button{
-    border:1px solid var(--border);
-    background:#fff;
-    color:#111827;
-    border-radius:12px;
-    padding:10px 12px;
-    cursor:pointer;
-    flex:1;
-    min-width:120px;
-    font-weight:700;
+    border:1px solid var(--border); background:#fff; color:#111827;
+    border-radius:12px; padding:10px 12px; cursor:pointer;
+    flex:1; min-width:120px; font-weight:700;
   }
-  .picker button:disabled{
-    opacity:.45;
-    cursor:not-allowed;
-  }
+  .picker button:disabled{ opacity:.45; cursor:not-allowed; }
   .picker .counter{
-    padding:10px 12px;
-    border:1px solid var(--border);
-    background:#fff;
-    border-radius:12px;
-    color:var(--muted);
-    font-size:12px;
-    white-space:nowrap;
+    padding:10px 12px; border:1px solid var(--border);
+    background:#fff; border-radius:12px; color:var(--muted);
+    font-size:12px; white-space:nowrap;
   }
 
   .table-wrap{ border-top:1px solid var(--border); }
   .table-scroll{ max-height: 520px; overflow:auto; }
   table{ width:100%; border-collapse:collapse; font-size:13px; }
   thead th{
-    position:sticky; top:0;
-    background:#111827; color:#fff;
+    position:sticky; top:0; background:#111827; color:#fff;
     text-align:left; padding:10px; z-index:2;
   }
   tbody td{ padding:10px; border-bottom:1px solid var(--border); vertical-align:top; }
@@ -263,31 +200,51 @@
     outline:2px solid rgba(245, 158, 11, .35);
   }
 
-  .right{ position: sticky; top: 20px; }
-  #mapa{
+  /* ===== Vista estante (con imagen base) ===== */
+  .shelf-image-wrap{
+    position:relative;
     width:100%;
-    border:1px solid var(--border);
-    border-radius:12px;
+    max-width:760px;
+    margin:0 auto;
+    aspect-ratio: 900 / 520;
+  }
+  .shelf-image{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    border-radius:10px;
+    user-select:none;
+    pointer-events:none;
+  }
+  .shelf-level-box{
+    position:absolute;
+    left:14%;
+    width:72%;
+    border:2px solid rgba(17,24,39,.35);
+    background:rgba(255,255,255,.2);
+    border-radius:10px;
+    transition:.18s;
+  }
+  .shelf-level-box .level-tag{
+    position:absolute;
+    left:-52px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:11px;
+    font-weight:700;
+    color:#6b7280;
     background:#fff;
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:2px 8px;
   }
-
-  .zona{ fill:#e8eef7; stroke:#333; stroke-width:2; transition:.25s; }
-  .highlight{ fill:#fbbf24 !important; stroke:#f97316 !important; stroke-width:4; }
-
-  .estante rect{ fill:#ffffff; stroke:#444; stroke-width:2; transition:.25s; }
-  .highlight-estante rect{ fill:#fb7185 !important; stroke:#be123c !important; stroke-width:3; }
-
-  .pasillo{ fill:#f3f4f6; stroke:#e5e7eb; stroke-width:1; }
-
-  .map-info{
-    padding:12px 14px;
-    border-top:1px solid var(--border);
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:10px;
+  .shelf-level-box.level-highlight{
+    background:rgba(251,191,36,.38);
+    border-color:#f97316;
+    box-shadow:0 0 0 3px rgba(249,115,22,.2) inset;
   }
-  .map-info .msg{ font-size:13px; color:var(--muted); line-height:1.4; }
 
   #reader{ display:none; padding:0 14px 14px 14px; }
 </style>
@@ -313,7 +270,7 @@
 
 <div class="layout">
 
-  <!-- LEFT -->
+  <!-- IZQUIERDA -->
   <div class="card">
     <div class="card-header">
       <div>
@@ -325,7 +282,17 @@
 
     <div class="controls">
       <div class="search">
-        <input id="buscar" type="text" placeholder="Escribe en desorden: aissa 093 boxer xl..." autocomplete="off" />
+        <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s  |  z4-e10-n8" autocomplete="off" />
+      </div>
+
+      <!-- CHIPS -->
+      <div class="chiprow">
+        <div class="chip active" id="chipReducido" role="button" tabindex="0">
+          Reducido (por nombre) <span class="badge" id="badgeReducido">0</span>
+        </div>
+        <div class="chip" id="chipDetallado" role="button" tabindex="0">
+          Detallado (todo) <span class="badge" id="badgeDetallado">0</span>
+        </div>
       </div>
 
       <div class="btnrow">
@@ -335,7 +302,7 @@
       </div>
 
       <div class="hint">
-        Puedes escribir palabras sueltas en cualquier orden. Tallas (S/M/L/XL) se priorizan.
+        <b>Reducido:</b> 1 fila por nombre. <b>Detallado:</b> todas las coincidencias.
       </div>
 
       <div class="result-card" id="resultCard">
@@ -349,12 +316,16 @@
 
         <div class="kv">
           <div class="kv-row">
-            <b>🔎 Búsqueda</b>
-            <span id="kvBusqueda">—</span>
+            <b>📍 Ubicación</b>
+            <span id="kvUbicacion">—</span>
           </div>
           <div class="kv-row">
-            <b>📍 Ubicación (Tienda)</b>
-            <span id="kvUbicacion">—</span>
+            <b>🧱 Estante</b>
+            <span id="kvEstante">—</span>
+          </div>
+          <div class="kv-row">
+            <b>📚 Nivel / Repisa</b>
+            <span id="kvNivel">—</span>
           </div>
           <div class="kv-row">
             <b>📦 Reserva (Almacén)</b>
@@ -380,7 +351,7 @@
               <th style="width:140px;">Barras</th>
               <th>Nombre</th>
               <th style="width:160px;">Variante</th>
-              <th style="width:120px;">Ubicación</th>
+              <th style="width:140px;">Ubicación</th>
               <th style="width:110px;">Almacén</th>
             </tr>
           </thead>
@@ -390,41 +361,66 @@
     </div>
   </div>
 
-  <!-- RIGHT -->
-  <div class="card right" id="mapCard" style="display:none;">
+  <!-- DERECHA: MAPA + VISTA ESTANTE -->
+  <div class="card sticky">
     <div class="card-header">
       <div>
-        <h2>Mapa • Plano Retail</h2>
-        <div class="meta">Resalta zona y estante</div>
+        <h2>Plano general</h2>
+        <div class="meta">Zona + Estante + Nivel</div>
       </div>
       <div class="meta" id="mapBadge">—</div>
     </div>
 
     <div style="padding:14px;">
       <svg id="mapa" viewBox="0 0 700 800">
+        <!-- ZONAS -->
         <rect id="Z1" class="zona" x="100" y="20" width="300" height="120"/>
         <text x="250" y="90" text-anchor="middle" font-size="16">ZONA 1</text>
 
         <rect id="Z2" class="zona" x="100" y="150" width="300" height="300"/>
         <text x="250" y="320" text-anchor="middle" font-size="16">ZONA 2</text>
 
-        <rect class="pasillo" x="230" y="170" width="40" height="260"/>
-
-        <g id="Z2-P1" class="estante"><rect x="120" y="170" width="90" height="260"/></g>
-        <g id="Z2-D1" class="estante" transform="translate(350 230) rotate(90)"><rect x="-100" y="-40" width="200" height="80"/></g>
-        <g id="Z2-D2" class="estante" transform="translate(350 320) rotate(90)"><rect x="-100" y="-40" width="200" height="80"/></g>
-
+        <!-- Zona 4 en el plano general se llama A -->
         <rect id="A" class="zona" x="420" y="150" width="220" height="300" stroke-dasharray="6"/>
         <text x="530" y="320" text-anchor="middle" font-size="16">ZONA 4</text>
         <text x="530" y="340" text-anchor="middle" font-size="12" fill="#6b7280">ALMACÉN</text>
 
         <rect id="Z3" class="zona" x="100" y="460" width="300" height="300"/>
         <text x="250" y="650" text-anchor="middle" font-size="16">ZONA 3</text>
+
+        <!-- EJEMPLO de un estante real dibujado en Z1 -->
+        <g id="Z1-E2" class="estante"><rect x="140" y="35" width="70" height="90" rx="6"/></g>
+        <g id="Z1-E2-N1" class="nivel"><rect x="146" y="42" width="58" height="22" rx="5"/></g>
+        <g id="Z1-E2-N2" class="nivel"><rect x="146" y="68" width="58" height="22" rx="5"/></g>
+        <g id="Z1-E2-N3" class="nivel"><rect x="146" y="94" width="58" height="22" rx="5"/></g>
+        <text x="175" y="30" font-size="10" text-anchor="middle" fill="#6b7280">E2</text>
+
+        <!-- (Puedes ir agregando aquí más estantes/niveles con IDs Z?-E?-N?) -->
       </svg>
     </div>
 
+    <!-- VISTA ESTANTE -->
+    <div style="padding:14px; border-top:1px solid var(--border);">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
+        <div style="font-weight:800;">Vista estante seleccionado</div>
+        <div class="pill" id="shelfLabel">—</div>
+      </div>
+
+      <div id="shelfPreview" style="
+        border:1px solid var(--border);
+        border-radius:12px;
+        background:#fff;
+        padding:12px;
+        min-height:220px;
+      ">
+        <div style="color:var(--muted); font-size:13px;">
+          Selecciona un producto para ver el estante y el nivel resaltado.
+        </div>
+      </div>
+    </div>
+
     <div class="map-info">
-      <div class="msg" id="info">Busca un producto para mostrar el mapa.</div>
+      <div class="msg" id="info">Pasa el mouse por la tabla o busca un producto.</div>
       <div class="pill" id="resultCountPill">0</div>
     </div>
   </div>
@@ -442,7 +438,6 @@ const sheetName = "Mujer";
 const tabla = document.getElementById("tabla");
 const buscador = document.getElementById("buscar");
 const info = document.getElementById("info");
-const mapCard = document.getElementById("mapCard");
 const metaCount = document.getElementById("metaCount");
 const metaResults = document.getElementById("metaResults");
 const mapBadge = document.getElementById("mapBadge");
@@ -456,8 +451,9 @@ const pillZona = document.getElementById("pillZona");
 const bigLoc = document.getElementById("bigLoc");
 const subLoc = document.getElementById("subLoc");
 
-const kvBusqueda = document.getElementById("kvBusqueda");
 const kvUbicacion = document.getElementById("kvUbicacion");
+const kvEstante = document.getElementById("kvEstante");
+const kvNivel = document.getElementById("kvNivel");
 const kvReserva = document.getElementById("kvReserva");
 
 const btnClear = document.getElementById("btnClear");
@@ -465,10 +461,22 @@ const btnPrev = document.getElementById("btnPrev");
 const btnNext = document.getElementById("btnNext");
 const pickerCounter = document.getElementById("pickerCounter");
 
-/* ===== Data ===== */
+const chipReducido = document.getElementById("chipReducido");
+const chipDetallado = document.getElementById("chipDetallado");
+const badgeReducido = document.getElementById("badgeReducido");
+const badgeDetallado = document.getElementById("badgeDetallado");
+
+/* Vista estante */
+const shelfPreview = document.getElementById("shelfPreview");
+const shelfLabel = document.getElementById("shelfLabel");
+
+/* ===== STATE ===== */
 let productos = [];
+let resultadosDetallado = [];
+let resultadosReducido = [];
 let resultadosActuales = [];
 let indiceActual = 0;
+let modo = "reducido"; // 'reducido' | 'detallado'
 
 /* ===== Feedback ===== */
 let audioCtx = null;
@@ -477,12 +485,9 @@ function beep(freq = 880, ms = 90, vol = 0.06){
     if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const o = audioCtx.createOscillator();
     const g = audioCtx.createGain();
-    o.type = "sine";
-    o.frequency.value = freq;
-    g.gain.value = vol;
+    o.type = "sine"; o.frequency.value = freq; g.gain.value = vol;
     o.connect(g); g.connect(audioCtx.destination);
-    o.start();
-    setTimeout(() => { o.stop(); }, ms);
+    o.start(); setTimeout(() => o.stop(), ms);
   }catch(e){}
 }
 function vibrar(pattern = [60, 40, 60]){
@@ -507,47 +512,102 @@ function escapeHtml(str){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
-function renderTabla(lista, activeIndex = -1){
-  let html = "";
-  for (let i=0;i<lista.length;i++){
-    const p = lista[i];
-    const active = i === activeIndex ? " class='active'" : "";
-    html += `
-      <tr${active}>
-        <td>${escapeHtml(p.barras)}</td>
-        <td>${escapeHtml(p.nombre)}</td>
-        <td>${escapeHtml(p.variante)}</td>
-        <td>${escapeHtml(p.ubic)}</td>
-        <td>${escapeHtml(p.almacen)}</td>
-      </tr>`;
-  }
-  tabla.innerHTML = html;
-}
-function obtenerZona(ubicacion, almacen){
-  if (almacen) return "A";
-  if (ubicacion.startsWith("Z1")) return "Z1";
-  if (ubicacion.startsWith("Z2")) return "Z2";
-  if (ubicacion.startsWith("Z3")) return "Z3";
-  return null;
-}
-function limpiarHighlights(){
-  document.querySelectorAll(".zona").forEach(z => z.classList.remove("highlight"));
-  document.querySelectorAll(".estante").forEach(e => e.classList.remove("highlight-estante"));
-}
-function setPickerState(){
-  const total = resultadosActuales.length;
-  pickerCounter.textContent = `${total ? (indiceActual + 1) : 0} / ${total}`;
-  btnPrev.disabled = total <= 1;
-  btnNext.disabled = total <= 1;
+
+/* ===== Parse ubicación (Z1..Z4) ===== */
+function parseUbicacion(raw){
+  const s = String(raw || "").trim().toUpperCase();
+  // acepta: Z1-E2-N3, Z4-E10-N8, etc.
+  const m = s.match(/^(Z[1234])(?:-(E\d+))?(?:-(N\d+))?$/);
+  if (!m) return { zonaId: "", estanteId: "", nivelId: "", pretty: s };
+  const zonaId = m[1] || "";
+  const e = m[2] || "";
+  const n = m[3] || "";
+  const estanteId = (zonaId && e) ? `${zonaId}-${e}` : "";
+  const nivelId   = (estanteId && n) ? `${estanteId}-${n}` : "";
+  return { zonaId, estanteId, nivelId, pretty: s };
 }
 
-/* ===== Normalización y búsqueda por tokens (SIN ORDEN) ===== */
+/* ===== Mapeo de zona para el SVG general ===== */
+function zonaMapaId(zonaId){
+  // En el plano general, Z4 se llama A
+  if (zonaId === "Z4") return "A";
+  return zonaId;
+}
+
+/* ===== Highlight ===== */
+function clearHover(){
+  document.querySelectorAll(".zona").forEach(z => z.classList.remove("hover"));
+  document.querySelectorAll(".estante,.repisa").forEach(e => e.classList.remove("hover-slot"));
+  document.querySelectorAll(".nivel").forEach(n => n.classList.remove("hover-level"));
+}
+function clearSearchHighlight(){
+  document.querySelectorAll(".zona").forEach(z => z.classList.remove("highlight"));
+  document.querySelectorAll(".estante,.repisa").forEach(e => e.classList.remove("highlight-slot"));
+  document.querySelectorAll(".nivel").forEach(n => n.classList.remove("highlight-level"));
+}
+function applyHover(zonaId, estanteId, nivelId){
+  clearHover();
+  if (zonaId) document.getElementById(zonaId)?.classList.add("hover");
+  if (estanteId) document.getElementById(estanteId)?.classList.add("hover-slot");
+  if (nivelId) document.getElementById(nivelId)?.classList.add("hover-level");
+}
+function applySearchHighlight(zonaId, estanteId, nivelId){
+  clearSearchHighlight();
+  if (zonaId) document.getElementById(zonaId)?.classList.add("highlight");
+  if (estanteId) document.getElementById(estanteId)?.classList.add("highlight-slot");
+  if (nivelId) document.getElementById(nivelId)?.classList.add("highlight-level");
+}
+
+/* ===== Vista estante (imagen + niveles de abajo hacia arriba) ===== */
+function generarVistaEstanteConImagen(estanteId, nivelId, totalNiveles = 8){
+  const levelParts = [];
+  const safeNivelId = String(nivelId || "");
+
+  // N1 queda ABAJO y los niveles suben (N2, N3...)
+  for (let i = 1; i <= totalNiveles; i++){
+    const bottomPct = ((i - 1) * (76 / totalNiveles)) + 10;
+    const hPct = (76 / totalNiveles) - 1.2;
+    const currentId = `${estanteId}-N${i}`;
+    const activeClass = currentId === safeNivelId ? " level-highlight" : "";
+
+    levelParts.push(`
+      <div class="shelf-level-box${activeClass}" style="bottom:${bottomPct}%;height:${hPct}%;" data-level-id="${currentId}">
+        <span class="level-tag">N${i}</span>
+      </div>
+    `);
+  }
+
+  return `
+    <div class="shelf-image-wrap" aria-label="${estanteId}">
+      <img class="shelf-image" src="assets/shelf-base.svg" alt="Imagen de estante" />
+      ${levelParts.join("")}
+    </div>
+  `;
+}
+
+function mostrarVistaEstante(estanteId, nivelId){
+  if (!estanteId){
+    shelfLabel.textContent = "—";
+    shelfPreview.innerHTML = `<div style="color:var(--muted); font-size:13px;">
+      Selecciona un producto para ver el estante y el nivel resaltado.
+    </div>`;
+    return;
+  }
+
+  // Z4 = almacén (8 niveles). Otras zonas por defecto 6.
+  const totalNiveles = estanteId.startsWith("Z4-") ? 8 : 6;
+
+  shelfLabel.textContent = estanteId;
+  shelfPreview.innerHTML = generarVistaEstanteConImagen(estanteId, nivelId, totalNiveles);
+}
+
+/* ===== Normalización búsqueda ===== */
 function norm(s){
   return String(s || "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9\s-]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -555,183 +615,257 @@ function tokens(s){
   const stop = new Set(["talla","color","de","para","con","sin","un","una","y","el","la","los","las"]);
   return norm(s).split(" ").filter(w => w && !stop.has(w));
 }
-function isSizeLetter(t){
-  return ["xs","s","m","l","xl","xxl","2xl"].includes(t);
-}
-function isPureNumber(t){
-  return /^\d{1,4}$/.test(t);
-}
+function isSizeLetter(t){ return ["xs","s","m","l","xl","xxl","2xl"].includes(t); }
+function isPureNumber(t){ return /^\d{1,4}$/.test(t); }
 function matchAll(textoNorm, qTokens){
-  for (const t of qTokens){
-    if (!textoNorm.includes(t)) return false;
-  }
+  for (const t of qTokens) if (!textoNorm.includes(t)) return false;
   return true;
 }
 function hasTallaNumero(nvNorm, num){
-  return new RegExp(`\\btalla\\s*${num}\\b`).test(nvNorm);
+  return new RegExp(`\btalla\s*${num}\b`).test(nvNorm);
 }
 
-/* ===== Aplicar resultado activo ===== */
+/* ===== Agrupar por nombre (reducido) ===== */
+function agruparPorNombre(listaDetallada){
+  const map = new Map();
+  for (const p of listaDetallada){
+    const key = (p.nombreNormKey || p.nombreNorm || p.nombre || "").trim();
+    if (!key) continue;
+
+    if (!map.has(key)){
+      map.set(key, { key, count: 1, representante: p, grupo: [p] });
+    } else {
+      const g = map.get(key);
+      g.count++;
+      g.grupo.push(p);
+      if ((p._score||0) > (g.representante._score||0)) g.representante = p;
+    }
+  }
+
+  const reducido = [];
+  for (const g of map.values()){
+    reducido.push({
+      ...g.representante,
+      // en tabla reducimos variante para indicar “x variantes”
+      variante: `${g.count} variantes`,
+      _grupo: g.grupo,
+      _count: g.count,
+      _representante: g.representante
+    });
+  }
+
+  reducido.sort((a,b) => (b._score||0) - (a._score||0));
+  return reducido;
+}
+
+/* ===== Render tabla ===== */
+function renderTabla(lista, activeIndex = -1){
+  let html = "";
+  for (let i=0;i<lista.length;i++){
+    const p = lista[i];
+    const active = i === activeIndex ? " class='active'" : "";
+    html += `
+      <tr${active}
+          data-i="${i}"
+          data-zona="${p._zonaMapaId || ''}"
+          data-estante="${p.estanteId || ''}"
+          data-nivel="${p.nivelId || ''}">
+        <td>${escapeHtml(p.barras || "")}</td>
+        <td>${escapeHtml(p.nombre || "")}</td>
+        <td>${escapeHtml(p.variante || "")}</td>
+        <td>${escapeHtml(p.ubic || "")}</td>
+        <td>${escapeHtml(p.almacen || "")}</td>
+      </tr>`;
+  }
+  tabla.innerHTML = html;
+  enlazarTabla();
+}
+
+function enlazarTabla(){
+  const rows = tabla.querySelectorAll("tr");
+  rows.forEach(tr => {
+    tr.addEventListener("mouseenter", () => {
+      const zonaId = tr.getAttribute("data-zona") || "";
+      const estanteId = tr.getAttribute("data-estante") || "";
+      const nivelId = tr.getAttribute("data-nivel") || "";
+
+      applyHover(zonaId, estanteId, nivelId);
+      mapBadge.textContent = (zonaId === "A") ? "ZONA 4" : (zonaId || "—");
+    });
+
+    tr.addEventListener("click", () => {
+      const i = Number(tr.getAttribute("data-i"));
+      if (!Number.isNaN(i)){
+        indiceActual = i;
+        aplicarResultadoActivo(true);
+      }
+    });
+  });
+
+  tabla.addEventListener("mouseleave", () => {
+    clearHover();
+    if (resultadosActuales.length){
+      aplicarResultadoActivo(false);
+    } else {
+      mapBadge.textContent = "—";
+      info.textContent = "Pasa el mouse por la tabla o busca un producto.";
+    }
+  }, { once:false });
+}
+
+/* ===== Picker ===== */
+function setPickerState(){
+  const total = resultadosActuales.length;
+  pickerCounter.textContent = `${total ? (indiceActual + 1) : 0} / ${total}`;
+  btnPrev.disabled = total <= 1;
+  btnNext.disabled = total <= 1;
+}
+
+/* ===== Resultado activo ===== */
 function aplicarResultadoActivo(triggerFeedback = false){
   const total = resultadosActuales.length;
   metaResults.textContent = `${total} resultados`;
   resultCountPill.textContent = String(total);
 
+  badgeDetallado.textContent = String(resultadosDetallado.length || 0);
+  badgeReducido.textContent = String(resultadosReducido.length || 0);
+
   if (!total){
     resultCard.style.display = "none";
-    mapCard.style.display = "none";
-    limpiarHighlights();
+    clearSearchHighlight();
+    info.textContent = "Pasa el mouse por la tabla o busca un producto.";
+    mapBadge.textContent = "—";
+    mostrarVistaEstante("", "");
     return;
   }
 
   if (indiceActual < 0) indiceActual = 0;
   if (indiceActual >= total) indiceActual = total - 1;
 
-  const activo = resultadosActuales[indiceActual];
-  const zona = obtenerZona(activo.ubic, activo.almacen);
+  const filaActiva = resultadosActuales[indiceActual];
+
+  // detalle real (si reducido: usar el representante)
+  const activo = (modo === "reducido" && filaActiva._representante)
+    ? filaActiva._representante
+    : filaActiva;
 
   renderTabla(resultadosActuales, indiceActual);
 
-  limpiarHighlights();
-  mapCard.style.display = "block";
+  // highlight en mapa general
+  applySearchHighlight(activo._zonaMapaId, activo.estanteId, activo.nivelId);
 
-  if (zona) document.getElementById(zona)?.classList.add("highlight");
-
-  const estante = document.getElementById(activo.ubic);
-  if (estante) estante.classList.add("highlight-estante");
-
-  if (activo.almacen){
-    info.textContent = `📦 Reserva en ALMACÉN (ZONA 4): ${activo.almacen}`;
-    mapBadge.textContent = "ZONA 4";
-  } else {
-    info.textContent = "📍 Ubicación: " + (activo.ubic || "—");
-    mapBadge.textContent = zona || "—";
-  }
+  mapBadge.textContent = (activo._zonaMapaId === "A") ? "ZONA 4" : (activo._zonaMapaId || "—");
+  info.textContent = activo.almacen
+    ? `📦 Reserva en ALMACÉN (ZONA 4): ${activo.almacen}`
+    : `📍 Ubicación: ${activo.ubic || "—"}`;
 
   resultCard.style.display = "block";
-  pillZona.textContent = activo.almacen ? "ZONA 4" : (zona || "—");
+  pillZona.textContent = (activo._zonaMapaId === "A") ? "ZONA 4" : (activo._zonaMapaId || "—");
   bigLoc.textContent = activo.almacen ? `RESERVA: ${activo.almacen}` : (activo.ubic || "—");
-  subLoc.textContent = `${activo.nombre || "—"} • ${activo.variante || "—"} • ${activo.barras || "—"}`;
 
-  kvBusqueda.textContent = buscador.value.trim() || "—";
+  if (modo === "reducido" && filaActiva._count){
+    subLoc.textContent = `${filaActiva.nombre || "—"} • ${filaActiva._count} variantes`;
+  } else {
+    subLoc.textContent = `${activo.nombre || "—"} • ${activo.variante || "—"} • ${activo.barras || "—"}`;
+  }
+
   kvUbicacion.textContent = activo.ubic || "—";
+  kvEstante.textContent = activo.estanteId || "—";
+  kvNivel.textContent = activo.nivelId || "—";
   kvReserva.textContent = activo.almacen || "—";
+
+  // Vista estante (panel)
+  mostrarVistaEstante(activo.estanteId, activo.nivelId);
 
   setPickerState();
   if (triggerFeedback) feedbackOK();
 }
 
-/* ===== Load sheet (solo hoja Mujer) ===== */
-setStatus("warn", "Cargando hoja “Mujer”...");
+/* ===== Switch chips ===== */
+function setModo(nuevo){
+  modo = nuevo;
+  chipReducido.classList.toggle("active", modo === "reducido");
+  chipDetallado.classList.toggle("active", modo === "detallado");
 
-fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`)
-  .then(res => res.text())
-  .then(text => {
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
-
-    productos = [];
-    for (const r of rows){
-      if (!r.c) continue;
-
-      const p = {
-        barras:   r.c[10]?.v || "",
-        nombre:   r.c[12]?.v || "",
-        variante: r.c[13]?.v || "",
-        ubic:     (r.c[20]?.v || "").toUpperCase().trim(),
-        almacen:  (r.c[21]?.v || "").toUpperCase().trim()
-      };
-
-      if (!p.barras && !p.nombre) continue;
-
-      // normalizados para ranking
-      p.nvNorm = norm((p.nombre || "") + " " + (p.variante || ""));
-      p.fulltextNorm = norm((p.barras||"") + " " + (p.nombre||"") + " " + (p.variante||"") + " " + (p.ubic||"") + " " + (p.almacen||""));
-
-      productos.push(p);
-    }
-
-    metaCount.textContent = `${productos.length} productos`;
+  if (buscador.value.trim()){
+    resultadosActuales = (modo === "reducido") ? resultadosReducido : resultadosDetallado;
+    indiceActual = 0;
+    aplicarResultadoActivo(false);
+  } else {
     resultadosActuales = [];
     indiceActual = 0;
     renderTabla(productos);
-    setStatus("ok", `Listo • ${productos.length} productos cargados`);
-  })
-  .catch(() => setStatus("bad", "Error cargando la hoja. Revisa permisos del Sheet."));
+    resultCard.style.display = "none";
+    clearSearchHighlight();
+    mostrarVistaEstante("", "");
+    metaResults.textContent = "0 resultados";
+    resultCountPill.textContent = "0";
+  }
+}
+chipReducido.addEventListener("click", () => setModo("reducido"));
+chipDetallado.addEventListener("click", () => setModo("detallado"));
 
-/* ===== Search (tokens + ranking) ===== */
+/* ===== Limpiar ===== */
 function limpiarBusqueda(){
   buscador.value = "";
+  resultadosDetallado = [];
+  resultadosReducido = [];
   resultadosActuales = [];
   indiceActual = 0;
+
   metaResults.textContent = "0 resultados";
-  resultCard.style.display = "none";
-  mapCard.style.display = "none";
-  info.textContent = "Busca un producto para mostrar el mapa.";
-  mapBadge.textContent = "—";
   resultCountPill.textContent = "0";
-  limpiarHighlights();
+  badgeDetallado.textContent = "0";
+  badgeReducido.textContent = "0";
+
+  resultCard.style.display = "none";
+  clearSearchHighlight();
+  clearHover();
+
+  info.textContent = "Pasa el mouse por la tabla o busca un producto.";
+  mapBadge.textContent = "—";
+
+  mostrarVistaEstante("", "");
+
   renderTabla(productos);
   buscador.focus();
 }
 btnClear.addEventListener("click", limpiarBusqueda);
 
+/* ===== Buscar ===== */
 function recalcularResultados(triggerFeedback=false){
   const q = tokens(buscador.value);
-
   if (!q.length){
-    resultadosActuales = [];
-    indiceActual = 0;
-    metaResults.textContent = "0 resultados";
-    resultCard.style.display = "none";
-    mapCard.style.display = "none";
-    limpiarHighlights();
-    renderTabla(productos);
+    limpiarBusqueda();
     return;
   }
 
-  // 1) filtro AND sin orden + 2) ranking inteligente
-  resultadosActuales = productos
+  resultadosDetallado = productos
     .filter(p => matchAll(p.fulltextNorm, q))
     .map(p => {
       let score = 0;
-
       for (const t of q){
         const inNV = p.nvNorm.includes(t);
-
-        // A) talla letras (S/M/L/XL): peso alto
-        if (isSizeLetter(t)){
-          score += inNV ? 20 : 5;
-          continue;
-        }
-
-        // B) números (28/30/093/261): ambiguo
+        if (isSizeLetter(t)){ score += inNV ? 20 : 5; continue; }
         if (isPureNumber(t)){
-          if (hasTallaNumero(p.nvNorm, t)){
-            score += 18; // "talla 30"
-          } else {
-            score += inNV ? 6 : 2; // número suelto, bajo
-          }
+          if (hasTallaNumero(p.nvNorm, t)) score += 18;
+          else score += inNV ? 6 : 2;
           continue;
         }
-
-        // C) palabras normales
         score += inNV ? 10 : 2;
       }
-
-      // Bonus: si el usuario escribe un código de 3 dígitos (ej 093/261)
       const code3 = q.find(t => /^\d{3}$/.test(t));
       if (code3 && p.nvNorm.includes(code3)) score += 12;
-
-      return { p, score };
+      return { ...p, _score: score };
     })
-    .sort((a,b) => b.score - a.score)
-    .map(x => x.p);
+    .sort((a,b) => (b._score||0) - (a._score||0));
 
+  resultadosReducido = agruparPorNombre(resultadosDetallado);
+
+  resultadosActuales = (modo === "reducido") ? resultadosReducido : resultadosDetallado;
   indiceActual = 0;
   aplicarResultadoActivo(triggerFeedback);
 }
-
 buscador.addEventListener("input", () => recalcularResultados(false));
 
 btnPrev.addEventListener("click", () => {
@@ -745,6 +879,65 @@ btnNext.addEventListener("click", () => {
   aplicarResultadoActivo(true);
 });
 
+/* ===== LOAD SHEET ===== */
+setStatus("warn", "Cargando hoja “Mujer”...");
+
+fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`)
+  .then(res => res.text())
+  .then(text => {
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const rows = json.table.rows;
+
+    productos = [];
+    for (const r of rows){
+      if (!r.c) continue;
+
+      const barras = r.c[10]?.v || "";
+      const nombre = r.c[12]?.v || "";
+      const variante = r.c[13]?.v || "";
+
+      const ubicRaw = r.c[20]?.v || "";
+      const almacen = String(r.c[21]?.v || "").toUpperCase().trim();
+
+      const parsed = parseUbicacion(ubicRaw);
+
+      // Si “Almacén” tiene algo, se considera reserva/almacén (zona 4)
+      const zonaId = almacen ? "Z4" : (parsed.zonaId || "");
+      const estanteId = almacen ? "" : (parsed.estanteId || "");
+      const nivelId = almacen ? "" : (parsed.nivelId || "");
+
+      const p = {
+        barras,
+        nombre,
+        variante,
+        ubic: almacen ? "Z4" : parsed.pretty,
+        almacen,
+
+        zonaId,
+        estanteId,
+        nivelId,
+
+        // id real del mapa general (Z4 => A)
+        _zonaMapaId: zonaMapaId(zonaId)
+      };
+
+      if (!barras && !nombre) continue;
+
+      p.nvNorm = norm((p.nombre || "") + " " + (p.variante || ""));
+      p.fulltextNorm = norm((p.barras||"") + " " + (p.nombre||"") + " " + (p.variante||"") + " " + (p.ubic||"") + " " + (p.almacen||""));
+
+      p.nombreNorm = norm(p.nombre);
+      p.nombreNormKey = p.nombreNorm;
+
+      productos.push(p);
+    }
+
+    metaCount.textContent = `${productos.length} productos`;
+    renderTabla(productos);
+    setStatus("ok", `Listo • ${productos.length} productos cargados`);
+  })
+  .catch(() => setStatus("bad", "Error cargando la hoja. Revisa permisos del Sheet."));
+
 /* ===== Scanner (QR + Barras) ===== */
 const btnScan = document.getElementById("btnScan");
 const btnCerrar = document.getElementById("btnCerrar");
@@ -754,7 +947,6 @@ let html5QrCode = null;
 btnScan.addEventListener("click", () => {
   readerDiv.style.display = "block";
   btnCerrar.style.display = "inline-flex";
-
   if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
 
   Html5Qrcode.getCameras().then(cameras => {
@@ -763,17 +955,12 @@ btnScan.addEventListener("click", () => {
 
     html5QrCode.start(
       cameraId,
-      {
-        fps: 20,
-        qrbox: { width: 260, height: 200 },
-        experimentalFeatures: { useBarCodeDetectorIfSupported: true }
-      },
+      { fps: 20, qrbox: { width: 260, height: 200 }, experimentalFeatures: { useBarCodeDetectorIfSupported: true } },
       codigo => {
         html5QrCode.stop().then(() => {
           readerDiv.style.display = "none";
           btnCerrar.style.display = "none";
         });
-
         feedbackOK();
         buscador.value = codigo;
         recalcularResultados(false);
