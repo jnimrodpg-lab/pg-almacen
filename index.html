@@ -17,10 +17,10 @@
     --border:#1f2a44; --shadow:0 12px 30px rgba(0,0,0,.45);
     --thead:#0b1020; --mapbg:#0b1020; --inputbg:#0b1020; --chipbg:#0b1020;
   }
-
   *{ box-sizing:border-box; }
   body{ margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text); padding:20px; transition:.2s; }
 
+  /* ===== HEADER ===== */
   .topbar{ max-width:1200px; margin:0 auto 16px auto; display:flex; align-items:center; justify-content:space-between; gap:12px; }
   .brand{ display:flex; align-items:center; gap:12px; }
   .logoMark{ width:44px;height:44px;border-radius:14px; background: linear-gradient(135deg, #111827, #374151); box-shadow: var(--shadow); position:relative; overflow:hidden; }
@@ -41,19 +41,26 @@
   .themeBtn{ border:1px solid var(--border); background:var(--card); color:var(--text); border-radius:999px; padding:10px 12px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 6px 18px rgba(0,0,0,.05); user-select:none; }
   .themeBtn .mini{ font-size:12px; color:var(--muted); }
 
+  /* ===== LAYOUT ===== */
   .layout{ max-width:1200px; margin:0 auto; display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; align-items:start; }
-  @media (max-width: 980px){ .layout{ grid-template-columns:1fr; } .sticky{ position:static !important; } .topRight{ flex-wrap:wrap; justify-content:flex-end; } }
+  @media (max-width: 980px){
+    .layout{ grid-template-columns:1fr; }
+    .sticky{ position:static !important; }
+    .topRight{ flex-wrap:wrap; justify-content:flex-end; }
+  }
 
   .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); overflow:hidden; transition:.2s; }
   .card-header{ padding:14px 14px 10px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .card-header h2{ font-size:14px; margin:0; }
   .meta{ font-size:12px; color:var(--muted); }
 
+  /* ===== MAPA ===== */
   .sticky{ position: sticky; top: 20px; }
   #mapa{ width:100%; border:1px solid var(--border); border-radius:12px; background:var(--mapbg); }
 
   .zona{ fill:#e8eef7; stroke:#333; stroke-width:2; transition:.18s; }
   body[data-theme="dark"] .zona{ fill:#0f1b33; stroke:#32405f; }
+
   .highlight{ fill:#fbbf24 !important; stroke:#f97316 !important; stroke-width:4; }
   .hover{ fill:#93c5fd !important; stroke:#2563eb !important; stroke-width:4; }
 
@@ -61,6 +68,7 @@
   .estante-img image { opacity:.98; transition:.18s; }
   .highlight-slot image{ filter: drop-shadow(0 0 10px rgba(249,115,22,.55)); }
   .hover-slot image{ filter: drop-shadow(0 0 10px rgba(37,99,235,.55)); }
+  .pinned-slot image{ filter: drop-shadow(0 0 12px rgba(22,163,74,.65)); }
 
   .nivel-mark{
     fill: rgba(251,191,36,.35);
@@ -78,6 +86,7 @@
   .map-info .msg{ font-size:13px; color:var(--muted); line-height:1.4; }
   .pill{ padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid var(--border); background:var(--chipbg); color:var(--muted); white-space:nowrap; }
 
+  /* ===== FORM + TABLA ===== */
   .controls{ padding:14px; display:grid; gap:10px; }
   .search input{ width:100%; padding:12px; font-size:15px; border:1px solid var(--border); border-radius:12px; outline:none; background:var(--inputbg); color:var(--text); }
   .search input:focus{ border-color: rgba(37, 99, 235, .6); box-shadow: 0 0 0 4px rgba(37,99,235,.12); }
@@ -118,36 +127,59 @@
   tbody tr:nth-child(even){ background:rgba(255,255,255,.03); }
   tbody tr.active{ background:rgba(245, 158, 11, .16) !important; outline:2px solid rgba(245, 158, 11, .35); }
 
-  .shelf-image-wrap{ position:relative; width:100%; max-width:760px; margin:0 auto; aspect-ratio: 900 / 520; }
-  .shelf-image{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; border-radius:10px; user-select:none; pointer-events:none; }
-  .shelf-level-overlay{
-    position:absolute; left:14%; width:72%;
-    border:2px solid rgba(249,115,22,.95);
-    background:rgba(251,191,36,.35);
+  /* ===== VISTA ESTANTE (TODOS LOS NIVELES VISIBLES) ===== */
+  .shelf-image-wrap{
+    position:relative;
+    width:100%;
+    max-width:760px;
+    margin:0 auto;
+    aspect-ratio: 900 / 520;
+  }
+  .shelf-image{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:contain;
     border-radius:10px;
-    box-shadow:0 0 0 3px rgba(249,115,22,.15) inset;
+    user-select:none;
+    pointer-events:none;
+  }
+  .shelf-level-box{
+    position:absolute;
+    left:14%;
+    width:72%;
+    border:2px solid rgba(17,24,39,.28);
+    background:rgba(255,255,255,.08);
+    border-radius:10px;
     transition:.18s;
   }
-  .shelf-level-overlay .level-tag{
-    position:absolute; left:-52px; top:50%; transform:translateY(-50%);
-    font-size:11px; font-weight:700; color:var(--muted);
-    background:var(--chipbg); border:1px solid var(--border);
-    border-radius:999px; padding:2px 8px;
+  .shelf-level-box .level-tag{
+    position:absolute;
+    left:-52px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:11px;
+    font-weight:800;
+    color:var(--muted);
+    background:var(--chipbg);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:2px 8px;
+  }
+  .shelf-level-box.level-highlight{
+    background:rgba(251,191,36,.35);
+    border-color:#f97316;
+    box-shadow:0 0 0 3px rgba(249,115,22,.15) inset;
   }
 
-  /* Banner filtro por estante */
-  .filter-banner{
-    display:none;
-    margin-top:8px;
-    padding:10px 12px;
-    border:1px solid var(--border);
-    border-radius:12px;
-    background:rgba(37,99,235,.08);
-    color:var(--text);
-    font-size:12px;
-  }
+  .filter-banner{ display:none; margin-top:8px; padding:10px 12px; border:1px solid var(--border); border-radius:12px; background:rgba(37,99,235,.08); color:var(--text); font-size:12px; }
   .filter-banner b{ font-weight:900; }
   body[data-theme="dark"] .filter-banner{ background:rgba(37,99,235,.14); }
+
+  .filter-actions{ margin-top:8px; display:none; gap:8px; align-items:center; }
+  .miniBtn{ border:1px solid var(--border); background:var(--chipbg); color:var(--text); border-radius:10px; padding:8px 10px; cursor:pointer; font-size:12px; font-weight:800; }
+  .miniBtn.danger{ border-color: rgba(220,38,38,.4); background: rgba(220,38,38,.10); }
 
   #reader{ display:none; padding:0 14px 14px 14px; }
 </style>
@@ -181,6 +213,7 @@
 
 <div class="layout">
 
+  <!-- IZQUIERDA -->
   <div class="card">
     <div class="card-header">
       <div>
@@ -195,9 +228,16 @@
         <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s | z2-e3-n1 | a1-e10-n8" autocomplete="off" />
       </div>
 
-      <!-- Banner filtro por estante -->
-      <div class="filter-banner" id="filterBanner">Filtrando por estante: <b id="filterBannerText">—</b></div>
+      <div class="filter-banner" id="filterBanner">
+        <span id="filterBannerMode">Preview:</span> estante <b id="filterBannerText">—</b>
+      </div>
 
+      <div class="filter-actions" id="filterActions">
+        <button class="miniBtn danger" id="btnClearShelf" type="button">Quitar filtro fijo</button>
+        <span class="pill" id="pillPinned">Fijo</span>
+      </div>
+
+      <!-- CHIPS -->
       <div class="chiprow">
         <div class="chip active" id="chipReducido" role="button" tabindex="0">
           Reducido (por nombre) <span class="badge" id="badgeReducido">0</span>
@@ -214,7 +254,7 @@
       </div>
 
       <div class="hint">
-        <b>Reducido:</b> 1 fila por nombre. <b>Detallado:</b> todas las coincidencias.
+        <b>Hover</b> = preview • <b>Click</b> = fijar y saltar al primer producto del estante.
       </div>
 
       <div class="result-card" id="resultCard">
@@ -261,6 +301,7 @@
     </div>
   </div>
 
+  <!-- DERECHA -->
   <div class="card sticky">
     <div class="card-header">
       <div>
@@ -285,7 +326,7 @@
         <rect id="Z3" class="zona" x="100" y="460" width="300" height="300"/>
         <text x="250" y="650" text-anchor="middle" font-size="16" fill="currentColor">ZONA 3</text>
 
-        <!-- EJEMPLO: DUPLICA estantes con ids reales (Z1-E2, Z2-E3, A1-E10, etc.) -->
+        <!-- EJEMPLO: DUPLICA estantes con ids reales (Z1-E2, Z2-E3, A1-E10...) -->
         <g id="Z1-E2" class="estante-img" data-levels="6" transform="translate(140 35)">
           <image href="assets/estantes/estante-mod1.png" width="70" height="90"></image>
           <rect class="nivel-mark" x="0" y="0" width="70" height="15"></rect>
@@ -294,6 +335,7 @@
       </svg>
     </div>
 
+    <!-- VISTA ESTANTE -->
     <div style="padding:14px; border-top:1px solid var(--border);">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
         <div style="font-weight:800;">Vista estante seleccionado</div>
@@ -370,11 +412,12 @@ const themeIcon = $("themeIcon");
 const themeText = $("themeText");
 const themeMini = $("themeMini");
 
-/* Filtro por estante (hover mapa) */
+/* Filtro por estante UI */
 const filterBanner = $("filterBanner");
 const filterBannerText = $("filterBannerText");
-let activeShelfFilter = ""; // ej: "Z1-E2"
-let lastQueryBeforeShelf = ""; // recordar texto actual del input (sin modificarlo)
+const filterBannerMode = $("filterBannerMode");
+const filterActions = $("filterActions");
+const btnClearShelf = $("btnClearShelf");
 
 /* =========================
    STATE
@@ -387,6 +430,10 @@ let indiceActual = 0;
 let modo = "reducido";
 let busquedaActiva = false;
 let activeRowEl = null;
+
+/* Filtros por estante */
+let shelfHoverId = "";
+let shelfPinnedId = "";
 
 /* =========================
    THEME
@@ -425,28 +472,20 @@ function setStatus(type, text){
 }
 function escapeHtml(str){
   return String(str || "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"quot;")
-    .replaceAll("'","&#039;");
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
 function norm(s){
-  return String(s || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9\s-]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  return String(s || "").toLowerCase().normalize("NFD")
+    .replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9\s-]/g, " ")
+    .replace(/\s+/g, " ").trim();
 }
 function tokensText(s){
   const stop = new Set(["talla","color","de","para","con","sin","un","una","y","el","la","los","las"]);
   return norm(s).split(" ").filter(w => w && !stop.has(w));
 }
 function debounce(fn, ms=160){
-  let t;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+  let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
 }
 
 /* =========================
@@ -456,7 +495,6 @@ function parseCodigo(raw){
   const s = String(raw || "").trim().toUpperCase();
   const m = s.match(/^(Z[123]|A1)(?:-(E\d+))?(?:-(N\d+))?$/);
   if (!m) return { zonaId: "", estanteId: "", nivelId: "", pretty: s, nivelNum: 0 };
-
   const zonaId = m[1] || "";
   const e = m[2] || "";
   const n = m[3] || "";
@@ -467,7 +505,7 @@ function parseCodigo(raw){
 }
 
 /* =========================
-   MAPA: highlights
+   MAPA highlights
 ========================= */
 function clearHover(){
   document.querySelectorAll(".zona").forEach(z => z.classList.remove("hover"));
@@ -476,6 +514,9 @@ function clearHover(){
 function clearSearchHighlight(){
   document.querySelectorAll(".zona").forEach(z => z.classList.remove("highlight"));
   document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("highlight-slot","highlight-level"));
+}
+function clearPinnedVisual(){
+  document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("pinned-slot"));
 }
 function setShelfLevelMark(estanteId, nivelNum, mode){
   const g = document.getElementById(estanteId);
@@ -529,24 +570,35 @@ function applyHover(zonaId, estanteId, nivelId){
 }
 
 /* =========================
-   VISTA ESTANTE
+   VISTA ESTANTE (TODOS LOS NIVELES)
 ========================= */
 function generarVistaEstanteConImagen(estanteId, nivelNum, totalNiveles){
   const n = Math.max(1, Math.min(totalNiveles, Number(nivelNum || 1)));
-  const usable = 76, start = 10;
-  const band = usable / totalNiveles;
-  const bottomPct = start + ((n - 1) * band);
-  const hPct = band - 1.2;
+
+  const usable = 76; // altura útil
+  const start  = 10; // margen inferior base
+  const band   = usable / totalNiveles;
+
+  const boxes = [];
+  for(let i=1;i<=totalNiveles;i++){
+    const bottomPct = start + ((i - 1) * band);
+    const hPct = band - 1.2; // gap
+    boxes.push(`
+      <div class="shelf-level-box ${i === n ? "level-highlight" : ""}"
+           style="bottom:${bottomPct}%; height:${hPct}%;">
+        <span class="level-tag">N${i}</span>
+      </div>
+    `);
+  }
 
   return `
     <div class="shelf-image-wrap" aria-label="${estanteId}">
       <img class="shelf-image" src="${IMG_EST_VISTA}" alt="Vista de estante" />
-      <div class="shelf-level-overlay" style="bottom:${bottomPct}%;height:${hPct}%;">
-        <span class="level-tag">N${n}</span>
-      </div>
+      ${boxes.join("")}
     </div>
   `;
 }
+
 function mostrarVistaEstante(estanteId, nivelId){
   if (!estanteId){
     shelfLabel.textContent = "—";
@@ -555,9 +607,12 @@ function mostrarVistaEstante(estanteId, nivelId){
     </div>`;
     return;
   }
+
   const m = (nivelId || "").match(/-N(\d+)$/i);
   const nivelNum = m ? Number(m[1]) : 1;
+
   const totalNiveles = estanteId.startsWith("A1-") ? 8 : 6;
+
   shelfLabel.textContent = estanteId;
   shelfPreview.innerHTML = generarVistaEstanteConImagen(estanteId, nivelNum, totalNiveles);
 }
@@ -567,13 +622,9 @@ function mostrarVistaEstante(estanteId, nivelId){
 ========================= */
 function isSizeLetter(t){ return ["xs","s","m","l","xl","xxl","2xl"].includes(t); }
 function isPureNumber(t){ return /^\d{1,4}$/.test(t); }
-function matchAll(textoNorm, qTokens){
-  for (const t of qTokens) if (!textoNorm.includes(t)) return false;
-  return true;
-}
-function hasTallaNumero(nvNorm, num){
-  return new RegExp(`\\btalla\\s*${num}\\b`).test(nvNorm);
-}
+function matchAll(textoNorm, qTokens){ for (const t of qTokens) if (!textoNorm.includes(t)) return false; return true; }
+function hasTallaNumero(nvNorm, num){ return new RegExp(`\\btalla\\s*${num}\\b`).test(nvNorm); }
+
 function agruparPorNombre(listaDetallada){
   const map = new Map();
   for (const p of listaDetallada){
@@ -601,8 +652,9 @@ function renderTabla(lista){
   const rows = new Array(lista.length);
   for (let i=0;i<lista.length;i++){
     const p = lista[i];
+    const isActive = i === indiceActual && (busquedaActiva || shelfHoverId || shelfPinnedId);
     rows[i] = `
-      <tr data-i="${i}"
+      <tr ${isActive ? "class='active'" : ""} data-i="${i}"
           data-zona="${p.zonaId || ''}"
           data-estante="${p.estanteId || ''}"
           data-nivel="${p.nivelId || ''}">
@@ -626,19 +678,17 @@ function setActiveRow(index, smooth=false){
   }
 }
 
-/* Hover/click tabla */
+/* Tabla hover/click */
 tablaBody.addEventListener("mousemove", (e) => {
   const tr = e.target.closest("tr");
   if (!tr || !tablaBody.contains(tr)) return;
-  const zonaId = tr.dataset.zona || "";
-  const estanteId = tr.dataset.estante || "";
-  const nivelId = tr.dataset.nivel || "";
-  applyHover(zonaId, estanteId, nivelId);
-  mapBadge.textContent = zonaId ? (zonaId === "A1" ? "ALMACÉN" : zonaId) : "—";
+  applyHover(tr.dataset.zona || "", tr.dataset.estante || "", tr.dataset.nivel || "");
+  const zid = tr.dataset.zona || "";
+  mapBadge.textContent = zid ? (zid === "A1" ? "ALMACÉN" : zid) : "—";
 });
 tablaBody.addEventListener("mouseleave", () => {
   clearHover();
-  if (busquedaActiva || activeShelfFilter) aplicarResultadoActivo(false);
+  if (busquedaActiva || shelfHoverId || shelfPinnedId) aplicarResultadoActivo(false);
   else {
     mapBadge.textContent = "—";
     info.textContent = "Pasa el mouse por la tabla o busca un producto.";
@@ -673,11 +723,9 @@ function hideResultUI(){
   pillZona.textContent = "—";
   info.textContent = "Pasa el mouse por la tabla o busca un producto.";
 }
-function aplicarResultadoActivo(forceShow=false){
-  // si hay filtro por estante, consideramos "activo" aunque el input esté vacío
-  const effectiveActive = busquedaActiva || !!activeShelfFilter;
-
-  if (!effectiveActive && !forceShow){
+function aplicarResultadoActivo(){
+  const effectiveActive = busquedaActiva || !!shelfHoverId || !!shelfPinnedId;
+  if (!effectiveActive){
     hideResultUI();
     return;
   }
@@ -686,22 +734,17 @@ function aplicarResultadoActivo(forceShow=false){
   metaResults.textContent = `${total} resultados`;
   resultCountPill.textContent = String(total);
 
-  badgeDetallado.textContent = String(resultadosDetallado.length || 0);
-  badgeReducido.textContent = String(resultadosReducido.length || 0);
-
   if (!total){
     hideResultUI();
     return;
   }
-
   if (indiceActual < 0) indiceActual = 0;
   if (indiceActual >= total) indiceActual = total - 1;
 
   const filaActiva = resultadosActuales[indiceActual];
-  const activo = (modo === "reducido" && filaActiva._representante)
-    ? filaActiva._representante
-    : filaActiva;
+  const activo = (modo === "reducido" && filaActiva._representante) ? filaActiva._representante : filaActiva;
 
+  renderTabla(resultadosActuales);
   setActiveRow(indiceActual, true);
 
   const main = activo._main || null;
@@ -748,12 +791,11 @@ function setModo(nuevo){
   chipReducido.classList.toggle("active", modo === "reducido");
   chipDetallado.classList.toggle("active", modo === "detallado");
 
-  // cuando cambia modo, recalculamos lista según estado actual (búsqueda o filtro estante)
   rebuildCurrentResults();
   indiceActual = 0;
   renderTabla(resultadosActuales);
 
-  if (busquedaActiva || activeShelfFilter) aplicarResultadoActivo(false);
+  if (busquedaActiva || shelfHoverId || shelfPinnedId) aplicarResultadoActivo();
   else hideResultUI();
 }
 chipReducido.addEventListener("click", () => setModo("reducido"));
@@ -767,17 +809,18 @@ function limpiarBusqueda(){
   busquedaActiva = false;
   indiceActual = 0;
 
-  // si había filtro por estante, lo apaga
-  setShelfFilter("");
+  shelfHoverId = "";
+  shelfPinnedId = "";
+  updateShelfFilterUI();
+
   modo = "reducido";
   chipReducido.classList.add("active");
   chipDetallado.classList.remove("active");
 
-  // vuelve al listado reducido completo
   resultadosDetallado = productos;
-  resultadosReducido = agruparPorNombre(productos);
-  resultadosActuales = resultadosReducido;
+  resultadosActuales = agruparPorNombre(productos);
 
+  clearPinnedVisual();
   renderTabla(resultadosActuales);
   hideResultUI();
   buscador.focus();
@@ -785,65 +828,117 @@ function limpiarBusqueda(){
 btnClear.addEventListener("click", limpiarBusqueda);
 
 /* =========================
-   REBUILD RESULTS
-   (según input + filtro estante)
+   SHELF FILTER UI + RESULTS
 ========================= */
-function rebuildCurrentResults(){
-  // base = si hay búsqueda, usamos resultados de búsqueda; sino usamos todo
-  const baseDet = busquedaActiva ? resultadosDetallado : productos;
+function getEffectiveShelfFilter(){ return shelfHoverId || shelfPinnedId || ""; }
 
-  // si hay filtro por estante, filtramos baseDet por ese estante (ubicación o reserva)
-  const filteredDet = activeShelfFilter
-    ? baseDet.filter(p => (p._main?.estanteId === activeShelfFilter) || (p._reserva?.estanteId === activeShelfFilter))
-    : baseDet;
-
-  // armamos det y reducido desde filteredDet
-  const det = filteredDet;
-  const red = agruparPorNombre(filteredDet);
-
-  // guardamos para badges/uso
-  // ojo: mantenemos "resultadosDetallado" como los de búsqueda real (para conteos generales),
-  // pero resultadosActuales se basan en det/red filtrados
-  const detForUI = det;
-  const redForUI = red;
-
-  // badges: si hay búsqueda activa, muestra conteos globales de búsqueda (ya calculados),
-  // pero si NO hay búsqueda, badges muestran conteos del filtro por estante (o todo)
-  if (!busquedaActiva){
-    badgeDetallado.textContent = String(detForUI.length || 0);
-    badgeReducido.textContent = String(redForUI.length || 0);
+function updateShelfFilterUI(){
+  const effective = getEffectiveShelfFilter();
+  if (effective){
+    filterBanner.style.display = "block";
+    filterBannerText.textContent = effective;
+    const isHoverPreview = !!shelfHoverId;
+    filterBannerMode.textContent = isHoverPreview ? "Preview:" : "Fijo:";
+    filterActions.style.display = shelfPinnedId ? "flex" : "none";
+  } else {
+    filterBanner.style.display = "none";
+    filterBannerText.textContent = "—";
+    filterActions.style.display = "none";
   }
 
-  resultadosActuales = (modo === "reducido") ? redForUI : detForUI;
+  clearPinnedVisual();
+  if (shelfPinnedId) document.getElementById(shelfPinnedId)?.classList.add("pinned-slot");
+}
+
+btnClearShelf.addEventListener("click", () => {
+  shelfPinnedId = "";
+  shelfHoverId = "";
+  updateShelfFilterUI();
+  rebuildCurrentResults();
+  indiceActual = 0;
+  renderTabla(resultadosActuales);
+  if (busquedaActiva) aplicarResultadoActivo();
+  else hideResultUI();
+});
+
+/* ===== PRO MAX: elegir el mejor resultado del estante clickeado ===== */
+function proMaxPickIndexForShelf(shelfId){
+  if (!resultadosActuales.length) return 0;
+
+  if (modo === "detallado") return 0;
+
+  let bestIdx = 0;
+  let bestScore = -1;
+
+  for (let i=0;i<resultadosActuales.length;i++){
+    const row = resultadosActuales[i];
+    const rep = row._representante || row;
+
+    const inShelf =
+      (rep._main?.estanteId === shelfId) ||
+      (rep._reserva?.estanteId === shelfId) ||
+      (row.estanteId === shelfId);
+
+    if (!inShelf) continue;
+
+    let s = 0;
+    if (busquedaActiva) s = Number(rep._score || 0);
+    else {
+      const levelNum = rep._main?.nivelNum || 99;
+      s = 100 - Math.min(levelNum, 99);
+      if (rep._main?.estanteId === shelfId) s += 20;
+    }
+
+    if (s > bestScore){
+      bestScore = s;
+      bestIdx = i;
+    }
+  }
+
+  return bestIdx;
+}
+
+function rebuildCurrentResults(){
+  const q = tokensText(buscador.value);
+  busquedaActiva = q.length > 0;
+
+  let baseDet;
+  if (busquedaActiva) baseDet = resultadosDetallado;
+  else baseDet = productos;
+
+  const shelf = getEffectiveShelfFilter();
+  const det = shelf
+    ? baseDet.filter(p => (p._main?.estanteId === shelf) || (p._reserva?.estanteId === shelf))
+    : baseDet;
+
+  const red = agruparPorNombre(det);
+  resultadosActuales = (modo === "reducido") ? red : det;
+
+  badgeDetallado.textContent = String(det.length || 0);
+  badgeReducido.textContent = String(red.length || 0);
 }
 
 /* =========================
-   BÚSQUEDA (debounced)
+   BÚSQUEDA
 ========================= */
 function recalcularResultados(){
   const q = tokensText(buscador.value);
   busquedaActiva = q.length > 0;
 
   if (!busquedaActiva){
-    // si no hay texto, pero hay filtro estante: mostrar filtro; si no, vista normal
-    if (activeShelfFilter){
-      // reconstruye desde todo con filtro estante
-      rebuildCurrentResults();
-      indiceActual = 0;
-      renderTabla(resultadosActuales);
-      aplicarResultadoActivo(false);
-      return;
-    }
-    // sin búsqueda y sin filtro: vuelve a base
-    resultadosDetallado = productos;
-    resultadosReducido = agruparPorNombre(productos);
-    resultadosActuales = (modo === "reducido") ? resultadosReducido : resultadosDetallado;
+    resultadosDetallado = [];
+    rebuildCurrentResults();
     renderTabla(resultadosActuales);
-    hideResultUI();
+
+    if (getEffectiveShelfFilter()){
+      indiceActual = 0;
+      aplicarResultadoActivo();
+    } else {
+      hideResultUI();
+    }
     return;
   }
 
-  // búsqueda normal (sobre productos completos)
   resultadosDetallado = productos
     .filter(p => matchAll(p.fulltextNorm, q))
     .map(p => {
@@ -864,73 +959,44 @@ function recalcularResultados(){
     })
     .sort((a,b) => (b._score||0) - (a._score||0));
 
-  resultadosReducido = agruparPorNombre(resultadosDetallado);
-
-  // si hay filtro por estante, aplica filtro encima
   rebuildCurrentResults();
   indiceActual = 0;
   renderTabla(resultadosActuales);
-  aplicarResultadoActivo(false);
+  aplicarResultadoActivo();
 }
 buscador.addEventListener("input", debounce(recalcularResultados, 180));
 
-/* Picker */
 btnPrev.addEventListener("click", () => {
   if (resultadosActuales.length <= 1) return;
   indiceActual = (indiceActual - 1 + resultadosActuales.length) % resultadosActuales.length;
-  aplicarResultadoActivo(true);
+  aplicarResultadoActivo();
 });
 btnNext.addEventListener("click", () => {
   if (resultadosActuales.length <= 1) return;
   indiceActual = (indiceActual + 1) % resultadosActuales.length;
-  aplicarResultadoActivo(true);
+  aplicarResultadoActivo();
 });
 
 /* =========================
-   FILTRO POR ESTANTE (hover mapa)
+   MAPA: hover preview + click pin (PRO MAX)
 ========================= */
-function setShelfFilter(estanteId){
-  activeShelfFilter = (estanteId || "").toUpperCase().trim();
-
-  if (activeShelfFilter){
-    filterBanner.style.display = "block";
-    filterBannerText.textContent = activeShelfFilter;
-  } else {
-    filterBanner.style.display = "none";
-    filterBannerText.textContent = "—";
-  }
-}
-
-/* Delegación sobre el SVG: detecta mouseenter/mouseleave sobre estantes */
 const mapaSvg = document.getElementById("mapa");
 
 mapaSvg.addEventListener("mouseover", (e) => {
   const g = e.target.closest(".estante-img");
   if (!g || !mapaSvg.contains(g)) return;
+  const id = g.id;
+  if (!id) return;
 
-  const estanteId = g.id;
-  if (!estanteId) return;
-
-  // activar filtro solo si cambió
-  if (activeShelfFilter !== estanteId){
-    setShelfFilter(estanteId);
-    // reconstruye lista según búsqueda actual + filtro
+  if (shelfHoverId !== id){
+    shelfHoverId = id;
+    updateShelfFilterUI();
     rebuildCurrentResults();
+
     indiceActual = 0;
     renderTabla(resultadosActuales);
-
-    // mostramos "activo" solo si hay resultados
-    if (resultadosActuales.length){
-      aplicarResultadoActivo(false);
-    } else {
-      metaResults.textContent = "0 resultados";
-      resultCountPill.textContent = "0";
-      resultCard.style.display = "none";
-      clearSearchHighlight();
-      info.textContent = `No hay productos para ${estanteId} con el filtro actual.`;
-      mapBadge.textContent = "—";
-      mostrarVistaEstante("", "");
-    }
+    if (resultadosActuales.length) aplicarResultadoActivo();
+    else hideResultUI();
   }
 });
 
@@ -938,13 +1004,52 @@ mapaSvg.addEventListener("mouseout", (e) => {
   const g = e.target.closest(".estante-img");
   if (!g || !mapaSvg.contains(g)) return;
 
-  // si el mouse sale del estante completo (no solo de un child), quitamos filtro
   const related = e.relatedTarget;
   if (related && g.contains(related)) return;
 
-  setShelfFilter("");
-  // volver a lo que corresponda (búsqueda o base)
-  recalcularResultados();
+  shelfHoverId = "";
+  updateShelfFilterUI();
+  rebuildCurrentResults();
+
+  indiceActual = 0;
+  renderTabla(resultadosActuales);
+
+  if (busquedaActiva || shelfPinnedId){
+    if (resultadosActuales.length) aplicarResultadoActivo();
+    else hideResultUI();
+  } else {
+    resultadosDetallado = [];
+    resultadosActuales = (modo === "reducido") ? agruparPorNombre(productos) : productos;
+    badgeDetallado.textContent = String(productos.length || 0);
+    badgeReducido.textContent = String(agruparPorNombre(productos).length || 0);
+    renderTabla(resultadosActuales);
+    hideResultUI();
+  }
+});
+
+mapaSvg.addEventListener("click", (e) => {
+  const g = e.target.closest(".estante-img");
+  if (!g || !mapaSvg.contains(g)) return;
+  const id = g.id;
+  if (!id) return;
+
+  if (shelfPinnedId === id) shelfPinnedId = "";
+  else shelfPinnedId = id;
+
+  updateShelfFilterUI();
+  rebuildCurrentResults();
+  renderTabla(resultadosActuales);
+
+  if (!shelfPinnedId){
+    if (busquedaActiva) { indiceActual = 0; aplicarResultadoActivo(); }
+    else hideResultUI();
+    return;
+  }
+
+  indiceActual = proMaxPickIndexForShelf(shelfPinnedId);
+
+  if (resultadosActuales.length) aplicarResultadoActivo();
+  else hideResultUI();
 });
 
 /* =========================
@@ -967,7 +1072,7 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
       const variante = r.c[13]?.v || "";
 
       const ubicRaw = r.c[20]?.v || "";
-      const almacenRaw = String(r.c[21]?.v || "").toUpperCase().trim(); // puede venir A1 o A1-E10-N8
+      const almacenRaw = String(r.c[21]?.v || "").toUpperCase().trim();
 
       const main = parseCodigo(ubicRaw);
       const reserva = almacenRaw ? parseCodigo(almacenRaw) : { zonaId:"", estanteId:"", nivelId:"", pretty:"", nivelNum:0 };
@@ -997,17 +1102,15 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
 
     metaCount.textContent = `${productos.length} productos`;
 
-    // carga inicial: reducido por defecto y sin resultado activo
-    resultadosDetallado = productos;
-    resultadosReducido = agruparPorNombre(productos);
-    resultadosActuales = resultadosReducido;
+    modo = "reducido";
+    resultadosActuales = agruparPorNombre(productos);
 
-    badgeDetallado.textContent = String(resultadosDetallado.length || 0);
-    badgeReducido.textContent = String(resultadosReducido.length || 0);
+    badgeDetallado.textContent = String(productos.length || 0);
+    badgeReducido.textContent = String(resultadosActuales.length || 0);
 
-    busquedaActiva = false;
     renderTabla(resultadosActuales);
     hideResultUI();
+    updateShelfFilterUI();
 
     setStatus("ok", `Listo • ${productos.length} productos cargados`);
   })
