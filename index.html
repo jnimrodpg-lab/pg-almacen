@@ -37,14 +37,11 @@
     justify-content:space-between;
     gap:12px;
   }
-
   .brand{
     display:flex;
     align-items:center;
     gap:12px;
   }
-
-  /* Logo simple (solo CSS) */
   .logoMark{
     width:44px;
     height:44px;
@@ -54,7 +51,6 @@
     position:relative;
     overflow:hidden;
   }
-  /* 2 “pasillos” tipo retail */
   .logoMark::before,
   .logoMark::after{
     content:"";
@@ -68,7 +64,6 @@
   }
   .logoMark::before{ left:12px; }
   .logoMark::after{ right:12px; }
-  /* línea inferior tipo “base” */
   .logoBase{
     position:absolute;
     left:10px;
@@ -330,7 +325,7 @@
 
     <div class="controls">
       <div class="search">
-        <input id="buscar" type="text" placeholder="Escanea o escribe..." autocomplete="off" />
+        <input id="buscar" type="text" placeholder="Escribe o Escanea el Qr ..." autocomplete="off" />
       </div>
 
       <div class="btnrow">
@@ -340,7 +335,7 @@
       </div>
 
       <div class="hint">
-        Modo Picker + feedback: sonido/vibración al escanear y al cambiar resultado.
+        Puedes escribir palabras sueltas en cualquier orden. Tallas (S/M/L/XL) se priorizan.
       </div>
 
       <div class="result-card" id="resultCard">
@@ -439,9 +434,11 @@
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
+/* ===== CONFIG ===== */
 const sheetID   = "1IU4wMdVImmEbl93kgcCCQAGPiTc28uQdNNaq0bgTF2o";
 const sheetName = "Mujer";
 
+/* ===== UI refs ===== */
 const tabla = document.getElementById("tabla");
 const buscador = document.getElementById("buscar");
 const info = document.getElementById("info");
@@ -468,11 +465,12 @@ const btnPrev = document.getElementById("btnPrev");
 const btnNext = document.getElementById("btnNext");
 const pickerCounter = document.getElementById("pickerCounter");
 
+/* ===== Data ===== */
 let productos = [];
 let resultadosActuales = [];
 let indiceActual = 0;
 
-/* Feedback */
+/* ===== Feedback ===== */
 let audioCtx = null;
 function beep(freq = 880, ms = 90, vol = 0.06){
   try{
@@ -496,7 +494,7 @@ function feedbackOK(){
   vibrar([50, 35, 50]);
 }
 
-/* Helpers */
+/* ===== Helpers ===== */
 function setStatus(type, text){
   statusDot.className = "dot" + (type === "ok" ? " ok" : type === "bad" ? " bad" : "");
   statusText.textContent = text;
@@ -543,7 +541,37 @@ function setPickerState(){
   btnNext.disabled = total <= 1;
 }
 
-/* Aplicar resultado */
+/* ===== Normalización y búsqueda por tokens (SIN ORDEN) ===== */
+function norm(s){
+  return String(s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function tokens(s){
+  const stop = new Set(["talla","color","de","para","con","sin","un","una","y","el","la","los","las"]);
+  return norm(s).split(" ").filter(w => w && !stop.has(w));
+}
+function isSizeLetter(t){
+  return ["xs","s","m","l","xl","xxl","2xl"].includes(t);
+}
+function isPureNumber(t){
+  return /^\d{1,4}$/.test(t);
+}
+function matchAll(textoNorm, qTokens){
+  for (const t of qTokens){
+    if (!textoNorm.includes(t)) return false;
+  }
+  return true;
+}
+function hasTallaNumero(nvNorm, num){
+  return new RegExp(`\\btalla\\s*${num}\\b`).test(nvNorm);
+}
+
+/* ===== Aplicar resultado activo ===== */
 function aplicarResultadoActivo(triggerFeedback = false){
   const total = resultadosActuales.length;
   metaResults.textContent = `${total} resultados`;
@@ -593,7 +621,7 @@ function aplicarResultadoActivo(triggerFeedback = false){
   if (triggerFeedback) feedbackOK();
 }
 
-/* Load sheet */
+/* ===== Load sheet (solo hoja Mujer) ===== */
 setStatus("warn", "Cargando hoja “Mujer”...");
 
 fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`)
@@ -613,8 +641,13 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
         ubic:     (r.c[20]?.v || "").toUpperCase().trim(),
         almacen:  (r.c[21]?.v || "").toUpperCase().trim()
       };
-      p.fulltext = (p.barras+" "+p.nombre+" "+p.variante+" "+p.ubic+" "+p.almacen).toLowerCase();
+
       if (!p.barras && !p.nombre) continue;
+
+      // normalizados para ranking
+      p.nvNorm = norm((p.nombre || "") + " " + (p.variante || ""));
+      p.fulltextNorm = norm((p.barras||"") + " " + (p.nombre||"") + " " + (p.variante||"") + " " + (p.ubic||"") + " " + (p.almacen||""));
+
       productos.push(p);
     }
 
@@ -626,7 +659,7 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
   })
   .catch(() => setStatus("bad", "Error cargando la hoja. Revisa permisos del Sheet."));
 
-/* Search */
+/* ===== Search (tokens + ranking) ===== */
 function limpiarBusqueda(){
   buscador.value = "";
   resultadosActuales = [];
@@ -644,9 +677,9 @@ function limpiarBusqueda(){
 btnClear.addEventListener("click", limpiarBusqueda);
 
 function recalcularResultados(triggerFeedback=false){
-  const filtro = buscador.value.toLowerCase().trim();
+  const q = tokens(buscador.value);
 
-  if (!filtro){
+  if (!q.length){
     resultadosActuales = [];
     indiceActual = 0;
     metaResults.textContent = "0 resultados";
@@ -657,10 +690,48 @@ function recalcularResultados(triggerFeedback=false){
     return;
   }
 
-  resultadosActuales = productos.filter(p => p.fulltext.includes(filtro));
+  // 1) filtro AND sin orden + 2) ranking inteligente
+  resultadosActuales = productos
+    .filter(p => matchAll(p.fulltextNorm, q))
+    .map(p => {
+      let score = 0;
+
+      for (const t of q){
+        const inNV = p.nvNorm.includes(t);
+
+        // A) talla letras (S/M/L/XL): peso alto
+        if (isSizeLetter(t)){
+          score += inNV ? 20 : 5;
+          continue;
+        }
+
+        // B) números (28/30/093/261): ambiguo
+        if (isPureNumber(t)){
+          if (hasTallaNumero(p.nvNorm, t)){
+            score += 18; // "talla 30"
+          } else {
+            score += inNV ? 6 : 2; // número suelto, bajo
+          }
+          continue;
+        }
+
+        // C) palabras normales
+        score += inNV ? 10 : 2;
+      }
+
+      // Bonus: si el usuario escribe un código de 3 dígitos (ej 093/261)
+      const code3 = q.find(t => /^\d{3}$/.test(t));
+      if (code3 && p.nvNorm.includes(code3)) score += 12;
+
+      return { p, score };
+    })
+    .sort((a,b) => b.score - a.score)
+    .map(x => x.p);
+
   indiceActual = 0;
   aplicarResultadoActivo(triggerFeedback);
 }
+
 buscador.addEventListener("input", () => recalcularResultados(false));
 
 btnPrev.addEventListener("click", () => {
@@ -668,14 +739,13 @@ btnPrev.addEventListener("click", () => {
   indiceActual = (indiceActual - 1 + resultadosActuales.length) % resultadosActuales.length;
   aplicarResultadoActivo(true);
 });
-
 btnNext.addEventListener("click", () => {
   if (resultadosActuales.length <= 1) return;
   indiceActual = (indiceActual + 1) % resultadosActuales.length;
   aplicarResultadoActivo(true);
 });
 
-/* Scanner */
+/* ===== Scanner (QR + Barras) ===== */
 const btnScan = document.getElementById("btnScan");
 const btnCerrar = document.getElementById("btnCerrar");
 const readerDiv = document.getElementById("reader");
@@ -724,4 +794,3 @@ btnCerrar.addEventListener("click", () => {
 
 </body>
 </html>
-
