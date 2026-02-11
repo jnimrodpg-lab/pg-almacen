@@ -15,7 +15,6 @@
   *{ box-sizing:border-box; }
   body{ margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text); padding:20px; }
 
-  /* ===== HEADER ===== */
   .topbar{
     max-width:1200px; margin:0 auto 16px auto;
     display:flex; align-items:center; justify-content:space-between; gap:12px;
@@ -55,7 +54,6 @@
   .dot{ width:10px;height:10px;border-radius:999px;background:var(--warn); }
   .dot.ok{ background:var(--ok); } .dot.bad{ background:var(--danger); }
 
-  /* ===== LAYOUT ===== */
   .layout{
     max-width:1200px; margin:0 auto; display:grid;
     grid-template-columns: 1.1fr .9fr; gap:16px; align-items:start;
@@ -76,15 +74,13 @@
   .card-header h2{ font-size:14px; margin:0; }
   .meta{ font-size:12px; color:var(--muted); }
 
-  /* ===== MAPA ===== */
   .sticky{ position: sticky; top: 20px; }
   #mapa{ width:100%; border:1px solid var(--border); border-radius:12px; background:#fff; }
 
   .zona{ fill:#e8eef7; stroke:#333; stroke-width:2; transition:.18s; }
-  .highlight{ fill:#fbbf24 !important; stroke:#f97316 !important; stroke-width:4; } /* búsqueda */
-  .hover{ fill:#93c5fd !important; stroke:#2563eb !important; stroke-width:4; }     /* mouse */
+  .highlight{ fill:#fbbf24 !important; stroke:#f97316 !important; stroke-width:4; }
+  .hover{ fill:#93c5fd !important; stroke:#2563eb !important; stroke-width:4; }
 
-  /* ===== ESTANTES CON IMAGEN (SVG) ===== */
   .estante-img { cursor:pointer; }
   .estante-img image { opacity:.98; transition:.18s; }
   .highlight-slot image{ filter: drop-shadow(0 0 10px rgba(249,115,22,.55)); }
@@ -113,7 +109,6 @@
     background:#fff; color:var(--muted); white-space:nowrap;
   }
 
-  /* ===== FORM + TABLA ===== */
   .controls{ padding:14px; display:grid; gap:10px; }
   .search input{
     width:100%; padding:12px; font-size:15px;
@@ -133,8 +128,8 @@
   .btn.primary{ background:var(--primary); }
   .btn.danger{ background:var(--danger); }
   .btn.dark{ background:#111827; }
+  .btn.warn{ background: var(--warn); color:#111827; font-weight:800; }
 
-  /* ===== CHIPS ===== */
   .chiprow{ display:flex; gap:8px; flex-wrap:wrap; }
   .chip{
     border:1px solid var(--border);
@@ -212,7 +207,6 @@
     outline:2px solid rgba(245, 158, 11, .35);
   }
 
-  /* ===== Vista estante (IMG + franja overlay) ===== */
   .shelf-image-wrap{
     position:relative;
     width:100%;
@@ -255,6 +249,19 @@
   }
 
   #reader{ display:none; padding:0 14px 14px 14px; }
+
+  /* indicador de voz */
+  .voice-pill{
+    display:none;
+    margin-top:6px;
+    padding:8px 10px;
+    border-radius:12px;
+    border:1px dashed var(--border);
+    background:#fff;
+    color:var(--muted);
+    font-size:12px;
+  }
+  .voice-pill.on{ display:block; }
 </style>
 </head>
 
@@ -305,9 +312,12 @@
 
       <div class="btnrow">
         <button class="btn primary" id="btnScan" type="button">📷 Escanear</button>
+        <button class="btn warn" id="btnVoz" type="button">🎙 Voz</button>
         <button class="btn danger" id="btnCerrar" type="button" style="display:none;">❌ Cerrar</button>
         <button class="btn dark" id="btnClear" type="button">🧹 Limpiar</button>
       </div>
+
+      <div class="voice-pill" id="voicePill">🎙 Escuchando… habla ahora</div>
 
       <div class="hint">
         <b>Reducido:</b> 1 fila por nombre. <b>Detallado:</b> todas las coincidencias.
@@ -369,7 +379,7 @@
     </div>
   </div>
 
-  <!-- DERECHA: MAPA + VISTA ESTANTE -->
+  <!-- DERECHA -->
   <div class="card sticky">
     <div class="card-header">
       <div>
@@ -381,14 +391,12 @@
 
     <div style="padding:14px;">
       <svg id="mapa" viewBox="0 0 700 800">
-        <!-- ZONAS -->
         <rect id="Z1" class="zona" x="100" y="20" width="300" height="120"/>
         <text x="250" y="90" text-anchor="middle" font-size="16">ZONA 1</text>
 
         <rect id="Z2" class="zona" x="100" y="150" width="300" height="300"/>
         <text x="250" y="320" text-anchor="middle" font-size="16">ZONA 2</text>
 
-        <!-- Zona 4 en el plano general se llama A -->
         <rect id="A" class="zona" x="420" y="150" width="220" height="300" stroke-dasharray="6"/>
         <text x="530" y="320" text-anchor="middle" font-size="16">ZONA 4</text>
         <text x="530" y="340" text-anchor="middle" font-size="12" fill="#6b7280">ALMACÉN</text>
@@ -396,7 +404,7 @@
         <rect id="Z3" class="zona" x="100" y="460" width="300" height="300"/>
         <text x="250" y="650" text-anchor="middle" font-size="16">ZONA 3</text>
 
-        <!-- ESTANTE EJEMPLO CON IMAGEN -->
+        <!-- EJEMPLO -->
         <g id="Z1-E2" class="estante-img" data-levels="6" transform="translate(140 35)">
           <image href="assets/estantes/estante-mod1.png" width="70" height="90" />
           <rect class="nivel-mark" x="0" y="0" width="70" height="15" />
@@ -405,7 +413,6 @@
       </svg>
     </div>
 
-    <!-- VISTA ESTANTE -->
     <div style="padding:14px; border-top:1px solid var(--border);">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
         <div style="font-weight:800;">Vista estante seleccionado</div>
@@ -440,7 +447,6 @@
 const sheetID   = "1IU4wMdVImmEbl93kgcCCQAGPiTc28uQdNNaq0bgTF2o";
 const sheetName = "Mujer";
 
-/* rutas imágenes */
 const IMG_EST_MAPA  = "assets/estantes/estante-mod1.png";
 const IMG_EST_VISTA = "assets/estantes_vista/estante-mod1-vista1.png";
 
@@ -476,9 +482,12 @@ const chipDetallado = document.getElementById("chipDetallado");
 const badgeReducido = document.getElementById("badgeReducido");
 const badgeDetallado = document.getElementById("badgeDetallado");
 
-/* Vista estante */
 const shelfPreview = document.getElementById("shelfPreview");
 const shelfLabel = document.getElementById("shelfLabel");
+
+/* voz */
+const btnVoz = document.getElementById("btnVoz");
+const voicePill = document.getElementById("voicePill");
 
 /* ===== STATE ===== */
 let productos = [];
@@ -486,7 +495,7 @@ let resultadosDetallado = [];
 let resultadosReducido = [];
 let resultadosActuales = [];
 let indiceActual = 0;
-let modo = "reducido"; // ✅ por defecto
+let modo = "reducido";
 
 /* ===== Feedback ===== */
 let audioCtx = null;
@@ -536,8 +545,6 @@ function parseUbicacion(raw){
   const nivelNum = n ? Number(n.replace("N","")) : 0;
   return { zonaId, estanteId, nivelId, pretty: s, nivelNum };
 }
-
-/* ===== zona mapa ===== */
 function zonaMapaId(zonaId){
   if (zonaId === "Z4") return "A";
   return zonaId;
@@ -603,7 +610,7 @@ function applySearchHighlight(zonaId, estanteId, nivelId){
   }
 }
 
-/* ===== Vista estante (IMG + overlay) ===== */
+/* ===== Vista estante ===== */
 function generarVistaEstanteConImagen(estanteId, nivelNum, totalNiveles){
   const n = Math.max(1, Math.min(totalNiveles, Number(nivelNum || 1)));
   const usable = 76, start = 10;
@@ -689,7 +696,6 @@ function agruparPorNombre(listaDetallada){
     });
   }
 
-  // aquí no tenemos score inicial, así que ordenamos alfabético para vista inicial
   reducido.sort((a,b) => String(a.nombre||"").localeCompare(String(b.nombre||""), "es"));
   return reducido;
 }
@@ -716,7 +722,6 @@ function renderTabla(lista, activeIndex = -1){
   tabla.innerHTML = html;
   enlazarTabla();
 }
-
 function enlazarTabla(){
   const rows = tabla.querySelectorAll("tr");
   rows.forEach(tr => {
@@ -824,7 +829,6 @@ function setModo(nuevo){
     indiceActual = 0;
     aplicarResultadoActivo(false);
   } else {
-    // ✅ SIN búsqueda, igual mostramos por defecto REDUCIDO
     resultadosActuales = (modo === "reducido") ? resultadosReducido : resultadosDetallado;
     indiceActual = 0;
     renderTabla(resultadosActuales);
@@ -857,7 +861,6 @@ function limpiarBusqueda(){
 
   mostrarVistaEstante("", "");
 
-  // ✅ Volver a lista por defecto (REDUCIDO)
   modo = "reducido";
   chipReducido.classList.add("active");
   chipDetallado.classList.remove("active");
@@ -867,7 +870,7 @@ function limpiarBusqueda(){
 
   buscador.focus();
 }
-document.getElementById("btnClear").addEventListener("click", limpiarBusqueda);
+btnClear.addEventListener("click", limpiarBusqueda);
 
 /* ===== Buscar ===== */
 function recalcularResultados(triggerFeedback=false){
@@ -905,12 +908,12 @@ function recalcularResultados(triggerFeedback=false){
 }
 buscador.addEventListener("input", () => recalcularResultados(false));
 
-document.getElementById("btnPrev").addEventListener("click", () => {
+btnPrev.addEventListener("click", () => {
   if (resultadosActuales.length <= 1) return;
   indiceActual = (indiceActual - 1 + resultadosActuales.length) % resultadosActuales.length;
   aplicarResultadoActivo(true);
 });
-document.getElementById("btnNext").addEventListener("click", () => {
+btnNext.addEventListener("click", () => {
   if (resultadosActuales.length <= 1) return;
   indiceActual = (indiceActual + 1) % resultadosActuales.length;
   aplicarResultadoActivo(true);
@@ -969,7 +972,6 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
 
     metaCount.textContent = `${productos.length} productos`;
 
-    // ✅ POR DEFECTO: la tabla se muestra en "reducido" agrupado por nombre
     resultadosDetallado = productos;
     resultadosReducido = agruparPorNombre(productos);
     resultadosActuales = resultadosReducido;
@@ -979,7 +981,6 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
 
     renderTabla(resultadosActuales);
 
-    // UI
     modo = "reducido";
     chipReducido.classList.add("active");
     chipDetallado.classList.remove("active");
@@ -1026,6 +1027,73 @@ btnCerrar.addEventListener("click", () => {
       btnCerrar.style.display = "none";
     });
   }
+});
+
+/* ===== BÚSQUEDA POR VOZ (Web Speech API) ===== */
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let listening = false;
+
+function voiceOn(){
+  if (!SpeechRecognition){
+    alert("Tu navegador no soporta búsqueda por voz. Prueba Chrome o Edge.");
+    return;
+  }
+  if (!recognition){
+    recognition = new SpeechRecognition();
+    recognition.lang = "es-PE";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+
+    recognition.onstart = () => {
+      listening = true;
+      voicePill.classList.add("on");
+      btnVoz.textContent = "🛑 Stop";
+    };
+
+    recognition.onresult = (event) => {
+      let finalText = "";
+      let interim = "";
+      for (let i = event.resultIndex; i < event.results.length; i++){
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalText += t;
+        else interim += t;
+      }
+      const text = (finalText || interim || "").trim();
+      if (text){
+        buscador.value = text;
+        recalcularResultados(false);
+      }
+    };
+
+    recognition.onerror = () => {
+      // típicos: not-allowed, service-not-allowed, no-speech
+      voiceOff(true);
+    };
+
+    recognition.onend = () => {
+      voiceOff(false);
+      // si quedó texto, aplicamos feedback
+      if (buscador.value.trim()) feedbackOK();
+    };
+  }
+
+  try{ recognition.start(); }catch(e){}
+}
+
+function voiceOff(silencio=false){
+  listening = false;
+  voicePill.classList.remove("on");
+  btnVoz.textContent = "🎙 Voz";
+  if (recognition){
+    try{ recognition.stop(); }catch(e){}
+  }
+  if (!silencio) {/* nada */}
+}
+
+btnVoz.addEventListener("click", () => {
+  if (listening) voiceOff(false);
+  else voiceOn();
 });
 </script>
 
