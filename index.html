@@ -250,7 +250,6 @@
 
   #reader{ display:none; padding:0 14px 14px 14px; }
 
-  /* indicador de voz */
   .voice-pill{
     display:none;
     margin-top:6px;
@@ -297,10 +296,9 @@
 
     <div class="controls">
       <div class="search">
-        <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s  |  z4-e10-n8" autocomplete="off" />
+        <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s | z2-e3-n1 | a1-e10-n8" autocomplete="off" />
       </div>
 
-      <!-- CHIPS -->
       <div class="chiprow">
         <div class="chip active" id="chipReducido" role="button" tabindex="0">
           Reducido (por nombre) <span class="badge" id="badgeReducido">0</span>
@@ -346,7 +344,7 @@
             <span id="kvNivel">—</span>
           </div>
           <div class="kv-row">
-            <b>📦 Reserva (Almacén)</b>
+            <b>📦 Reserva (ALMACÉN)</b>
             <span id="kvReserva">—</span>
           </div>
         </div>
@@ -370,7 +368,7 @@
               <th>Nombre</th>
               <th style="width:160px;">Variante</th>
               <th style="width:140px;">Ubicación</th>
-              <th style="width:110px;">Almacén</th>
+              <th style="width:140px;">ALMACÉN</th>
             </tr>
           </thead>
           <tbody id="tabla"></tbody>
@@ -384,7 +382,7 @@
     <div class="card-header">
       <div>
         <h2>Plano general</h2>
-        <div class="meta">Zona + Estante + Nivel</div>
+        <div class="meta">Zonas + Estante + Nivel</div>
       </div>
       <div class="meta" id="mapBadge">—</div>
     </div>
@@ -397,14 +395,15 @@
         <rect id="Z2" class="zona" x="100" y="150" width="300" height="300"/>
         <text x="250" y="320" text-anchor="middle" font-size="16">ZONA 2</text>
 
-        <rect id="A" class="zona" x="420" y="150" width="220" height="300" stroke-dasharray="6"/>
-        <text x="530" y="320" text-anchor="middle" font-size="16">ZONA 4</text>
-        <text x="530" y="340" text-anchor="middle" font-size="12" fill="#6b7280">ALMACÉN</text>
+        <!-- ALMACÉN (A1) -->
+        <rect id="A1" class="zona" x="420" y="150" width="220" height="300" stroke-dasharray="6"/>
+        <text x="530" y="310" text-anchor="middle" font-size="16">ALMACÉN</text>
+        <text x="530" y="330" text-anchor="middle" font-size="12" fill="#6b7280">A1</text>
 
         <rect id="Z3" class="zona" x="100" y="460" width="300" height="300"/>
         <text x="250" y="650" text-anchor="middle" font-size="16">ZONA 3</text>
 
-        <!-- EJEMPLO -->
+        <!-- EJEMPLO estante -->
         <g id="Z1-E2" class="estante-img" data-levels="6" transform="translate(140 35)">
           <image href="assets/estantes/estante-mod1.png" width="70" height="90" />
           <rect class="nivel-mark" x="0" y="0" width="70" height="15" />
@@ -497,6 +496,10 @@ let resultadosActuales = [];
 let indiceActual = 0;
 let modo = "reducido";
 
+/* vocabulario para voz */
+let vocabSet = new Set();
+let vocabArr = []; // array para buscar similitudes (levenshtein)
+
 /* ===== Feedback ===== */
 let audioCtx = null;
 function beep(freq = 880, ms = 90, vol = 0.06){
@@ -532,22 +535,41 @@ function escapeHtml(str){
     .replaceAll("'","&#039;");
 }
 
-/* ===== Parse ubicación ===== */
-function parseUbicacion(raw){
+/* ===== Normalización ===== */
+function norm(s){
+  return String(s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function tokensText(s){
+  const stop = new Set(["talla","color","de","para","con","sin","un","una","y","el","la","los","las"]);
+  return norm(s).split(" ").filter(w => w && !stop.has(w));
+}
+
+/* ===== Parse códigos ubicación / almacén =====
+   Acepta:
+   - Z1-E2-N3
+   - Z2
+   - A1-E10-N8
+   - A1
+*/
+function parseCodigo(raw){
   const s = String(raw || "").trim().toUpperCase();
-  const m = s.match(/^(Z[1234])(?:-(E\d+))?(?:-(N\d+))?$/);
+  const m = s.match(/^(Z[123]|A1)(?:-(E\d+))?(?:-(N\d+))?$/);
   if (!m) return { zonaId: "", estanteId: "", nivelId: "", pretty: s, nivelNum: 0 };
+
   const zonaId = m[1] || "";
   const e = m[2] || "";
   const n = m[3] || "";
   const estanteId = (zonaId && e) ? `${zonaId}-${e}` : "";
   const nivelId   = (estanteId && n) ? `${estanteId}-${n}` : "";
   const nivelNum = n ? Number(n.replace("N","")) : 0;
+
   return { zonaId, estanteId, nivelId, pretty: s, nivelNum };
-}
-function zonaMapaId(zonaId){
-  if (zonaId === "Z4") return "A";
-  return zonaId;
 }
 
 /* ===== Overlay nivel en SVG ===== */
@@ -578,7 +600,7 @@ function setShelfLevelMark(estanteId, nivelNum, mode){
   g.classList.toggle("highlight-level", mode === "search");
 }
 
-/* ===== Highlight ===== */
+/* ===== Highlight multi-zona ===== */
 function clearHover(){
   document.querySelectorAll(".zona").forEach(z => z.classList.remove("hover"));
   document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("hover-slot","hover-level"));
@@ -586,6 +608,21 @@ function clearHover(){
 function clearSearchHighlight(){
   document.querySelectorAll(".zona").forEach(z => z.classList.remove("highlight"));
   document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("highlight-slot","highlight-level"));
+}
+function addSearchHighlight(zonaId, estanteId, nivelId){
+  if (zonaId) document.getElementById(zonaId)?.classList.add("highlight");
+  if (estanteId){
+    const g = document.getElementById(estanteId);
+    g?.classList.add("highlight-slot");
+    const n = (nivelId || "").match(/-N(\d+)$/i);
+    const nivelNum = n ? Number(n[1]) : 1;
+    if (g?.classList.contains("estante-img")) setShelfLevelMark(estanteId, nivelNum, "search");
+  }
+}
+function applySearchHighlightMulti(main, reserva){
+  clearSearchHighlight();
+  if (main) addSearchHighlight(main.zonaId, main.estanteId, main.nivelId);
+  if (reserva) addSearchHighlight(reserva.zonaId, reserva.estanteId, reserva.nivelId);
 }
 function applyHover(zonaId, estanteId, nivelId){
   clearHover();
@@ -598,19 +635,8 @@ function applyHover(zonaId, estanteId, nivelId){
     if (g?.classList.contains("estante-img")) setShelfLevelMark(estanteId, nivelNum, "hover");
   }
 }
-function applySearchHighlight(zonaId, estanteId, nivelId){
-  clearSearchHighlight();
-  if (zonaId) document.getElementById(zonaId)?.classList.add("highlight");
-  if (estanteId){
-    const g = document.getElementById(estanteId);
-    g?.classList.add("highlight-slot");
-    const n = (nivelId || "").match(/-N(\d+)$/i);
-    const nivelNum = n ? Number(n[1]) : 1;
-    if (g?.classList.contains("estante-img")) setShelfLevelMark(estanteId, nivelNum, "search");
-  }
-}
 
-/* ===== Vista estante ===== */
+/* ===== Vista estante (usa ubicación principal) ===== */
 function generarVistaEstanteConImagen(estanteId, nivelNum, totalNiveles){
   const n = Math.max(1, Math.min(totalNiveles, Number(nivelNum || 1)));
   const usable = 76, start = 10;
@@ -638,26 +664,13 @@ function mostrarVistaEstante(estanteId, nivelId){
   }
   const n = (nivelId || "").match(/-N(\d+)$/i);
   const nivelNum = n ? Number(n[1]) : 1;
-  const totalNiveles = estanteId.startsWith("Z4-") ? 8 : 6;
+  const totalNiveles = estanteId.startsWith("A1-") ? 8 : 6;
 
   shelfLabel.textContent = estanteId;
   shelfPreview.innerHTML = generarVistaEstanteConImagen(estanteId, nivelNum, totalNiveles);
 }
 
-/* ===== Normalización búsqueda ===== */
-function norm(s){
-  return String(s || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9\s-]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-function tokens(s){
-  const stop = new Set(["talla","color","de","para","con","sin","un","una","y","el","la","los","las"]);
-  return norm(s).split(" ").filter(w => w && !stop.has(w));
-}
+/* ===== matching búsqueda ===== */
 function isSizeLetter(t){ return ["xs","s","m","l","xl","xxl","2xl"].includes(t); }
 function isPureNumber(t){ return /^\d{1,4}$/.test(t); }
 function matchAll(textoNorm, qTokens){
@@ -709,7 +722,7 @@ function renderTabla(lista, activeIndex = -1){
     html += `
       <tr${active}
           data-i="${i}"
-          data-zona="${p._zonaMapaId || ''}"
+          data-zona="${p.zonaId || ''}"
           data-estante="${p.estanteId || ''}"
           data-nivel="${p.nivelId || ''}">
         <td>${escapeHtml(p.barras || "")}</td>
@@ -731,7 +744,7 @@ function enlazarTabla(){
       const nivelId = tr.getAttribute("data-nivel") || "";
 
       applyHover(zonaId, estanteId, nivelId);
-      mapBadge.textContent = (zonaId === "A") ? "ZONA 4" : (zonaId || "—");
+      mapBadge.textContent = zonaId ? (zonaId === "A1" ? "ALMACÉN" : zonaId) : "—";
     });
 
     tr.addEventListener("click", () => {
@@ -762,7 +775,7 @@ function setPickerState(){
   btnNext.disabled = total <= 1;
 }
 
-/* ===== Resultado activo ===== */
+/* ===== Resultado activo (marca 1 o 2 zonas) ===== */
 function aplicarResultadoActivo(triggerFeedback = false){
   const total = resultadosActuales.length;
   metaResults.textContent = `${total} resultados`;
@@ -790,16 +803,26 @@ function aplicarResultadoActivo(triggerFeedback = false){
 
   renderTabla(resultadosActuales, indiceActual);
 
-  applySearchHighlight(activo._zonaMapaId, activo.estanteId, activo.nivelId);
+  const main = activo._main || null;
+  const reserva = activo._reserva || null;
+  applySearchHighlightMulti(main, reserva);
 
-  mapBadge.textContent = (activo._zonaMapaId === "A") ? "ZONA 4" : (activo._zonaMapaId || "—");
-  info.textContent = activo.almacen
-    ? `📦 Reserva en ALMACÉN (ZONA 4): ${activo.almacen}`
-    : `📍 Ubicación: ${activo.ubic || "—"}`;
+  const zonas = [];
+  if (main?.zonaId) zonas.push(main.zonaId === "A1" ? "ALMACÉN" : main.zonaId);
+  if (reserva?.zonaId && reserva.zonaId !== main?.zonaId) zonas.push(reserva.zonaId === "A1" ? "ALMACÉN" : reserva.zonaId);
+
+  mapBadge.textContent = zonas.length ? zonas.join(" + ") : "—";
+  pillZona.textContent = zonas.length ? zonas.join(" + ") : "—";
+
+  const ubicTxt = (activo.ubic || "—");
+  const almTxt = (activo.almacen || "");
+
+  info.textContent = almTxt
+    ? `📍 Ubicación: ${ubicTxt}  |  📦 Reserva en ALMACÉN: ${almTxt}`
+    : `📍 Ubicación: ${ubicTxt}`;
 
   resultCard.style.display = "block";
-  pillZona.textContent = (activo._zonaMapaId === "A") ? "ZONA 4" : (activo._zonaMapaId || "—");
-  bigLoc.textContent = activo.almacen ? `RESERVA: ${activo.almacen}` : (activo.ubic || "—");
+  bigLoc.textContent = ubicTxt;
 
   if (modo === "reducido" && filaActiva._count){
     subLoc.textContent = `${filaActiva.nombre || "—"} • ${filaActiva._count} variantes`;
@@ -807,12 +830,12 @@ function aplicarResultadoActivo(triggerFeedback = false){
     subLoc.textContent = `${activo.nombre || "—"} • ${activo.variante || "—"} • ${activo.barras || "—"}`;
   }
 
-  kvUbicacion.textContent = activo.ubic || "—";
-  kvEstante.textContent = activo.estanteId || "—";
-  kvNivel.textContent = activo.nivelId || "—";
-  kvReserva.textContent = activo.almacen || "—";
+  kvUbicacion.textContent = ubicTxt;
+  kvEstante.textContent = main?.estanteId || "—";
+  kvNivel.textContent = main?.nivelId || "—";
+  kvReserva.textContent = almTxt || "—";
 
-  mostrarVistaEstante(activo.estanteId, activo.nivelId);
+  mostrarVistaEstante(main?.estanteId || "", main?.nivelId || "");
 
   setPickerState();
   if (triggerFeedback) feedbackOK();
@@ -874,7 +897,7 @@ btnClear.addEventListener("click", limpiarBusqueda);
 
 /* ===== Buscar ===== */
 function recalcularResultados(triggerFeedback=false){
-  const q = tokens(buscador.value);
+  const q = tokensText(buscador.value);
   if (!q.length){
     limpiarBusqueda();
     return;
@@ -919,6 +942,124 @@ btnNext.addEventListener("click", () => {
   aplicarResultadoActivo(true);
 });
 
+/* ===== VOCAB (para voz) ===== */
+function buildVocab(){
+  const set = new Set();
+  for (const p of productos){
+    const parts = [
+      p.barras, p.nombre, p.variante, p.ubic, p.almacen
+    ].join(" ");
+    for (const t of tokensText(parts)){
+      if (t.length >= 3) set.add(t); // ignora muy cortas
+    }
+  }
+  vocabSet = set;
+  vocabArr = Array.from(set);
+}
+
+/* ===== Levenshtein (corrección) ===== */
+function levenshtein(a, b){
+  if (a === b) return 0;
+  const al = a.length, bl = b.length;
+  if (!al) return bl;
+  if (!bl) return al;
+
+  const dp = new Array(bl + 1);
+  for (let j = 0; j <= bl; j++) dp[j] = j;
+
+  for (let i = 1; i <= al; i++){
+    let prev = dp[0];
+    dp[0] = i;
+    for (let j = 1; j <= bl; j++){
+      const temp = dp[j];
+      const cost = a[i-1] === b[j-1] ? 0 : 1;
+      dp[j] = Math.min(
+        dp[j] + 1,       // delete
+        dp[j-1] + 1,     // insert
+        prev + cost      // replace
+      );
+      prev = temp;
+    }
+  }
+  return dp[bl];
+}
+
+function correctToken(tok){
+  if (!tok || tok.length < 4) return tok;
+  if (vocabSet.has(tok)) return tok;
+
+  // busca candidato cercano
+  let best = tok;
+  let bestD = 3; // máximo permitido (2–3)
+  for (const v of vocabArr){
+    if (Math.abs(v.length - tok.length) > 2) continue;
+    const d = levenshtein(tok, v);
+    if (d < bestD){
+      bestD = d;
+      best = v;
+      if (bestD === 1) break;
+    }
+  }
+  return bestD <= 2 ? best : tok;
+}
+
+/* ===== Voz: entiende comandos + corrige palabras al vocab del sheet ===== */
+const NUM_MAP = {
+  "uno":1,"una":1,"dos":2,"tres":3,"cuatro":4,"cinco":5,"seis":6,"siete":7,"ocho":8,"nueve":9,"diez":10,
+  "once":11,"doce":12,"trece":13,"catorce":14,"quince":15,"dieciseis":16,"dieciséis":16,"diecisiete":17,"dieciocho":18,"diecinueve":19,"veinte":20
+};
+
+function toNum(w){
+  const n = Number(w);
+  if (!Number.isNaN(n)) return n;
+  const k = norm(w);
+  return NUM_MAP[k] || null;
+}
+
+function voiceToQuery(text){
+  // 1) normaliza
+  let t = norm(text);
+
+  // 2) comandos: zona/almacen/estante/nivel
+  // Ej: "zona 2 estante 10 nivel 8" -> "Z2-E10-N8"
+  // Ej: "almacen estante 10 nivel 8" -> "A1-E10-N8"
+  let zona = null, est = null, niv = null;
+
+  const words = t.split(" ").filter(Boolean);
+
+  for (let i=0;i<words.length;i++){
+    const w = words[i];
+
+    if (w === "zona" && words[i+1]){
+      const n = toNum(words[i+1]);
+      if (n && [1,2,3].includes(n)) zona = `Z${n}`;
+    }
+    if ((w === "almacen" || w === "almacén")){
+      zona = "A1";
+    }
+    if (w === "estante" && words[i+1]){
+      const n = toNum(words[i+1]);
+      if (n) est = `E${n}`;
+    }
+    if ((w === "nivel" || w === "n") && words[i+1]){
+      const n = toNum(words[i+1]);
+      if (n) niv = `N${n}`;
+    }
+  }
+
+  const commandCode = (zona && est && niv) ? `${zona}-${est}-${niv}` : (zona && !est && !niv ? zona : null);
+
+  // 3) corrección por vocabulario del sheet
+  const toks = tokensText(t).map(correctToken);
+  const corrected = toks.join(" ").trim();
+
+  // si hay comando completo, lo priorizamos pero dejamos el texto corregido también
+  if (commandCode){
+    return `${commandCode} ${corrected}`.trim();
+  }
+  return corrected || t;
+}
+
 /* ===== LOAD SHEET ===== */
 setStatus("warn", "Cargando hoja “Mujer”...");
 
@@ -937,32 +1078,33 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
       const variante = r.c[13]?.v || "";
 
       const ubicRaw = r.c[20]?.v || "";
-      const almacen = String(r.c[21]?.v || "").toUpperCase().trim();
+      const almacenRaw = String(r.c[21]?.v || "").toUpperCase().trim(); // A1 o A1-E10-N8
 
-      const parsed = parseUbicacion(ubicRaw);
-
-      const zonaId = almacen ? "Z4" : (parsed.zonaId || "");
-      const estanteId = almacen ? "" : (parsed.estanteId || "");
-      const nivelId = almacen ? "" : (parsed.nivelId || "");
+      const main = parseCodigo(ubicRaw);
+      const reserva = almacenRaw ? parseCodigo(almacenRaw) : { zonaId:"", estanteId:"", nivelId:"", pretty:"", nivelNum:0 };
 
       const p = {
         barras,
         nombre,
         variante,
-        ubic: almacen ? "Z4" : parsed.pretty,
-        almacen,
+        ubic: main.pretty || "",
+        almacen: almacenRaw,
 
-        zonaId,
-        estanteId,
-        nivelId,
+        zonaId: main.zonaId || "",
+        estanteId: main.estanteId || "",
+        nivelId: main.nivelId || "",
 
-        _zonaMapaId: zonaMapaId(zonaId)
+        _main: (main.zonaId ? main : null),
+        _reserva: (reserva.zonaId ? reserva : null)
       };
 
       if (!barras && !nombre) continue;
 
       p.nvNorm = norm((p.nombre || "") + " " + (p.variante || ""));
-      p.fulltextNorm = norm((p.barras||"") + " " + (p.nombre||"") + " " + (p.variante||"") + " " + (p.ubic||"") + " " + (p.almacen||""));
+      p.fulltextNorm = norm(
+        (p.barras||"") + " " + (p.nombre||"") + " " + (p.variante||"") + " " +
+        (p.ubic||"") + " " + (p.almacen||"")
+      );
 
       p.nombreNorm = norm(p.nombre);
       p.nombreNormKey = p.nombreNorm;
@@ -984,6 +1126,8 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
     modo = "reducido";
     chipReducido.classList.add("active");
     chipDetallado.classList.remove("active");
+
+    buildVocab();
 
     setStatus("ok", `Listo • ${productos.length} productos cargados`);
   })
@@ -1029,7 +1173,7 @@ btnCerrar.addEventListener("click", () => {
   }
 });
 
-/* ===== BÚSQUEDA POR VOZ (Web Speech API) ===== */
+/* ===== VOZ (con corrección al vocab del Sheet) ===== */
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 let listening = false;
@@ -1055,25 +1199,22 @@ function voiceOn(){
       let finalText = "";
       let interim = "";
       for (let i = event.resultIndex; i < event.results.length; i++){
-        const t = event.results[i][0].transcript;
-        if (event.results[i].isFinal) finalText += t;
-        else interim += t;
+        const tx = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalText += tx;
+        else interim += tx;
       }
-      const text = (finalText || interim || "").trim();
-      if (text){
-        buscador.value = text;
+      const raw = (finalText || interim || "").trim();
+      if (raw){
+        // 👇 aquí se hace la magia: comando + corrección a vocab del sheet
+        const fixed = voiceToQuery(raw);
+        buscador.value = fixed;
         recalcularResultados(false);
       }
     };
 
-    recognition.onerror = () => {
-      // típicos: not-allowed, service-not-allowed, no-speech
-      voiceOff(true);
-    };
-
+    recognition.onerror = () => voiceOff(true);
     recognition.onend = () => {
       voiceOff(false);
-      // si quedó texto, aplicamos feedback
       if (buscador.value.trim()) feedbackOK();
     };
   }
@@ -1081,18 +1222,17 @@ function voiceOn(){
   try{ recognition.start(); }catch(e){}
 }
 
-function voiceOff(silencio=false){
+function voiceOff(){
   listening = false;
   voicePill.classList.remove("on");
   btnVoz.textContent = "🎙 Voz";
   if (recognition){
     try{ recognition.stop(); }catch(e){}
   }
-  if (!silencio) {/* nada */}
 }
 
 btnVoz.addEventListener("click", () => {
-  if (listening) voiceOff(false);
+  if (listening) voiceOff();
   else voiceOn();
 });
 </script>
