@@ -10,87 +10,58 @@
     --bg:#f6f6f6; --card:#ffffff; --text:#111827; --muted:#6b7280;
     --border:#e5e7eb; --primary:#2563eb; --danger:#dc2626;
     --warn:#f59e0b; --ok:#16a34a; --shadow:0 10px 25px rgba(0,0,0,.08);
-    --radius:14px;
+    --radius:14px; --thead:#111827; --mapbg:#fff; --inputbg:#fff; --chipbg:#fff;
   }
-  *{ box-sizing:border-box; }
-  body{ margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text); padding:20px; }
+  body[data-theme="dark"]{
+    --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#9ca3af;
+    --border:#1f2a44; --shadow:0 12px 30px rgba(0,0,0,.45);
+    --thead:#0b1020; --mapbg:#0b1020; --inputbg:#0b1020; --chipbg:#0b1020;
+  }
 
-  /* ===== HEADER ===== */
-  .topbar{
-    max-width:1200px; margin:0 auto 16px auto;
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text); padding:20px; transition:.2s; }
+
+  .topbar{ max-width:1200px; margin:0 auto 16px auto; display:flex; align-items:center; justify-content:space-between; gap:12px; }
   .brand{ display:flex; align-items:center; gap:12px; }
-  .logoMark{
-    width:44px;height:44px;border-radius:14px;
-    background: linear-gradient(135deg, #111827, #374151);
-    box-shadow: var(--shadow); position:relative; overflow:hidden;
-  }
-  .logoMark::before,.logoMark::after{
-    content:""; position:absolute; top:10px; width:10px; height:24px;
-    border-radius:6px; background: rgba(255,255,255,.85); opacity:.9;
-  }
+  .logoMark{ width:44px;height:44px;border-radius:14px; background: linear-gradient(135deg, #111827, #374151); box-shadow: var(--shadow); position:relative; overflow:hidden; }
+  body[data-theme="dark"] .logoMark{ background: linear-gradient(135deg, #0b1020, #111827); }
+  .logoMark::before,.logoMark::after{ content:""; position:absolute; top:10px; width:10px; height:24px; border-radius:6px; background: rgba(255,255,255,.85); opacity:.9; }
   .logoMark::before{ left:12px; } .logoMark::after{ right:12px; }
-  .logoBase{
-    position:absolute; left:10px; right:10px; bottom:8px;
-    height:4px; border-radius:999px; background: rgba(255,255,255,.75);
-  }
+  .logoBase{ position:absolute; left:10px; right:10px; bottom:8px; height:4px; border-radius:999px; background: rgba(255,255,255,.75); }
+
   .brandText{ display:flex; flex-direction:column; line-height:1.05; }
   .brandText .title{ font-size:18px; font-weight:900; letter-spacing:.5px; margin:0; }
   .brandText .subtitle{ font-size:12px; color:var(--muted); margin-top:4px; }
-  .brandText .tag{
-    display:inline-flex; align-items:center; gap:6px;
-    margin-top:6px; font-size:11px;
-    border:1px solid var(--border); background:#fff;
-    padding:6px 10px; border-radius:999px; width:max-content;
-  }
+  .brandText .tag{ display:inline-flex; align-items:center; gap:6px; margin-top:6px; font-size:11px; border:1px solid var(--border); background:var(--chipbg); padding:6px 10px; border-radius:999px; width:max-content; }
 
-  .status{
-    display:flex; align-items:center; gap:8px;
-    padding:10px 12px; border:1px solid var(--border);
-    border-radius:999px; background:var(--card);
-    box-shadow:0 6px 18px rgba(0,0,0,.05);
-    white-space:nowrap; font-size:13px; color:var(--muted);
-  }
+  .status{ display:flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid var(--border); border-radius:999px; background:var(--card); box-shadow:0 6px 18px rgba(0,0,0,.05); white-space:nowrap; font-size:13px; color:var(--muted); }
   .dot{ width:10px;height:10px;border-radius:999px;background:var(--warn); }
   .dot.ok{ background:var(--ok); } .dot.bad{ background:var(--danger); }
 
-  /* ===== LAYOUT ===== */
-  .layout{
-    max-width:1200px; margin:0 auto; display:grid;
-    grid-template-columns: 1.1fr .9fr; gap:16px; align-items:start;
-  }
-  @media (max-width: 980px){
-    .layout{ grid-template-columns:1fr; }
-    .sticky{ position:static !important; }
-  }
+  .themeBtn{ border:1px solid var(--border); background:var(--card); color:var(--text); border-radius:999px; padding:10px 12px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 6px 18px rgba(0,0,0,.05); user-select:none; }
+  .themeBtn .mini{ font-size:12px; color:var(--muted); }
 
-  .card{
-    background:var(--card); border:1px solid var(--border);
-    border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
-  }
-  .card-header{
-    padding:14px 14px 10px 14px; border-bottom:1px solid var(--border);
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-  }
+  .layout{ max-width:1200px; margin:0 auto; display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; align-items:start; }
+  @media (max-width: 980px){ .layout{ grid-template-columns:1fr; } .sticky{ position:static !important; } .topRight{ flex-wrap:wrap; justify-content:flex-end; } }
+
+  .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); overflow:hidden; transition:.2s; }
+  .card-header{ padding:14px 14px 10px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .card-header h2{ font-size:14px; margin:0; }
   .meta{ font-size:12px; color:var(--muted); }
 
-  /* ===== MAPA ===== */
   .sticky{ position: sticky; top: 20px; }
-  #mapa{ width:100%; border:1px solid var(--border); border-radius:12px; background:#fff; }
+  #mapa{ width:100%; border:1px solid var(--border); border-radius:12px; background:var(--mapbg); }
 
   .zona{ fill:#e8eef7; stroke:#333; stroke-width:2; transition:.18s; }
-  .highlight{ fill:#fbbf24 !important; stroke:#f97316 !important; stroke-width:4; } /* búsqueda */
-  .hover{ fill:#93c5fd !important; stroke:#2563eb !important; stroke-width:4; }     /* mouse */
+  body[data-theme="dark"] .zona{ fill:#0f1b33; stroke:#32405f; }
+  .highlight{ fill:#fbbf24 !important; stroke:#f97316 !important; stroke-width:4; }
+  .hover{ fill:#93c5fd !important; stroke:#2563eb !important; stroke-width:4; }
 
-  /* Estantes en SVG con imagen */
   .estante-img { cursor:pointer; }
   .estante-img image { opacity:.98; transition:.18s; }
   .highlight-slot image{ filter: drop-shadow(0 0 10px rgba(249,115,22,.55)); }
   .hover-slot image{ filter: drop-shadow(0 0 10px rgba(37,99,235,.55)); }
 
-  /* Overlay de nivel dentro del estante (en SVG) */
   .nivel-mark{
     fill: rgba(251,191,36,.35);
     stroke: rgba(249,115,22,.95);
@@ -103,138 +74,54 @@
   .highlight-level .nivel-mark{ opacity: 1; }
   .hover-level .nivel-mark{ opacity: 1; fill: rgba(147,197,253,.30); stroke: rgba(37,99,235,.95); }
 
-  .map-info{
-    padding:12px 14px; border-top:1px solid var(--border);
-    display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
-  }
+  .map-info{ padding:12px 14px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
   .map-info .msg{ font-size:13px; color:var(--muted); line-height:1.4; }
-  .pill{
-    padding:6px 10px; border-radius:999px;
-    font-size:12px; border:1px solid var(--border);
-    background:#fff; color:var(--muted); white-space:nowrap;
-  }
+  .pill{ padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid var(--border); background:var(--chipbg); color:var(--muted); white-space:nowrap; }
 
-  /* ===== FORM + TABLA ===== */
   .controls{ padding:14px; display:grid; gap:10px; }
-  .search input{
-    width:100%; padding:12px; font-size:15px;
-    border:1px solid var(--border); border-radius:12px; outline:none;
-  }
-  .search input:focus{
-    border-color: rgba(37, 99, 235, .6);
-    box-shadow: 0 0 0 4px rgba(37,99,235,.12);
-  }
+  .search input{ width:100%; padding:12px; font-size:15px; border:1px solid var(--border); border-radius:12px; outline:none; background:var(--inputbg); color:var(--text); }
+  .search input:focus{ border-color: rgba(37, 99, 235, .6); box-shadow: 0 0 0 4px rgba(37,99,235,.12); }
 
   .btnrow{ display:flex; gap:10px; flex-wrap:wrap; }
-  .btn{
-    flex:1; min-width:140px; border:none; border-radius:12px;
-    padding:12px; font-size:14px; cursor:pointer; color:#fff;
-    display:flex; align-items:center; justify-content:center; gap:8px;
-  }
+  .btn{ flex:1; min-width:140px; border:none; border-radius:12px; padding:12px; font-size:14px; cursor:pointer; color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; }
   .btn.primary{ background:var(--primary); }
   .btn.danger{ background:var(--danger); }
   .btn.dark{ background:#111827; }
+  body[data-theme="dark"] .btn.dark{ background:#0b1020; border:1px solid var(--border); }
 
-  /* ===== CHIPS ===== */
   .chiprow{ display:flex; gap:8px; flex-wrap:wrap; }
-  .chip{
-    border:1px solid var(--border);
-    background:#fff; color:#111827;
-    border-radius:999px;
-    padding:8px 10px;
-    font-size:12px;
-    cursor:pointer;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    user-select:none;
-  }
-  .chip .badge{
-    font-size:11px;
-    padding:3px 8px;
-    border-radius:999px;
-    border:1px solid var(--border);
-    background:#f9fafb;
-    color:var(--muted);
-  }
-  .chip.active{
-    border-color: rgba(37,99,235,.35);
-    box-shadow: 0 0 0 4px rgba(37,99,235,.10);
-  }
-  .chip.active .badge{
-    border-color: rgba(37,99,235,.35);
-    background: rgba(37,99,235,.08);
-    color: #1f3b8f;
-  }
+  .chip{ border:1px solid var(--border); background:var(--chipbg); color:var(--text); border-radius:999px; padding:8px 10px; font-size:12px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; user-select:none; }
+  .chip .badge{ font-size:11px; padding:3px 8px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,.04); color:var(--muted); }
+  .chip.active{ border-color: rgba(37,99,235,.35); box-shadow: 0 0 0 4px rgba(37,99,235,.10); }
 
   .hint{ font-size:12px; color:var(--muted); line-height:1.4; }
 
-  .result-card{
-    margin-top:6px; padding:12px; border:1px dashed var(--border);
-    border-radius:12px; background:#fafafa; display:none;
-  }
+  .result-card{ margin-top:6px; padding:12px; border:1px dashed var(--border); border-radius:12px; background:rgba(255,255,255,.04); display:none; }
   .result-title{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .bigloc{ margin-top:8px; font-size:22px; font-weight:800; letter-spacing:.5px; }
   .sub{ margin-top:6px; font-size:12px; color:var(--muted); }
 
   .kv{ margin-top:10px; display:grid; gap:8px; }
-  .kv-row{
-    display:flex; justify-content:space-between; gap:10px;
-    padding:10px 12px; border:1px solid var(--border);
-    border-radius:12px; background:#fff; font-size:12px;
-  }
-  .kv-row b{ color:#111827; }
-  .kv-row span{ color:var(--muted); text-align:right; }
+  .kv-row{ display:flex; justify-content:space-between; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:12px; background:rgba(255,255,255,.03); font-size:12px; }
+  .kv-row b{ color:var(--text); } .kv-row span{ color:var(--muted); text-align:right; }
 
   .picker{ margin-top:10px; display:flex; gap:10px; align-items:center; }
-  .picker button{
-    border:1px solid var(--border); background:#fff; color:#111827;
-    border-radius:12px; padding:10px 12px; cursor:pointer;
-    flex:1; min-width:120px; font-weight:700;
-  }
+  .picker button{ border:1px solid var(--border); background:var(--chipbg); color:var(--text); border-radius:12px; padding:10px 12px; cursor:pointer; flex:1; min-width:120px; font-weight:700; }
   .picker button:disabled{ opacity:.45; cursor:not-allowed; }
-  .picker .counter{
-    padding:10px 12px; border:1px solid var(--border);
-    background:#fff; border-radius:12px; color:var(--muted);
-    font-size:12px; white-space:nowrap;
-  }
+  .picker .counter{ padding:10px 12px; border:1px solid var(--border); background:var(--chipbg); border-radius:12px; color:var(--muted); font-size:12px; white-space:nowrap; }
 
   .table-wrap{ border-top:1px solid var(--border); }
   .table-scroll{ max-height: 520px; overflow:auto; }
   table{ width:100%; border-collapse:collapse; font-size:13px; }
-  thead th{
-    position:sticky; top:0; background:#111827; color:#fff;
-    text-align:left; padding:10px; z-index:2;
-  }
+  thead th{ position:sticky; top:0; background:var(--thead); color:#fff; text-align:left; padding:10px; z-index:2; }
   tbody td{ padding:10px; border-bottom:1px solid var(--border); vertical-align:top; }
-  tbody tr:nth-child(even){ background:#fafafa; }
-  tbody tr.active{
-    background:#fff7ed !important;
-    outline:2px solid rgba(245, 158, 11, .35);
-  }
+  tbody tr:nth-child(even){ background:rgba(255,255,255,.03); }
+  tbody tr.active{ background:rgba(245, 158, 11, .16) !important; outline:2px solid rgba(245, 158, 11, .35); }
 
-  /* ===== Vista estante (imagen base) ===== */
-  .shelf-image-wrap{
-    position:relative;
-    width:100%;
-    max-width:760px;
-    margin:0 auto;
-    aspect-ratio: 900 / 520;
-  }
-  .shelf-image{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:contain;
-    border-radius:10px;
-    user-select:none;
-    pointer-events:none;
-  }
+  .shelf-image-wrap{ position:relative; width:100%; max-width:760px; margin:0 auto; aspect-ratio: 900 / 520; }
+  .shelf-image{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; border-radius:10px; user-select:none; pointer-events:none; }
   .shelf-level-overlay{
-    position:absolute;
-    left:14%;
-    width:72%;
+    position:absolute; left:14%; width:72%;
     border:2px solid rgba(249,115,22,.95);
     background:rgba(251,191,36,.35);
     border-radius:10px;
@@ -242,18 +129,25 @@
     transition:.18s;
   }
   .shelf-level-overlay .level-tag{
-    position:absolute;
-    left:-52px;
-    top:50%;
-    transform:translateY(-50%);
-    font-size:11px;
-    font-weight:700;
-    color:#6b7280;
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:999px;
-    padding:2px 8px;
+    position:absolute; left:-52px; top:50%; transform:translateY(-50%);
+    font-size:11px; font-weight:700; color:var(--muted);
+    background:var(--chipbg); border:1px solid var(--border);
+    border-radius:999px; padding:2px 8px;
   }
+
+  /* Banner filtro por estante */
+  .filter-banner{
+    display:none;
+    margin-top:8px;
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:rgba(37,99,235,.08);
+    color:var(--text);
+    font-size:12px;
+  }
+  .filter-banner b{ font-weight:900; }
+  body[data-theme="dark"] .filter-banner{ background:rgba(37,99,235,.14); }
 
   #reader{ display:none; padding:0 14px 14px 14px; }
 </style>
@@ -271,15 +165,22 @@
     </div>
   </div>
 
-  <div class="status">
-    <span class="dot" id="statusDot"></span>
-    <span id="statusText">Cargando hoja “Mujer”...</span>
+  <div class="topRight" style="display:flex; gap:10px; align-items:center;">
+    <button class="themeBtn" id="themeToggle" type="button" aria-label="Cambiar tema">
+      <span id="themeIcon">🌙</span>
+      <span id="themeText">Modo oscuro</span>
+      <span class="mini" id="themeMini">OFF</span>
+    </button>
+
+    <div class="status">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">Cargando hoja “Mujer”...</span>
+    </div>
   </div>
 </div>
 
 <div class="layout">
 
-  <!-- IZQUIERDA -->
   <div class="card">
     <div class="card-header">
       <div>
@@ -293,6 +194,9 @@
       <div class="search">
         <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s | z2-e3-n1 | a1-e10-n8" autocomplete="off" />
       </div>
+
+      <!-- Banner filtro por estante -->
+      <div class="filter-banner" id="filterBanner">Filtrando por estante: <b id="filterBannerText">—</b></div>
 
       <div class="chiprow">
         <div class="chip active" id="chipReducido" role="button" tabindex="0">
@@ -323,22 +227,10 @@
         <div class="sub" id="subLoc">—</div>
 
         <div class="kv">
-          <div class="kv-row">
-            <b>📍 Ubicación</b>
-            <span id="kvUbicacion">—</span>
-          </div>
-          <div class="kv-row">
-            <b>🧱 Estante</b>
-            <span id="kvEstante">—</span>
-          </div>
-          <div class="kv-row">
-            <b>📚 Nivel / Repisa</b>
-            <span id="kvNivel">—</span>
-          </div>
-          <div class="kv-row">
-            <b>📦 Reserva (ALMACÉN)</b>
-            <span id="kvReserva">—</span>
-          </div>
+          <div class="kv-row"><b>📍 Ubicación</b><span id="kvUbicacion">—</span></div>
+          <div class="kv-row"><b>🧱 Estante</b><span id="kvEstante">—</span></div>
+          <div class="kv-row"><b>📚 Nivel / Repisa</b><span id="kvNivel">—</span></div>
+          <div class="kv-row"><b>📦 Reserva (ALMACÉN)</b><span id="kvReserva">—</span></div>
         </div>
 
         <div class="picker">
@@ -369,7 +261,6 @@
     </div>
   </div>
 
-  <!-- DERECHA -->
   <div class="card sticky">
     <div class="card-header">
       <div>
@@ -382,25 +273,24 @@
     <div style="padding:14px;">
       <svg id="mapa" viewBox="0 0 700 800">
         <rect id="Z1" class="zona" x="100" y="20" width="300" height="120"/>
-        <text x="250" y="90" text-anchor="middle" font-size="16">ZONA 1</text>
+        <text x="250" y="90" text-anchor="middle" font-size="16" fill="currentColor">ZONA 1</text>
 
         <rect id="Z2" class="zona" x="100" y="150" width="300" height="300"/>
-        <text x="250" y="320" text-anchor="middle" font-size="16">ZONA 2</text>
+        <text x="250" y="320" text-anchor="middle" font-size="16" fill="currentColor">ZONA 2</text>
 
-        <!-- ALMACÉN (A1) -->
         <rect id="A1" class="zona" x="420" y="150" width="220" height="300" stroke-dasharray="6"/>
-        <text x="530" y="310" text-anchor="middle" font-size="16">ALMACÉN</text>
-        <text x="530" y="330" text-anchor="middle" font-size="12" fill="#6b7280">A1</text>
+        <text x="530" y="310" text-anchor="middle" font-size="16" fill="currentColor">ALMACÉN</text>
+        <text x="530" y="330" text-anchor="middle" font-size="12" fill="currentColor" opacity=".65">A1</text>
 
         <rect id="Z3" class="zona" x="100" y="460" width="300" height="300"/>
-        <text x="250" y="650" text-anchor="middle" font-size="16">ZONA 3</text>
+        <text x="250" y="650" text-anchor="middle" font-size="16" fill="currentColor">ZONA 3</text>
 
-        <!-- EJEMPLO estante -->
+        <!-- EJEMPLO: DUPLICA estantes con ids reales (Z1-E2, Z2-E3, A1-E10, etc.) -->
         <g id="Z1-E2" class="estante-img" data-levels="6" transform="translate(140 35)">
           <image href="assets/estantes/estante-mod1.png" width="70" height="90"></image>
           <rect class="nivel-mark" x="0" y="0" width="70" height="15"></rect>
         </g>
-        <text x="175" y="30" font-size="10" text-anchor="middle" fill="#6b7280">E2</text>
+        <text x="175" y="30" font-size="10" text-anchor="middle" fill="currentColor" opacity=".65">E2</text>
       </svg>
     </div>
 
@@ -410,13 +300,7 @@
         <div class="pill" id="shelfLabel">—</div>
       </div>
 
-      <div id="shelfPreview" style="
-        border:1px solid var(--border);
-        border-radius:12px;
-        background:#fff;
-        padding:12px;
-        min-height:220px;
-      ">
+      <div id="shelfPreview" style="border:1px solid var(--border); border-radius:12px; background:var(--chipbg); padding:12px; min-height:220px;">
         <div style="color:var(--muted); font-size:13px;">
           Selecciona un producto para ver el estante y el nivel resaltado.
         </div>
@@ -428,88 +312,113 @@
       <div class="pill" id="resultCountPill">0</div>
     </div>
   </div>
-
 </div>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
-/* ===== CONFIG ===== */
+/* =========================
+   CONFIG
+========================= */
 const sheetID   = "1IU4wMdVImmEbl93kgcCCQAGPiTc28uQdNNaq0bgTF2o";
 const sheetName = "Mujer";
-
-/* imágenes */
 const IMG_EST_MAPA  = "assets/estantes/estante-mod1.png";
 const IMG_EST_VISTA = "assets/estantes_vista/estante-mod1-vista1.png";
 
-/* ===== UI refs ===== */
-const tabla = document.getElementById("tabla");
-const buscador = document.getElementById("buscar");
-const info = document.getElementById("info");
-const metaCount = document.getElementById("metaCount");
-const metaResults = document.getElementById("metaResults");
-const mapBadge = document.getElementById("mapBadge");
-const resultCountPill = document.getElementById("resultCountPill");
+/* =========================
+   DOM helpers
+========================= */
+const $ = (id) => document.getElementById(id);
 
-const statusDot = document.getElementById("statusDot");
-const statusText = document.getElementById("statusText");
+const tablaBody = $("tabla");
+const buscador = $("buscar");
+const info = $("info");
+const metaCount = $("metaCount");
+const metaResults = $("metaResults");
+const mapBadge = $("mapBadge");
+const resultCountPill = $("resultCountPill");
 
-const resultCard = document.getElementById("resultCard");
-const pillZona = document.getElementById("pillZona");
-const bigLoc = document.getElementById("bigLoc");
-const subLoc = document.getElementById("subLoc");
+const statusDot = $("statusDot");
+const statusText = $("statusText");
 
-const kvUbicacion = document.getElementById("kvUbicacion");
-const kvEstante = document.getElementById("kvEstante");
-const kvNivel = document.getElementById("kvNivel");
-const kvReserva = document.getElementById("kvReserva");
+const resultCard = $("resultCard");
+const pillZona = $("pillZona");
+const bigLoc = $("bigLoc");
+const subLoc = $("subLoc");
 
-const btnClear = document.getElementById("btnClear");
-const btnPrev = document.getElementById("btnPrev");
-const btnNext = document.getElementById("btnNext");
-const pickerCounter = document.getElementById("pickerCounter");
+const kvUbicacion = $("kvUbicacion");
+const kvEstante = $("kvEstante");
+const kvNivel = $("kvNivel");
+const kvReserva = $("kvReserva");
 
-const chipReducido = document.getElementById("chipReducido");
-const chipDetallado = document.getElementById("chipDetallado");
-const badgeReducido = document.getElementById("badgeReducido");
-const badgeDetallado = document.getElementById("badgeDetallado");
+const btnClear = $("btnClear");
+const btnPrev = $("btnPrev");
+const btnNext = $("btnNext");
+const pickerCounter = $("pickerCounter");
 
-/* Vista estante */
-const shelfPreview = document.getElementById("shelfPreview");
-const shelfLabel = document.getElementById("shelfLabel");
+const chipReducido = $("chipReducido");
+const chipDetallado = $("chipDetallado");
+const badgeReducido = $("badgeReducido");
+const badgeDetallado = $("badgeDetallado");
 
-/* ===== STATE ===== */
+const shelfPreview = $("shelfPreview");
+const shelfLabel = $("shelfLabel");
+
+/* Dark mode */
+const themeToggle = $("themeToggle");
+const themeIcon = $("themeIcon");
+const themeText = $("themeText");
+const themeMini = $("themeMini");
+
+/* Filtro por estante (hover mapa) */
+const filterBanner = $("filterBanner");
+const filterBannerText = $("filterBannerText");
+let activeShelfFilter = ""; // ej: "Z1-E2"
+let lastQueryBeforeShelf = ""; // recordar texto actual del input (sin modificarlo)
+
+/* =========================
+   STATE
+========================= */
 let productos = [];
 let resultadosDetallado = [];
 let resultadosReducido = [];
 let resultadosActuales = [];
 let indiceActual = 0;
-let modo = "reducido"; // por defecto
+let modo = "reducido";
+let busquedaActiva = false;
+let activeRowEl = null;
 
-let busquedaActiva = false; // ✅ NUEVO: solo se muestra "Resultado activo" si el usuario buscó
+/* =========================
+   THEME
+========================= */
+function applyTheme(theme){
+  if (theme === "dark"){
+    document.body.setAttribute("data-theme", "dark");
+    themeIcon.textContent = "☀️";
+    themeText.textContent = "Modo claro";
+    themeMini.textContent = "ON";
+  } else {
+    document.body.removeAttribute("data-theme");
+    themeIcon.textContent = "🌙";
+    themeText.textContent = "Modo oscuro";
+    themeMini.textContent = "OFF";
+  }
+  localStorage.setItem("theme", theme);
+}
+(function initTheme(){
+  const saved = localStorage.getItem("theme");
+  if (saved) return applyTheme(saved);
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(prefersDark ? "dark" : "light");
+})();
+themeToggle.addEventListener("click", () => {
+  const isDark = document.body.getAttribute("data-theme") === "dark";
+  applyTheme(isDark ? "light" : "dark");
+});
 
-/* ===== Feedback ===== */
-let audioCtx = null;
-function beep(freq = 880, ms = 90, vol = 0.06){
-  try{
-    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = "sine"; o.frequency.value = freq; g.gain.value = vol;
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start(); setTimeout(() => o.stop(), ms);
-  }catch(e){}
-}
-function vibrar(pattern = [60, 40, 60]){
-  try{ if (navigator.vibrate) navigator.vibrate(pattern); }catch(e){}
-}
-function feedbackOK(){
-  beep(880, 80, 0.06);
-  setTimeout(() => beep(1320, 70, 0.05), 90);
-  vibrar([50, 35, 50]);
-}
-
-/* ===== Helpers ===== */
+/* =========================
+   UTIL
+========================= */
 function setStatus(type, text){
   statusDot.className = "dot" + (type === "ok" ? " ok" : type === "bad" ? " bad" : "");
   statusText.textContent = text;
@@ -519,7 +428,7 @@ function escapeHtml(str){
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
     .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
+    .replaceAll('"',"quot;")
     .replaceAll("'","&#039;");
 }
 function norm(s){
@@ -535,8 +444,14 @@ function tokensText(s){
   const stop = new Set(["talla","color","de","para","con","sin","un","una","y","el","la","los","las"]);
   return norm(s).split(" ").filter(w => w && !stop.has(w));
 }
+function debounce(fn, ms=160){
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
 
-/* ===== Parse código (Z1..Z3 o A1) ===== */
+/* =========================
+   PARSE
+========================= */
 function parseCodigo(raw){
   const s = String(raw || "").trim().toUpperCase();
   const m = s.match(/^(Z[123]|A1)(?:-(E\d+))?(?:-(N\d+))?$/);
@@ -548,18 +463,25 @@ function parseCodigo(raw){
   const estanteId = (zonaId && e) ? `${zonaId}-${e}` : "";
   const nivelId   = (estanteId && n) ? `${estanteId}-${n}` : "";
   const nivelNum = n ? Number(n.replace("N","")) : 0;
-
   return { zonaId, estanteId, nivelId, pretty: s, nivelNum };
 }
 
-/* ===== Overlay nivel en SVG ===== */
+/* =========================
+   MAPA: highlights
+========================= */
+function clearHover(){
+  document.querySelectorAll(".zona").forEach(z => z.classList.remove("hover"));
+  document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("hover-slot","hover-level"));
+}
+function clearSearchHighlight(){
+  document.querySelectorAll(".zona").forEach(z => z.classList.remove("highlight"));
+  document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("highlight-slot","highlight-level"));
+}
 function setShelfLevelMark(estanteId, nivelNum, mode){
   const g = document.getElementById(estanteId);
   if (!g) return;
-
   const img = g.querySelector("image");
   if (img) img.setAttribute("href", IMG_EST_MAPA);
-
   const mark = g.querySelector(".nivel-mark");
   if (!mark) return;
 
@@ -579,23 +501,13 @@ function setShelfLevelMark(estanteId, nivelNum, mode){
   g.classList.toggle("hover-level", mode === "hover");
   g.classList.toggle("highlight-level", mode === "search");
 }
-
-/* ===== Highlight multi-zona ===== */
-function clearHover(){
-  document.querySelectorAll(".zona").forEach(z => z.classList.remove("hover"));
-  document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("hover-slot","hover-level"));
-}
-function clearSearchHighlight(){
-  document.querySelectorAll(".zona").forEach(z => z.classList.remove("highlight"));
-  document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("highlight-slot","highlight-level"));
-}
 function addSearchHighlight(zonaId, estanteId, nivelId){
   if (zonaId) document.getElementById(zonaId)?.classList.add("highlight");
   if (estanteId){
     const g = document.getElementById(estanteId);
     g?.classList.add("highlight-slot");
-    const n = (nivelId || "").match(/-N(\d+)$/i);
-    const nivelNum = n ? Number(n[1]) : 1;
+    const m = (nivelId || "").match(/-N(\d+)$/i);
+    const nivelNum = m ? Number(m[1]) : 1;
     if (g?.classList.contains("estante-img")) setShelfLevelMark(estanteId, nivelNum, "search");
   }
 }
@@ -610,18 +522,19 @@ function applyHover(zonaId, estanteId, nivelId){
   if (estanteId){
     const g = document.getElementById(estanteId);
     g?.classList.add("hover-slot");
-    const n = (nivelId || "").match(/-N(\d+)$/i);
-    const nivelNum = n ? Number(n[1]) : 1;
+    const m = (nivelId || "").match(/-N(\d+)$/i);
+    const nivelNum = m ? Number(m[1]) : 1;
     if (g?.classList.contains("estante-img")) setShelfLevelMark(estanteId, nivelNum, "hover");
   }
 }
 
-/* ===== Vista estante (imagen) ===== */
+/* =========================
+   VISTA ESTANTE
+========================= */
 function generarVistaEstanteConImagen(estanteId, nivelNum, totalNiveles){
   const n = Math.max(1, Math.min(totalNiveles, Number(nivelNum || 1)));
   const usable = 76, start = 10;
   const band = usable / totalNiveles;
-
   const bottomPct = start + ((n - 1) * band);
   const hPct = band - 1.2;
 
@@ -642,15 +555,16 @@ function mostrarVistaEstante(estanteId, nivelId){
     </div>`;
     return;
   }
-  const n = (nivelId || "").match(/-N(\d+)$/i);
-  const nivelNum = n ? Number(n[1]) : 1;
+  const m = (nivelId || "").match(/-N(\d+)$/i);
+  const nivelNum = m ? Number(m[1]) : 1;
   const totalNiveles = estanteId.startsWith("A1-") ? 8 : 6;
-
   shelfLabel.textContent = estanteId;
   shelfPreview.innerHTML = generarVistaEstanteConImagen(estanteId, nivelNum, totalNiveles);
 }
 
-/* ===== Matching búsqueda ===== */
+/* =========================
+   SEARCH / GROUP
+========================= */
 function isSizeLetter(t){ return ["xs","s","m","l","xl","xxl","2xl"].includes(t); }
 function isPureNumber(t){ return /^\d{1,4}$/.test(t); }
 function matchAll(textoNorm, qTokens){
@@ -660,48 +574,35 @@ function matchAll(textoNorm, qTokens){
 function hasTallaNumero(nvNorm, num){
   return new RegExp(`\\btalla\\s*${num}\\b`).test(nvNorm);
 }
-
-/* ===== Agrupar por nombre (reducido) ===== */
 function agruparPorNombre(listaDetallada){
   const map = new Map();
   for (const p of listaDetallada){
     const key = (p.nombreNormKey || p.nombreNorm || p.nombre || "").trim();
     if (!key) continue;
-
-    if (!map.has(key)){
-      map.set(key, { key, count: 1, representante: p, grupo: [p] });
-    } else {
-      const g = map.get(key);
-      g.count++;
-      g.grupo.push(p);
-      if ((p._score||0) > (g.representante._score||0)) g.representante = p;
+    const cur = map.get(key);
+    if (!cur) map.set(key, { count: 1, representante: p });
+    else {
+      cur.count++;
+      if ((p._score||0) > (cur.representante._score||0)) cur.representante = p;
     }
   }
-
   const reducido = [];
   for (const g of map.values()){
-    reducido.push({
-      ...g.representante,
-      variante: `${g.count} variantes`,
-      _grupo: g.grupo,
-      _count: g.count,
-      _representante: g.representante
-    });
+    reducido.push({ ...g.representante, variante: `${g.count} variantes`, _count: g.count, _representante: g.representante });
   }
-
   reducido.sort((a,b) => String(a.nombre||"").localeCompare(String(b.nombre||""), "es"));
   return reducido;
 }
 
-/* ===== Render tabla ===== */
-function renderTabla(lista, activeIndex = -1){
-  let html = "";
+/* =========================
+   TABLE
+========================= */
+function renderTabla(lista){
+  const rows = new Array(lista.length);
   for (let i=0;i<lista.length;i++){
     const p = lista[i];
-    const active = i === activeIndex ? " class='active'" : "";
-    html += `
-      <tr${active}
-          data-i="${i}"
+    rows[i] = `
+      <tr data-i="${i}"
           data-zona="${p.zonaId || ''}"
           data-estante="${p.estanteId || ''}"
           data-nivel="${p.nivelId || ''}">
@@ -712,60 +613,72 @@ function renderTabla(lista, activeIndex = -1){
         <td>${escapeHtml(p.almacen || "")}</td>
       </tr>`;
   }
-  tabla.innerHTML = html;
-  enlazarTabla();
+  tablaBody.innerHTML = rows.join("");
+  activeRowEl = null;
+}
+function setActiveRow(index, smooth=false){
+  if (activeRowEl) activeRowEl.classList.remove("active");
+  const tr = tablaBody.querySelector(`tr[data-i="${index}"]`);
+  if (tr){
+    tr.classList.add("active");
+    activeRowEl = tr;
+    if (smooth) tr.scrollIntoView({ block:"nearest", behavior:"smooth" });
+  }
 }
 
-function enlazarTabla(){
-  const rows = tabla.querySelectorAll("tr");
-  rows.forEach(tr => {
-    tr.addEventListener("mouseenter", () => {
-      const zonaId = tr.getAttribute("data-zona") || "";
-      const estanteId = tr.getAttribute("data-estante") || "";
-      const nivelId = tr.getAttribute("data-nivel") || "";
+/* Hover/click tabla */
+tablaBody.addEventListener("mousemove", (e) => {
+  const tr = e.target.closest("tr");
+  if (!tr || !tablaBody.contains(tr)) return;
+  const zonaId = tr.dataset.zona || "";
+  const estanteId = tr.dataset.estante || "";
+  const nivelId = tr.dataset.nivel || "";
+  applyHover(zonaId, estanteId, nivelId);
+  mapBadge.textContent = zonaId ? (zonaId === "A1" ? "ALMACÉN" : zonaId) : "—";
+});
+tablaBody.addEventListener("mouseleave", () => {
+  clearHover();
+  if (busquedaActiva || activeShelfFilter) aplicarResultadoActivo(false);
+  else {
+    mapBadge.textContent = "—";
+    info.textContent = "Pasa el mouse por la tabla o busca un producto.";
+  }
+});
+tablaBody.addEventListener("click", (e) => {
+  const tr = e.target.closest("tr");
+  if (!tr || !tablaBody.contains(tr)) return;
+  const i = Number(tr.dataset.i);
+  if (!Number.isNaN(i)){
+    indiceActual = i;
+    aplicarResultadoActivo(true);
+  }
+});
 
-      applyHover(zonaId, estanteId, nivelId);
-      mapBadge.textContent = zonaId ? (zonaId === "A1" ? "ALMACÉN" : zonaId) : "—";
-    });
-
-    tr.addEventListener("click", () => {
-      const i = Number(tr.getAttribute("data-i"));
-      if (!Number.isNaN(i)){
-        indiceActual = i;
-        aplicarResultadoActivo(true, true); // ✅ forzado por click
-      }
-    });
-  });
-
-  tabla.addEventListener("mouseleave", () => {
-    clearHover();
-    if (busquedaActiva){
-      aplicarResultadoActivo(false, false);
-    } else {
-      mapBadge.textContent = "—";
-      info.textContent = "Pasa el mouse por la tabla o busca un producto.";
-    }
-  }, { once:false });
-}
-
-/* ===== Picker ===== */
+/* =========================
+   RESULT UI
+========================= */
 function setPickerState(){
   const total = resultadosActuales.length;
   pickerCounter.textContent = `${total ? (indiceActual + 1) : 0} / ${total}`;
   btnPrev.disabled = total <= 1;
   btnNext.disabled = total <= 1;
 }
+function hideResultUI(){
+  resultCard.style.display = "none";
+  clearSearchHighlight();
+  mostrarVistaEstante("", "");
+  metaResults.textContent = "0 resultados";
+  resultCountPill.textContent = "0";
+  mapBadge.textContent = "—";
+  pillZona.textContent = "—";
+  info.textContent = "Pasa el mouse por la tabla o busca un producto.";
+}
+function aplicarResultadoActivo(forceShow=false){
+  // si hay filtro por estante, consideramos "activo" aunque el input esté vacío
+  const effectiveActive = busquedaActiva || !!activeShelfFilter;
 
-/* ===== Resultado activo (NO aparece si no buscaste) ===== */
-function aplicarResultadoActivo(triggerFeedback = false, forceShow = false){
-  if (!busquedaActiva && !forceShow){
-    resultCard.style.display = "none";
-    clearSearchHighlight();
-    mostrarVistaEstante("", "");
-    metaResults.textContent = "0 resultados";
-    resultCountPill.textContent = "0";
-    mapBadge.textContent = "—";
-    info.textContent = "Pasa el mouse por la tabla o busca un producto.";
+  if (!effectiveActive && !forceShow){
+    hideResultUI();
     return;
   }
 
@@ -777,11 +690,7 @@ function aplicarResultadoActivo(triggerFeedback = false, forceShow = false){
   badgeReducido.textContent = String(resultadosReducido.length || 0);
 
   if (!total){
-    resultCard.style.display = "none";
-    clearSearchHighlight();
-    info.textContent = "Pasa el mouse por la tabla o busca un producto.";
-    mapBadge.textContent = "—";
-    mostrarVistaEstante("", "");
+    hideResultUI();
     return;
   }
 
@@ -793,11 +702,10 @@ function aplicarResultadoActivo(triggerFeedback = false, forceShow = false){
     ? filaActiva._representante
     : filaActiva;
 
-  renderTabla(resultadosActuales, indiceActual);
+  setActiveRow(indiceActual, true);
 
-  const main = activo._main || null;        // ubicación
-  const reserva = activo._reserva || null;  // almacén
-
+  const main = activo._main || null;
+  const reserva = activo._reserva || null;
   applySearchHighlightMulti(main, reserva);
 
   const zonas = [];
@@ -829,70 +737,113 @@ function aplicarResultadoActivo(triggerFeedback = false, forceShow = false){
   kvReserva.textContent = almTxt || "—";
 
   mostrarVistaEstante(main?.estanteId || "", main?.nivelId || "");
-
   setPickerState();
-  if (triggerFeedback) feedbackOK();
 }
 
-/* ===== Switch chips ===== */
+/* =========================
+   MODO chips
+========================= */
 function setModo(nuevo){
   modo = nuevo;
   chipReducido.classList.toggle("active", modo === "reducido");
   chipDetallado.classList.toggle("active", modo === "detallado");
 
-  resultadosActuales = (modo === "reducido") ? resultadosReducido : resultadosDetallado;
+  // cuando cambia modo, recalculamos lista según estado actual (búsqueda o filtro estante)
+  rebuildCurrentResults();
   indiceActual = 0;
+  renderTabla(resultadosActuales);
 
-  // si no hay búsqueda, solo cambia la tabla (sin mostrar "resultado activo")
-  if (!busquedaActiva){
-    renderTabla(resultadosActuales);
-    return;
-  }
-
-  aplicarResultadoActivo(false, false);
+  if (busquedaActiva || activeShelfFilter) aplicarResultadoActivo(false);
+  else hideResultUI();
 }
 chipReducido.addEventListener("click", () => setModo("reducido"));
 chipDetallado.addEventListener("click", () => setModo("detallado"));
 
-/* ===== Limpiar ===== */
+/* =========================
+   LIMPIAR
+========================= */
 function limpiarBusqueda(){
   buscador.value = "";
-  indiceActual = 0;
   busquedaActiva = false;
+  indiceActual = 0;
 
-  metaResults.textContent = "0 resultados";
-  resultCountPill.textContent = "0";
-
-  resultCard.style.display = "none";
-  clearSearchHighlight();
-  clearHover();
-
-  info.textContent = "Pasa el mouse por la tabla o busca un producto.";
-  mapBadge.textContent = "—";
-
-  mostrarVistaEstante("", "");
-
+  // si había filtro por estante, lo apaga
+  setShelfFilter("");
   modo = "reducido";
   chipReducido.classList.add("active");
   chipDetallado.classList.remove("active");
 
+  // vuelve al listado reducido completo
+  resultadosDetallado = productos;
+  resultadosReducido = agruparPorNombre(productos);
   resultadosActuales = resultadosReducido;
-  renderTabla(resultadosActuales);
 
+  renderTabla(resultadosActuales);
+  hideResultUI();
   buscador.focus();
 }
 btnClear.addEventListener("click", limpiarBusqueda);
 
-/* ===== Buscar ===== */
-function recalcularResultados(triggerFeedback=false){
+/* =========================
+   REBUILD RESULTS
+   (según input + filtro estante)
+========================= */
+function rebuildCurrentResults(){
+  // base = si hay búsqueda, usamos resultados de búsqueda; sino usamos todo
+  const baseDet = busquedaActiva ? resultadosDetallado : productos;
+
+  // si hay filtro por estante, filtramos baseDet por ese estante (ubicación o reserva)
+  const filteredDet = activeShelfFilter
+    ? baseDet.filter(p => (p._main?.estanteId === activeShelfFilter) || (p._reserva?.estanteId === activeShelfFilter))
+    : baseDet;
+
+  // armamos det y reducido desde filteredDet
+  const det = filteredDet;
+  const red = agruparPorNombre(filteredDet);
+
+  // guardamos para badges/uso
+  // ojo: mantenemos "resultadosDetallado" como los de búsqueda real (para conteos generales),
+  // pero resultadosActuales se basan en det/red filtrados
+  const detForUI = det;
+  const redForUI = red;
+
+  // badges: si hay búsqueda activa, muestra conteos globales de búsqueda (ya calculados),
+  // pero si NO hay búsqueda, badges muestran conteos del filtro por estante (o todo)
+  if (!busquedaActiva){
+    badgeDetallado.textContent = String(detForUI.length || 0);
+    badgeReducido.textContent = String(redForUI.length || 0);
+  }
+
+  resultadosActuales = (modo === "reducido") ? redForUI : detForUI;
+}
+
+/* =========================
+   BÚSQUEDA (debounced)
+========================= */
+function recalcularResultados(){
   const q = tokensText(buscador.value);
   busquedaActiva = q.length > 0;
 
-  if (!q.length){
-    limpiarBusqueda();
+  if (!busquedaActiva){
+    // si no hay texto, pero hay filtro estante: mostrar filtro; si no, vista normal
+    if (activeShelfFilter){
+      // reconstruye desde todo con filtro estante
+      rebuildCurrentResults();
+      indiceActual = 0;
+      renderTabla(resultadosActuales);
+      aplicarResultadoActivo(false);
+      return;
+    }
+    // sin búsqueda y sin filtro: vuelve a base
+    resultadosDetallado = productos;
+    resultadosReducido = agruparPorNombre(productos);
+    resultadosActuales = (modo === "reducido") ? resultadosReducido : resultadosDetallado;
+    renderTabla(resultadosActuales);
+    hideResultUI();
     return;
   }
 
+  // búsqueda normal (sobre productos completos)
   resultadosDetallado = productos
     .filter(p => matchAll(p.fulltextNorm, q))
     .map(p => {
@@ -915,25 +866,90 @@ function recalcularResultados(triggerFeedback=false){
 
   resultadosReducido = agruparPorNombre(resultadosDetallado);
 
-  resultadosActuales = (modo === "reducido") ? resultadosReducido : resultadosDetallado;
+  // si hay filtro por estante, aplica filtro encima
+  rebuildCurrentResults();
   indiceActual = 0;
-
-  aplicarResultadoActivo(triggerFeedback, false);
+  renderTabla(resultadosActuales);
+  aplicarResultadoActivo(false);
 }
-buscador.addEventListener("input", () => recalcularResultados(false));
+buscador.addEventListener("input", debounce(recalcularResultados, 180));
 
+/* Picker */
 btnPrev.addEventListener("click", () => {
   if (resultadosActuales.length <= 1) return;
   indiceActual = (indiceActual - 1 + resultadosActuales.length) % resultadosActuales.length;
-  aplicarResultadoActivo(true, true);
+  aplicarResultadoActivo(true);
 });
 btnNext.addEventListener("click", () => {
   if (resultadosActuales.length <= 1) return;
   indiceActual = (indiceActual + 1) % resultadosActuales.length;
-  aplicarResultadoActivo(true, true);
+  aplicarResultadoActivo(true);
 });
 
-/* ===== LOAD SHEET ===== */
+/* =========================
+   FILTRO POR ESTANTE (hover mapa)
+========================= */
+function setShelfFilter(estanteId){
+  activeShelfFilter = (estanteId || "").toUpperCase().trim();
+
+  if (activeShelfFilter){
+    filterBanner.style.display = "block";
+    filterBannerText.textContent = activeShelfFilter;
+  } else {
+    filterBanner.style.display = "none";
+    filterBannerText.textContent = "—";
+  }
+}
+
+/* Delegación sobre el SVG: detecta mouseenter/mouseleave sobre estantes */
+const mapaSvg = document.getElementById("mapa");
+
+mapaSvg.addEventListener("mouseover", (e) => {
+  const g = e.target.closest(".estante-img");
+  if (!g || !mapaSvg.contains(g)) return;
+
+  const estanteId = g.id;
+  if (!estanteId) return;
+
+  // activar filtro solo si cambió
+  if (activeShelfFilter !== estanteId){
+    setShelfFilter(estanteId);
+    // reconstruye lista según búsqueda actual + filtro
+    rebuildCurrentResults();
+    indiceActual = 0;
+    renderTabla(resultadosActuales);
+
+    // mostramos "activo" solo si hay resultados
+    if (resultadosActuales.length){
+      aplicarResultadoActivo(false);
+    } else {
+      metaResults.textContent = "0 resultados";
+      resultCountPill.textContent = "0";
+      resultCard.style.display = "none";
+      clearSearchHighlight();
+      info.textContent = `No hay productos para ${estanteId} con el filtro actual.`;
+      mapBadge.textContent = "—";
+      mostrarVistaEstante("", "");
+    }
+  }
+});
+
+mapaSvg.addEventListener("mouseout", (e) => {
+  const g = e.target.closest(".estante-img");
+  if (!g || !mapaSvg.contains(g)) return;
+
+  // si el mouse sale del estante completo (no solo de un child), quitamos filtro
+  const related = e.relatedTarget;
+  if (related && g.contains(related)) return;
+
+  setShelfFilter("");
+  // volver a lo que corresponda (búsqueda o base)
+  recalcularResultados();
+});
+
+/* =========================
+   LOAD SHEET
+========================= */
 setStatus("warn", "Cargando hoja “Mujer”...");
 
 fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`)
@@ -951,15 +967,13 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
       const variante = r.c[13]?.v || "";
 
       const ubicRaw = r.c[20]?.v || "";
-      const almacenRaw = String(r.c[21]?.v || "").toUpperCase().trim(); // A1 o A1-E10-N8
+      const almacenRaw = String(r.c[21]?.v || "").toUpperCase().trim(); // puede venir A1 o A1-E10-N8
 
       const main = parseCodigo(ubicRaw);
       const reserva = almacenRaw ? parseCodigo(almacenRaw) : { zonaId:"", estanteId:"", nivelId:"", pretty:"", nivelNum:0 };
 
       const p = {
-        barras,
-        nombre,
-        variante,
+        barras, nombre, variante,
         ubic: main.pretty || "",
         almacen: almacenRaw,
 
@@ -968,17 +982,13 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
         nivelId: main.nivelId || "",
 
         _main: (main.zonaId ? main : null),
-        _reserva: (reserva.zonaId ? reserva : null)
+        _reserva: (reserva.zonaId ? reserva : null),
       };
 
       if (!barras && !nombre) continue;
 
       p.nvNorm = norm((p.nombre || "") + " " + (p.variante || ""));
-      p.fulltextNorm = norm(
-        (p.barras||"") + " " + (p.nombre||"") + " " + (p.variante||"") + " " +
-        (p.ubic||"") + " " + (p.almacen||"")
-      );
-
+      p.fulltextNorm = norm((p.barras||"") + " " + (p.nombre||"") + " " + (p.variante||"") + " " + (p.ubic||"") + " " + (p.almacen||""));
       p.nombreNorm = norm(p.nombre);
       p.nombreNormKey = p.nombreNorm;
 
@@ -987,6 +997,7 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
 
     metaCount.textContent = `${productos.length} productos`;
 
+    // carga inicial: reducido por defecto y sin resultado activo
     resultadosDetallado = productos;
     resultadosReducido = agruparPorNombre(productos);
     resultadosActuales = resultadosReducido;
@@ -994,22 +1005,20 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
     badgeDetallado.textContent = String(resultadosDetallado.length || 0);
     badgeReducido.textContent = String(resultadosReducido.length || 0);
 
-    // ✅ IMPORTANTE: al cargar, NO mostramos "resultado activo"
     busquedaActiva = false;
-    resultCard.style.display = "none";
-    metaResults.textContent = "0 resultados";
-    resultCountPill.textContent = "0";
-
     renderTabla(resultadosActuales);
+    hideResultUI();
 
     setStatus("ok", `Listo • ${productos.length} productos cargados`);
   })
   .catch(() => setStatus("bad", "Error cargando la hoja. Revisa permisos del Sheet."));
 
-/* ===== Scanner (QR + Barras) ===== */
-const btnScan = document.getElementById("btnScan");
-const btnCerrar = document.getElementById("btnCerrar");
-const readerDiv = document.getElementById("reader");
+/* =========================
+   Scanner
+========================= */
+const btnScan = $("btnScan");
+const btnCerrar = $("btnCerrar");
+const readerDiv = $("reader");
 let html5QrCode = null;
 
 btnScan.addEventListener("click", () => {
@@ -1029,9 +1038,8 @@ btnScan.addEventListener("click", () => {
           readerDiv.style.display = "none";
           btnCerrar.style.display = "none";
         });
-        feedbackOK();
         buscador.value = codigo;
-        recalcularResultados(false);
+        recalcularResultados();
       }
     );
   });
