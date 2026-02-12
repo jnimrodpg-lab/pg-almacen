@@ -254,7 +254,6 @@
   }
   .map-info .msg{ font-size:13px; color:var(--muted); line-height:1.4; }
 
-  /* ===== Vista Estante Isométrica ===== */
   .shelfIsoWrap{
     width:100%;
     border:1px solid var(--border);
@@ -303,7 +302,6 @@
 
 <div class="layout">
 
-  <!-- IZQUIERDA -->
   <div class="card">
     <div class="card-header">
       <div>
@@ -315,7 +313,7 @@
 
     <div class="controls">
       <div class="search">
-        <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s  |  z1-e1-n6  |  a1-e2-n6" autocomplete="off" />
+        <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s  |  z1-e1-n6  |  z1-e1-n6-p2  |  a1-e2-n6-p1" autocomplete="off" />
       </div>
 
       <div class="chiprow">
@@ -360,6 +358,10 @@
             <span id="kvNivel">—</span>
           </div>
           <div class="kv-row">
+            <b>🎯 Slot</b>
+            <span id="kvSlot">—</span>
+          </div>
+          <div class="kv-row">
             <b>📦 Almacén</b>
             <span id="kvAlmacen">—</span>
           </div>
@@ -383,8 +385,8 @@
               <th style="width:140px;">Barras</th>
               <th>Nombre</th>
               <th style="width:160px;">Variante</th>
-              <th style="width:140px;">Ubicación</th>
-              <th style="width:140px;">Almacén</th>
+              <th style="width:160px;">Ubicación</th>
+              <th style="width:160px;">Almacén</th>
             </tr>
           </thead>
           <tbody id="tabla"></tbody>
@@ -393,7 +395,6 @@
     </div>
   </div>
 
-  <!-- DERECHA -->
   <div class="card sticky">
     <div class="card-header">
       <div>
@@ -407,7 +408,6 @@
       <svg id="isoMap" viewBox="-600 -120 1200 760" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
 
-    <!-- VISTA ESTANTE ISO -->
     <div style="padding:14px; border-top:1px solid var(--border);">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
         <div style="font-weight:800;">Vista estante (isométrico)</div>
@@ -438,21 +438,16 @@
 const sheetID   = "1IU4wMdVImmEbl93kgcCCQAGPiTc28uQdNNaq0bgTF2o";
 const sheetName = "Mujer";
 
-/* ===== LAYOUT FIJO POR ZONA =====
-   - rows/cols: tu grilla real
-   - order: el orden exacto de racks dentro de la grilla (fila por fila)
-   - si order no incluye un rack que exista en el sheet, ese rack se agregará al final.
-*/
 const ZONE_LAYOUT = {
-  Z1: { rows: 2, cols: 4, order: ["Z1-E1","Z1-E2","Z1-E3","Z1-E4","Z1-E5","Z1-E6","Z1-E7","Z1-E8"] },
-  Z2: { rows: 2, cols: 5, order: ["Z2-E1","Z2-E2","Z2-E3","Z2-E4","Z2-E5","Z2-E6","Z2-E7","Z2-E8","Z2-E9","Z2-E10"] },
-  Z3: { rows: 3, cols: 3, order: ["Z3-E1","Z3-E2","Z3-E3","Z3-E4","Z3-E5","Z3-E6","Z3-E7","Z3-E8","Z3-E9"] },
-  A1: { rows: 3, cols: 4, order: ["A1-E1","A1-E2","A1-E3","A1-E4","A1-E5","A1-E6","A1-E7","A1-E8","A1-E9","A1-E10","A1-E11","A1-E12"] },
+  Z1: { rows: 1, cols: 4, order: ["Z1-E1","Z1-E2","Z1-E3","Z1-E4"] },
+  Z2: { rows: 2, cols: 4, order: ["Z2-E1","Z2-E2","Z2-E3","Z2-E4","Z2-E5","Z2-E6","Z2-E7","Z2-E8"] },
+  Z3: { rows: 2, cols: 4, order: ["Z3-E1","Z3-E2","Z3-E3","Z3-E4","Z3-E5","Z3-E6","Z3-E7","Z3-E8"] },
+  A1: { rows: 2, cols: 4, order: ["A1-E1","A1-E2","A1-E3","A1-E4","A1-E5","A1-E6","A1-E7","A1-E8"] },
 };
 
-/* Vista estante */
-const SLOTS_PER_LEVEL = 5; // “celdas” por nivel en la vista estante
-const DEFAULT_SLOT = 3;    // si tu ubicación no trae slot, se pinta el centro
+/* ✅ Vista estante: 3 slots */
+const SLOTS_PER_LEVEL = 3;
+const DEFAULT_SLOT = 2;
 
 /* =========================
    UI refs
@@ -476,6 +471,7 @@ const subLoc = document.getElementById("subLoc");
 const kvUbicacion = document.getElementById("kvUbicacion");
 const kvEstante = document.getElementById("kvEstante");
 const kvNivel = document.getElementById("kvNivel");
+const kvSlot = document.getElementById("kvSlot");
 const kvAlmacen = document.getElementById("kvAlmacen");
 
 const btnClear = document.getElementById("btnClear");
@@ -502,12 +498,12 @@ let resultadosDetallado = [];
 let resultadosReducido = [];
 let resultadosActuales = [];
 let indiceActual = 0;
-let modo = "reducido"; // default ✅
+let modo = "reducido";
 let isLoaded = false;
 
 let racksIndex = { Z1:[], Z2:[], Z3:[], A1:[] };
-let rackNodes = new Map();  // rackId -> <g>
-let zoneNodes = new Map();  // zoneId -> <path>
+let rackNodes = new Map();
+let zoneNodes = new Map();
 let lastHoverQuery = null;
 
 /* =========================
@@ -568,25 +564,39 @@ function matchAll(textoNorm, qTokens){
 }
 
 /* =========================
-   Parse loc: Z1/Z2/Z3/A1
-   expected: z1-e1-n6 / a1-e2-n6
+   Parse loc con SLOT opcional
+   ✅ acepta:
+   - Z1-E1-N6
+   - Z1-E1-N6-P2  (o ...-S2)
 ========================= */
+function clamp(n, min, max){
+  return Math.max(min, Math.min(max, n));
+}
 function parseLoc(raw){
   const s = String(raw || "").trim().toUpperCase();
-  const m = s.match(/^(Z[123]|A1)-(E\d+)-(N\d+)$/);
-  if (!m) return { zonaId:"", estanteId:"", nivelId:"", levelNum:0, pretty:s };
+
+  // grupo4 opcional: -P# o -S#
+  const m = s.match(/^(Z[123]|A1)-(E\d+)-(N\d+)(?:-([PS])(\d+))?$/);
+  if (!m) return { zonaId:"", estanteId:"", nivelId:"", levelNum:0, slotNum:0, pretty:s };
+
   const zonaId = m[1];
   const estanteId = `${zonaId}-${m[2]}`;
+
   const levelNum = parseInt(m[3].replace("N",""), 10) || 0;
   const nivelId = `${estanteId}-${m[3]}`;
-  return { zonaId, estanteId, nivelId, levelNum, pretty:s };
+
+  let slotNum = 0;
+  if (m[5]){
+    slotNum = parseInt(m[5], 10) || 0;
+    // ✅ como tus estantes tienen 3 slots, acotamos 1..3
+    slotNum = clamp(slotNum, 1, SLOTS_PER_LEVEL);
+  }
+
+  return { zonaId, estanteId, nivelId, levelNum, slotNum, pretty:s };
 }
 
 /* =========================
    Vista estante (ISOMÉTRICA)
-   - muestra todos los niveles
-   - dibuja grilla (slots por nivel) en outline
-   - pinta SOLO la celda del producto
 ========================= */
 const ISO_ANGLE = 30 * (Math.PI / 180);
 const COS_30 = Math.cos(ISO_ANGLE);
@@ -613,17 +623,16 @@ function isoLine(from, to, attrs){
 function renderShelfIso(estanteId, levelNum, slotNum){
   const isAlmacen = estanteId.startsWith("A1-");
   const levels = isAlmacen ? 8 : 6;
-  const slots = SLOTS_PER_LEVEL;
+  const slots = SLOTS_PER_LEVEL; // 3
 
-  const rackW = 220;
+  const rackW = 190;
   const rackD = 90;
   const rackH = 220;
   const shelfSpacing = rackH / levels;
 
-  const viewBox = "-260 -300 520 440";
+  const viewBox = "-240 -300 480 440";
   const svg = svgEl("svg", { class:"shelfIsoSvg", viewBox, preserveAspectRatio:"xMidYMid meet" });
 
-  // floor tile
   svg.appendChild(isoFace(
     [toScreen(-20,-20,0), toScreen(rackW+20,-20,0), toScreen(rackW+20,rackD+20,0), toScreen(-20,rackD+20,0)],
     {
@@ -633,24 +642,22 @@ function renderShelfIso(estanteId, levelNum, slotNum){
     }
   ));
 
-  // posts
   const postStyle = { stroke: document.body.classList.contains("dark") ? "#94a3b8" : "#64748b", "stroke-width":"3", "stroke-linecap":"round" };
-  // back
   svg.appendChild(isoLine(toScreen(0,0,0), toScreen(0,0,rackH), postStyle));
   svg.appendChild(isoLine(toScreen(rackW,0,0), toScreen(rackW,0,rackH), postStyle));
 
-  // shelves + grid slots
   const thickness = 3;
   const slotW = rackW / slots;
   const fillHL = "#f97316";
   const strokeHL = "#ea580c";
+
+  const safeSlot = clamp(slotNum || DEFAULT_SLOT, 1, slots);
 
   for (let i=0;i<levels;i++){
     const z = i*shelfSpacing + 10;
     const lvl = i + 1;
     const isTargetLevel = lvl === levelNum;
 
-    // shelf surfaces
     const top = [toScreen(0,0,z), toScreen(rackW,0,z), toScreen(rackW,rackD,z), toScreen(0,rackD,z)];
     const front = [toScreen(0,rackD,z), toScreen(rackW,rackD,z), toScreen(rackW,rackD,z-thickness), toScreen(0,rackD,z-thickness)];
     const right = [toScreen(rackW,0,z), toScreen(rackW,rackD,z), toScreen(rackW,rackD,z-thickness), toScreen(rackW,0,z-thickness)];
@@ -664,7 +671,6 @@ function renderShelfIso(estanteId, levelNum, slotNum){
     svg.appendChild(isoFace(front, { fill: document.body.classList.contains("dark") ? "#1f2a3d" : "#cbd5e1", opacity:"0.85" }));
     svg.appendChild(isoFace(right, { fill: document.body.classList.contains("dark") ? "#22314b" : "#b6c2d3", opacity:"0.85" }));
 
-    // label N#
     const labelPos = toScreen(-16, rackD/2, z + shelfSpacing/2);
     const txt = svgEl("text", {
       x: labelPos.x, y: labelPos.y,
@@ -677,12 +683,10 @@ function renderShelfIso(estanteId, levelNum, slotNum){
     txt.textContent = `N${lvl}`;
     svg.appendChild(txt);
 
-    // slots grid (outlines only)
     for (let s=1;s<=slots;s++){
       const x0 = (s-1)*slotW + 3;
       const w = slotW - 6;
 
-      // a thin “cell” on the shelf top (like a tile)
       const cellTop = [
         toScreen(x0, 8, z + 1),
         toScreen(x0+w, 8, z + 1),
@@ -690,7 +694,7 @@ function renderShelfIso(estanteId, levelNum, slotNum){
         toScreen(x0, rackD-8, z + 1),
       ];
 
-      const isTargetCell = (lvl === levelNum) && (s === slotNum);
+      const isTargetCell = (lvl === levelNum) && (s === safeSlot);
 
       svg.appendChild(isoFace(cellTop, {
         fill: isTargetCell ? fillHL : "transparent",
@@ -701,11 +705,9 @@ function renderShelfIso(estanteId, levelNum, slotNum){
     }
   }
 
-  // front posts last
   svg.appendChild(isoLine(toScreen(0,rackD,0), toScreen(0,rackD,rackH), postStyle));
   svg.appendChild(isoLine(toScreen(rackW,rackD,0), toScreen(rackW,rackD,rackH), postStyle));
 
-  // top label
   const lp = toScreen(rackW/2, rackD/2, rackH + 16);
   svg.appendChild(svgEl("rect", {
     x: lp.x - 50, y: lp.y - 12, width: 100, height: 20, rx: 6,
@@ -720,13 +722,12 @@ function renderShelfIso(estanteId, levelNum, slotNum){
   tl.textContent = estanteId;
   svg.appendChild(tl);
 
-  // container
   const wrap = document.createElement("div");
   wrap.className = "shelfIsoWrap";
   wrap.innerHTML = `
     <div class="shelfIsoTopbar">
       <span>Slots por nivel: <b>${slots}</b></span>
-      <span>Celda pintada: <b>N${levelNum}</b> / <b>Pos ${slotNum}</b></span>
+      <span>Celda pintada: <b>N${levelNum}</b> / <b>Pos ${safeSlot}</b></span>
     </div>
   `;
   wrap.appendChild(svg);
@@ -734,7 +735,7 @@ function renderShelfIso(estanteId, levelNum, slotNum){
   return wrap;
 }
 
-function mostrarVistaEstante(estanteId, levelNum){
+function mostrarVistaEstante(estanteId, levelNum, slotNum){
   if (!estanteId){
     shelfLabel.textContent = "—";
     shelfPreview.innerHTML = `<div style="color:var(--muted); font-size:13px;">
@@ -742,15 +743,13 @@ function mostrarVistaEstante(estanteId, levelNum){
     </div>`;
     return;
   }
-
   shelfLabel.textContent = estanteId;
 
-  // Como tu formato NO trae “slot”, usamos uno default (centro)
-  // Si luego agregas slot a tu nomenclatura, lo parseamos sin problema.
-  const slotNum = DEFAULT_SLOT;
+  // ✅ si no viene slot en la ubicación, cae al centro
+  const slot = clamp(slotNum || DEFAULT_SLOT, 1, SLOTS_PER_LEVEL);
 
   shelfPreview.innerHTML = "";
-  shelfPreview.appendChild(renderShelfIso(estanteId, levelNum || 1, slotNum));
+  shelfPreview.appendChild(renderShelfIso(estanteId, levelNum || 1, slot));
 }
 
 /* =========================
@@ -868,7 +867,7 @@ function setModo(nuevo){
     renderTabla(productos);
     resultCard.style.display = "none";
     clearAllHL();
-    mostrarVistaEstante("", 0);
+    mostrarVistaEstante("", 0, 0);
     metaResults.textContent = "0 resultados";
     resultCountPill.textContent = "0";
   }
@@ -896,7 +895,7 @@ function limpiarBusqueda(){
 
   info.textContent = "Escribe para buscar o pasa el mouse por los racks.";
   mapBadge.textContent = "—";
-  mostrarVistaEstante("", 0);
+  mostrarVistaEstante("", 0, 0);
 
   renderTabla(productos);
   buscador.focus();
@@ -921,7 +920,7 @@ function recalcularResultados(triggerFeedback=false){
     badgeReducido.textContent = "0";
     resultCard.style.display = "none";
     clearAllHL();
-    mostrarVistaEstante("", 0);
+    mostrarVistaEstante("", 0, 0);
     renderTabla(productos);
     return;
   }
@@ -968,7 +967,6 @@ btnDark.addEventListener("click", () => {
   localStorage.setItem("darkMode", document.body.classList.contains("dark") ? "1" : "0");
   btnDark.textContent = document.body.classList.contains("dark") ? "☀️ Modo claro" : "🌙 Modo oscuro";
   setTimeout(()=>renderIsometric(), 30);
-  // Re-render shelf if visible
   if (resultadosActuales.length) setTimeout(()=>aplicarResultadoActivo(false), 50);
 });
 
@@ -1055,14 +1053,13 @@ function drawRack(rack, zoneColor){
     "text-anchor":"middle", "font-size":"11", "font-weight":"900", "font-family":"monospace",
     fill: "#1e293b"
   });
-  txt.textContent = id.split("-")[1]; // E#
+  txt.textContent = id.split("-")[1];
   g.appendChild(rect);
   g.appendChild(txt);
 
   return g;
 }
 
-/* === LAYOUT EXACTO (sin “auto grilla”) === */
 function placeZoneRacks(zoneId, rackIds){
   const layout = ZONE_LAYOUT[zoneId] || { rows: 2, cols: 4, order: [] };
 
@@ -1073,7 +1070,7 @@ function placeZoneRacks(zoneId, rackIds){
     A1:{ ox:300, oy:260, w:300, d:280 },
   }[zoneId];
 
-  const rackW = 55;
+  const rackW = 40;
   const rackD = 120;
   const rackH = 120;
   const levels = (zoneId === "A1") ? 8 : 6;
@@ -1081,7 +1078,6 @@ function placeZoneRacks(zoneId, rackIds){
   const gapX = (origin.w - (layout.cols * rackW)) / Math.max(1, (layout.cols - 1));
   const gapY = (origin.d - (layout.rows * rackD)) / Math.max(1, (layout.rows - 1));
 
-  // orden final: primero order, luego los que falten
   const orderSet = new Set(layout.order);
   const missing = rackIds.filter(id => !orderSet.has(id));
   const finalOrder = [...layout.order.filter(id => rackIds.includes(id)), ...missing];
@@ -1228,7 +1224,7 @@ function aplicarResultadoActivo(triggerFeedback = false){
     clearAllHL();
     info.textContent = "Escribe para buscar o pasa el mouse por los racks.";
     mapBadge.textContent = "—";
-    mostrarVistaEstante("", 0);
+    mostrarVistaEstante("", 0, 0);
     return;
   }
 
@@ -1264,10 +1260,15 @@ function aplicarResultadoActivo(triggerFeedback = false){
   kvUbicacion.textContent = mainPretty || "—";
   kvEstante.textContent = activo.mainLoc?.estanteId || "—";
   kvNivel.textContent = activo.mainLoc?.nivelId || "—";
+  kvSlot.textContent = (activo.mainLoc?.slotNum ? `P${activo.mainLoc.slotNum}` : "—");
   kvAlmacen.textContent = storePretty || "—";
 
-  // ✅ Vista Estante isométrica
-  mostrarVistaEstante(activo.mainLoc?.estanteId || "", activo.mainLoc?.levelNum || 1);
+  // ✅ ahora usa SLOT real si existe, sino centro
+  mostrarVistaEstante(
+    activo.mainLoc?.estanteId || "",
+    activo.mainLoc?.levelNum || 1,
+    activo.mainLoc?.slotNum || 0
+  );
 
   setPickerState();
   if (triggerFeedback) feedbackOK();
@@ -1292,8 +1293,8 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
       const nombre = r.c[12]?.v || "";
       const variante = r.c[13]?.v || "";
 
-      const ubicRaw = r.c[20]?.v || "";    // z1-e1-n6
-      const almacenRaw = r.c[21]?.v || ""; // a1-e2-n6 (o vacío)
+      const ubicRaw = r.c[20]?.v || "";
+      const almacenRaw = r.c[21]?.v || "";
 
       const mainLoc = parseLoc(ubicRaw);
       const storeLoc = parseLoc(almacenRaw);
@@ -1326,7 +1327,7 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
 
     renderIsometric();
   })
-  .catch(() => setStatus("bad", "Error cargando la hoja. Revisa permisos del Sheet."));
+  .catch(() => setStatus("bad", "Error cargando la hoja. Revisa permisos del Sheet.")));
 
 /* =========================
    Scanner
