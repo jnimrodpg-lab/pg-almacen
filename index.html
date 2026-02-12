@@ -10,178 +10,273 @@
     --bg:#f6f6f6; --card:#ffffff; --text:#111827; --muted:#6b7280;
     --border:#e5e7eb; --primary:#2563eb; --danger:#dc2626;
     --warn:#f59e0b; --ok:#16a34a; --shadow:0 10px 25px rgba(0,0,0,.08);
-    --radius:14px; --thead:#111827; --mapbg:#fff; --inputbg:#fff; --chipbg:#fff;
-  }
-  body[data-theme="dark"]{
-    --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#9ca3af;
-    --border:#1f2a44; --shadow:0 12px 30px rgba(0,0,0,.45);
-    --thead:#0b1020; --mapbg:#0b1020; --inputbg:#0b1020; --chipbg:#0b1020;
+    --radius:14px;
   }
   *{ box-sizing:border-box; }
-  body{ margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text); padding:20px; transition:.2s; }
+  body{ margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text); padding:20px; }
 
-  /* ===== HEADER ===== */
-  .topbar{ max-width:1200px; margin:0 auto 16px auto; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  body.dark{
+    --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#94a3b8;
+    --border:#1f2937; --shadow:0 10px 25px rgba(0,0,0,.35);
+  }
+
+  .topbar{
+    max-width:1200px; margin:0 auto 16px auto;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
   .brand{ display:flex; align-items:center; gap:12px; }
-  .logoMark{ width:44px;height:44px;border-radius:14px; background: linear-gradient(135deg, #111827, #374151); box-shadow: var(--shadow); position:relative; overflow:hidden; }
-  body[data-theme="dark"] .logoMark{ background: linear-gradient(135deg, #0b1020, #111827); }
-  .logoMark::before,.logoMark::after{ content:""; position:absolute; top:10px; width:10px; height:24px; border-radius:6px; background: rgba(255,255,255,.85); opacity:.9; }
+  .logoMark{
+    width:44px;height:44px;border-radius:14px;
+    background: linear-gradient(135deg, #111827, #374151);
+    box-shadow: var(--shadow); position:relative; overflow:hidden;
+  }
+  .logoMark::before,.logoMark::after{
+    content:""; position:absolute; top:10px; width:10px; height:24px;
+    border-radius:6px; background: rgba(255,255,255,.85); opacity:.9;
+  }
   .logoMark::before{ left:12px; } .logoMark::after{ right:12px; }
-  .logoBase{ position:absolute; left:10px; right:10px; bottom:8px; height:4px; border-radius:999px; background: rgba(255,255,255,.75); }
-
+  .logoBase{
+    position:absolute; left:10px; right:10px; bottom:8px;
+    height:4px; border-radius:999px; background: rgba(255,255,255,.75);
+  }
   .brandText{ display:flex; flex-direction:column; line-height:1.05; }
   .brandText .title{ font-size:18px; font-weight:900; letter-spacing:.5px; margin:0; }
   .brandText .subtitle{ font-size:12px; color:var(--muted); margin-top:4px; }
-  .brandText .tag{ display:inline-flex; align-items:center; gap:6px; margin-top:6px; font-size:11px; border:1px solid var(--border); background:var(--chipbg); padding:6px 10px; border-radius:999px; width:max-content; }
+  .brandText .tag{
+    display:inline-flex; align-items:center; gap:6px;
+    margin-top:6px; font-size:11px;
+    border:1px solid var(--border); background:var(--card);
+    padding:6px 10px; border-radius:999px; width:max-content;
+  }
 
-  .status{ display:flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid var(--border); border-radius:999px; background:var(--card); box-shadow:0 6px 18px rgba(0,0,0,.05); white-space:nowrap; font-size:13px; color:var(--muted); }
+  .topActions{ display:flex; gap:10px; align-items:center; }
+  .toggle{
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    border-radius:999px;
+    padding:10px 12px;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,.05);
+    font-size:13px;
+  }
+
+  .status{
+    display:flex; align-items:center; gap:8px;
+    padding:10px 12px; border:1px solid var(--border);
+    border-radius:999px; background:var(--card);
+    box-shadow:0 6px 18px rgba(0,0,0,.05);
+    white-space:nowrap; font-size:13px; color:var(--muted);
+  }
   .dot{ width:10px;height:10px;border-radius:999px;background:var(--warn); }
   .dot.ok{ background:var(--ok); } .dot.bad{ background:var(--danger); }
 
-  .themeBtn{ border:1px solid var(--border); background:var(--card); color:var(--text); border-radius:999px; padding:10px 12px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 6px 18px rgba(0,0,0,.05); user-select:none; }
-  .themeBtn .mini{ font-size:12px; color:var(--muted); }
-
-  /* ===== LAYOUT ===== */
-  .layout{ max-width:1200px; margin:0 auto; display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; align-items:start; }
+  .layout{
+    max-width:1200px; margin:0 auto; display:grid;
+    grid-template-columns: 1.1fr .9fr; gap:16px; align-items:start;
+  }
   @media (max-width: 980px){
     .layout{ grid-template-columns:1fr; }
     .sticky{ position:static !important; }
-    .topRight{ flex-wrap:wrap; justify-content:flex-end; }
   }
 
-  .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); overflow:hidden; transition:.2s; }
-  .card-header{ padding:14px 14px 10px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .card{
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
+  }
+  .card-header{
+    padding:14px 14px 10px 14px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
   .card-header h2{ font-size:14px; margin:0; }
   .meta{ font-size:12px; color:var(--muted); }
 
-  /* ===== MAPA ===== */
-  .sticky{ position: sticky; top: 20px; }
-  #mapa{ width:100%; border:1px solid var(--border); border-radius:12px; background:var(--mapbg); }
-
-  .zona{ fill:#e8eef7; stroke:#333; stroke-width:2; transition:.18s; }
-  body[data-theme="dark"] .zona{ fill:#0f1b33; stroke:#32405f; }
-
-  .highlight{ fill:#fbbf24 !important; stroke:#f97316 !important; stroke-width:4; }
-  .hover{ fill:#93c5fd !important; stroke:#2563eb !important; stroke-width:4; }
-
-  .estante-img { cursor:pointer; }
-  .estante-img image { opacity:.98; transition:.18s; }
-  .highlight-slot image{ filter: drop-shadow(0 0 10px rgba(249,115,22,.55)); }
-  .hover-slot image{ filter: drop-shadow(0 0 10px rgba(37,99,235,.55)); }
-  .pinned-slot image{ filter: drop-shadow(0 0 12px rgba(22,163,74,.65)); }
-
-  .nivel-mark{
-    fill: rgba(251,191,36,.35);
-    stroke: rgba(249,115,22,.95);
-    stroke-width: 2;
-    rx: 10; ry: 10;
-    opacity: 0;
-    pointer-events: none;
-    transition: .18s;
-  }
-  .highlight-level .nivel-mark{ opacity: 1; }
-  .hover-level .nivel-mark{ opacity: 1; fill: rgba(147,197,253,.30); stroke: rgba(37,99,235,.95); }
-
-  .map-info{ padding:12px 14px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
-  .map-info .msg{ font-size:13px; color:var(--muted); line-height:1.4; }
-  .pill{ padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid var(--border); background:var(--chipbg); color:var(--muted); white-space:nowrap; }
-
-  /* ===== FORM + TABLA ===== */
   .controls{ padding:14px; display:grid; gap:10px; }
-  .search input{ width:100%; padding:12px; font-size:15px; border:1px solid var(--border); border-radius:12px; outline:none; background:var(--inputbg); color:var(--text); }
-  .search input:focus{ border-color: rgba(37, 99, 235, .6); box-shadow: 0 0 0 4px rgba(37,99,235,.12); }
+  .search input{
+    width:100%; padding:12px; font-size:15px;
+    border:1px solid var(--border); border-radius:12px; outline:none;
+    background:var(--card); color:var(--text);
+  }
+  .search input:focus{
+    border-color: rgba(37, 99, 235, .6);
+    box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+  }
 
   .btnrow{ display:flex; gap:10px; flex-wrap:wrap; }
-  .btn{ flex:1; min-width:140px; border:none; border-radius:12px; padding:12px; font-size:14px; cursor:pointer; color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .btn{
+    flex:1; min-width:140px; border:none; border-radius:12px;
+    padding:12px; font-size:14px; cursor:pointer; color:#fff;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
   .btn.primary{ background:var(--primary); }
   .btn.danger{ background:var(--danger); }
   .btn.dark{ background:#111827; }
-  body[data-theme="dark"] .btn.dark{ background:#0b1020; border:1px solid var(--border); }
+  body.dark .btn.dark{ background:#334155; }
 
   .chiprow{ display:flex; gap:8px; flex-wrap:wrap; }
-  .chip{ border:1px solid var(--border); background:var(--chipbg); color:var(--text); border-radius:999px; padding:8px 10px; font-size:12px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; user-select:none; }
-  .chip .badge{ font-size:11px; padding:3px 8px; border-radius:999px; border:1px solid var(--border); background:rgba(255,255,255,.04); color:var(--muted); }
-  .chip.active{ border-color: rgba(37,99,235,.35); box-shadow: 0 0 0 4px rgba(37,99,235,.10); }
-
+  .chip{
+    border:1px solid var(--border);
+    background:var(--card); color:var(--text);
+    border-radius:999px;
+    padding:8px 10px;
+    font-size:12px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    user-select:none;
+  }
+  .chip .badge{
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#f9fafb;
+    color:var(--muted);
+  }
+  body.dark .chip .badge{ background:#0b1220; }
+  .chip.active{
+    border-color: rgba(37,99,235,.35);
+    box-shadow: 0 0 0 4px rgba(37,99,235,.10);
+  }
+  .chip.active .badge{
+    border-color: rgba(37,99,235,.35);
+    background: rgba(37,99,235,.08);
+    color: #1f3b8f;
+  }
   .hint{ font-size:12px; color:var(--muted); line-height:1.4; }
 
-  .result-card{ margin-top:6px; padding:12px; border:1px dashed var(--border); border-radius:12px; background:rgba(255,255,255,.04); display:none; }
+  .result-card{
+    margin-top:6px; padding:12px; border:1px dashed var(--border);
+    border-radius:12px; background:rgba(0,0,0,.02); display:none;
+  }
+  body.dark .result-card{ background:rgba(255,255,255,.03); }
   .result-title{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .bigloc{ margin-top:8px; font-size:22px; font-weight:800; letter-spacing:.5px; }
   .sub{ margin-top:6px; font-size:12px; color:var(--muted); }
 
   .kv{ margin-top:10px; display:grid; gap:8px; }
-  .kv-row{ display:flex; justify-content:space-between; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:12px; background:rgba(255,255,255,.03); font-size:12px; }
-  .kv-row b{ color:var(--text); } .kv-row span{ color:var(--muted); text-align:right; }
+  .kv-row{
+    display:flex; justify-content:space-between; gap:10px;
+    padding:10px 12px; border:1px solid var(--border);
+    border-radius:12px; background:var(--card); font-size:12px;
+  }
+  .kv-row b{ color:var(--text); }
+  .kv-row span{ color:var(--muted); text-align:right; }
 
   .picker{ margin-top:10px; display:flex; gap:10px; align-items:center; }
-  .picker button{ border:1px solid var(--border); background:var(--chipbg); color:var(--text); border-radius:12px; padding:10px 12px; cursor:pointer; flex:1; min-width:120px; font-weight:700; }
+  .picker button{
+    border:1px solid var(--border); background:var(--card); color:var(--text);
+    border-radius:12px; padding:10px 12px; cursor:pointer;
+    flex:1; min-width:120px; font-weight:700;
+  }
   .picker button:disabled{ opacity:.45; cursor:not-allowed; }
-  .picker .counter{ padding:10px 12px; border:1px solid var(--border); background:var(--chipbg); border-radius:12px; color:var(--muted); font-size:12px; white-space:nowrap; }
+  .picker .counter{
+    padding:10px 12px; border:1px solid var(--border);
+    background:var(--card); border-radius:12px; color:var(--muted);
+    font-size:12px; white-space:nowrap;
+  }
 
   .table-wrap{ border-top:1px solid var(--border); }
   .table-scroll{ max-height: 520px; overflow:auto; }
   table{ width:100%; border-collapse:collapse; font-size:13px; }
-  thead th{ position:sticky; top:0; background:var(--thead); color:#fff; text-align:left; padding:10px; z-index:2; }
+  thead th{
+    position:sticky; top:0; background:#111827; color:#fff;
+    text-align:left; padding:10px; z-index:2;
+  }
   tbody td{ padding:10px; border-bottom:1px solid var(--border); vertical-align:top; }
-  tbody tr:nth-child(even){ background:rgba(255,255,255,.03); }
-  tbody tr.active{ background:rgba(245, 158, 11, .16) !important; outline:2px solid rgba(245, 158, 11, .35); }
+  tbody tr:nth-child(even){ background:rgba(0,0,0,.02); }
+  body.dark tbody tr:nth-child(even){ background:rgba(255,255,255,.03); }
+  tbody tr.active{
+    background:#fff7ed !important;
+    outline:2px solid rgba(245, 158, 11, .35);
+  }
+  body.dark tbody tr.active{ background:rgba(245, 158, 11, .12) !important; }
 
-  /* ===== VISTA ESTANTE (TODOS LOS NIVELES VISIBLES) ===== */
-  .shelf-image-wrap{
-    position:relative;
+  .sticky{ position: sticky; top: 20px; }
+  #isoWrap{ padding:14px; }
+  #isoMap{
     width:100%;
-    max-width:760px;
-    margin:0 auto;
-    aspect-ratio: 900 / 520;
-  }
-  .shelf-image{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:contain;
-    border-radius:10px;
-    user-select:none;
-    pointer-events:none;
-  }
-  .shelf-level-box{
-    position:absolute;
-    left:14%;
-    width:72%;
-    border:2px solid rgba(17,24,39,.28);
-    background:rgba(255,255,255,.08);
-    border-radius:10px;
-    transition:.18s;
-  }
-  .shelf-level-box .level-tag{
-    position:absolute;
-    left:-52px;
-    top:50%;
-    transform:translateY(-50%);
-    font-size:11px;
-    font-weight:800;
-    color:var(--muted);
-    background:var(--chipbg);
+    height:420px;
     border:1px solid var(--border);
-    border-radius:999px;
-    padding:2px 8px;
-  }
-  .shelf-level-box.level-highlight{
-    background:rgba(251,191,36,.35);
-    border-color:#f97316;
-    box-shadow:0 0 0 3px rgba(249,115,22,.15) inset;
+    border-radius:12px;
+    background:var(--card);
+    display:block;
   }
 
-  .filter-banner{ display:none; margin-top:8px; padding:10px 12px; border:1px solid var(--border); border-radius:12px; background:rgba(37,99,235,.08); color:var(--text); font-size:12px; }
-  .filter-banner b{ font-weight:900; }
-  body[data-theme="dark"] .filter-banner{ background:rgba(37,99,235,.14); }
+  .iso-zone{ transition:.18s; }
+  .iso-zone.z1{ fill:rgba(20,184,166,.10); stroke:rgba(20,184,166,.55); }
+  .iso-zone.z2{ fill:rgba(45,212,191,.10); stroke:rgba(45,212,191,.55); }
+  .iso-zone.z3{ fill:rgba(94,234,212,.10); stroke:rgba(94,234,212,.55); }
+  .iso-zone.a1{ fill:rgba(147,197,253,.10); stroke:rgba(147,197,253,.55); }
+  body.dark .iso-zone.z1{ fill:rgba(20,184,166,.06); stroke:rgba(20,184,166,.45); }
+  body.dark .iso-zone.z2{ fill:rgba(45,212,191,.06); stroke:rgba(45,212,191,.45); }
+  body.dark .iso-zone.z3{ fill:rgba(94,234,212,.06); stroke:rgba(94,234,212,.45); }
+  body.dark .iso-zone.a1{ fill:rgba(147,197,253,.06); stroke:rgba(147,197,253,.45); }
 
-  .filter-actions{ margin-top:8px; display:none; gap:8px; align-items:center; }
-  .miniBtn{ border:1px solid var(--border); background:var(--chipbg); color:var(--text); border-radius:10px; padding:8px 10px; cursor:pointer; font-size:12px; font-weight:800; }
-  .miniBtn.danger{ border-color: rgba(220,38,38,.4); background: rgba(220,38,38,.10); }
+  .iso-zone.mainHL{ fill:rgba(251,191,36,.25) !important; stroke:#f97316 !important; stroke-width:3; }
+  .iso-zone.storeHL{ fill:rgba(34,197,94,.18) !important; stroke:#16a34a !important; stroke-width:3; }
+
+  .rack{ cursor:pointer; transition:.18s; }
+  .rack.dim{ opacity:.25; }
+  .rack .post{ stroke:#64748b; stroke-width:2.3; stroke-linecap:round; }
+  .rack .shelfTop{ fill:#cbd5e1; stroke:#64748b; stroke-width:1; }
+  .rack .shelfFront{ fill:#94a3b8; }
+  .rack .shelfRight{ fill:#a3b3c8; }
+
+  body.dark .rack .post{ stroke:#94a3b8; }
+  body.dark .rack .shelfTop{ fill:#243045; stroke:#94a3b8; }
+  body.dark .rack .shelfFront{ fill:#1f2a3d; }
+  body.dark .rack .shelfRight{ fill:#22314b; }
+
+  .rack.mainHL .post{ stroke:#f97316; }
+  .rack.mainHL .shelfTop{ fill:#fef3c7; stroke:#f97316; }
+  .rack.mainHL .shelfFront{ fill:#fbbf24; }
+  .rack.mainHL .shelfRight{ fill:#f59e0b; }
+
+  .rack.storeHL .post{ stroke:#16a34a; }
+  .rack.storeHL .shelfTop{ fill:#dcfce7; stroke:#16a34a; }
+  .rack.storeHL .shelfFront{ fill:#86efac; }
+  .rack.storeHL .shelfRight{ fill:#22c55e; }
+
+  .rack.hoverHL .post{ stroke:#2563eb; }
+  .rack.hoverHL .shelfTop{ fill:rgba(37,99,235,.15); stroke:#2563eb; }
 
   #reader{ display:none; padding:0 14px 14px 14px; }
+  .pill{
+    padding:6px 10px; border-radius:999px;
+    font-size:12px; border:1px solid var(--border);
+    background:var(--card); color:var(--muted); white-space:nowrap;
+  }
+  .map-info{
+    padding:12px 14px; border-top:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+  }
+  .map-info .msg{ font-size:13px; color:var(--muted); line-height:1.4; }
+
+  /* ===== Vista Estante Isométrica ===== */
+  .shelfIsoWrap{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:var(--card);
+    overflow:hidden;
+  }
+  .shelfIsoTopbar{
+    padding:10px 12px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    font-size:12px;
+    color:var(--muted);
+  }
+  .shelfIsoSvg{
+    width:100%;
+    height:260px;
+    display:block;
+  }
 </style>
 </head>
 
@@ -197,13 +292,8 @@
     </div>
   </div>
 
-  <div class="topRight" style="display:flex; gap:10px; align-items:center;">
-    <button class="themeBtn" id="themeToggle" type="button" aria-label="Cambiar tema">
-      <span id="themeIcon">🌙</span>
-      <span id="themeText">Modo oscuro</span>
-      <span class="mini" id="themeMini">OFF</span>
-    </button>
-
+  <div class="topActions">
+    <button class="toggle" id="btnDark">🌙 Modo oscuro</button>
     <div class="status">
       <span class="dot" id="statusDot"></span>
       <span id="statusText">Cargando hoja “Mujer”...</span>
@@ -225,19 +315,9 @@
 
     <div class="controls">
       <div class="search">
-        <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s | z2-e3-n1 | a1-e10-n8" autocomplete="off" />
+        <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s  |  z1-e1-n6  |  a1-e2-n6" autocomplete="off" />
       </div>
 
-      <div class="filter-banner" id="filterBanner">
-        <span id="filterBannerMode">Preview:</span> estante <b id="filterBannerText">—</b>
-      </div>
-
-      <div class="filter-actions" id="filterActions">
-        <button class="miniBtn danger" id="btnClearShelf" type="button">Quitar filtro fijo</button>
-        <span class="pill" id="pillPinned">Fijo</span>
-      </div>
-
-      <!-- CHIPS -->
       <div class="chiprow">
         <div class="chip active" id="chipReducido" role="button" tabindex="0">
           Reducido (por nombre) <span class="badge" id="badgeReducido">0</span>
@@ -254,7 +334,7 @@
       </div>
 
       <div class="hint">
-        <b>Hover</b> = preview • <b>Click</b> = fijar y saltar al primer producto del estante.
+        <b>Reducido:</b> 1 fila por nombre. <b>Detallado:</b> todas las coincidencias.
       </div>
 
       <div class="result-card" id="resultCard">
@@ -267,10 +347,22 @@
         <div class="sub" id="subLoc">—</div>
 
         <div class="kv">
-          <div class="kv-row"><b>📍 Ubicación</b><span id="kvUbicacion">—</span></div>
-          <div class="kv-row"><b>🧱 Estante</b><span id="kvEstante">—</span></div>
-          <div class="kv-row"><b>📚 Nivel / Repisa</b><span id="kvNivel">—</span></div>
-          <div class="kv-row"><b>📦 Reserva (ALMACÉN)</b><span id="kvReserva">—</span></div>
+          <div class="kv-row">
+            <b>📍 Ubicación</b>
+            <span id="kvUbicacion">—</span>
+          </div>
+          <div class="kv-row">
+            <b>🧱 Estante</b>
+            <span id="kvEstante">—</span>
+          </div>
+          <div class="kv-row">
+            <b>📚 Nivel</b>
+            <span id="kvNivel">—</span>
+          </div>
+          <div class="kv-row">
+            <b>📦 Almacén</b>
+            <span id="kvAlmacen">—</span>
+          </div>
         </div>
 
         <div class="picker">
@@ -292,7 +384,7 @@
               <th>Nombre</th>
               <th style="width:160px;">Variante</th>
               <th style="width:140px;">Ubicación</th>
-              <th style="width:140px;">ALMACÉN</th>
+              <th style="width:140px;">Almacén</th>
             </tr>
           </thead>
           <tbody id="tabla"></tbody>
@@ -306,54 +398,35 @@
     <div class="card-header">
       <div>
         <h2>Plano general</h2>
-        <div class="meta">Zonas + Estante + Nivel</div>
+        <div class="meta">Isométrico • Hover filtra por estante</div>
       </div>
       <div class="meta" id="mapBadge">—</div>
     </div>
 
-    <div style="padding:14px;">
-      <svg id="mapa" viewBox="0 0 700 800">
-        <rect id="Z1" class="zona" x="100" y="20" width="300" height="120"/>
-        <text x="250" y="90" text-anchor="middle" font-size="16" fill="currentColor">ZONA 1</text>
-
-        <rect id="Z2" class="zona" x="100" y="150" width="300" height="300"/>
-        <text x="250" y="320" text-anchor="middle" font-size="16" fill="currentColor">ZONA 2</text>
-
-        <rect id="A1" class="zona" x="420" y="150" width="220" height="300" stroke-dasharray="6"/>
-        <text x="530" y="310" text-anchor="middle" font-size="16" fill="currentColor">ALMACÉN</text>
-        <text x="530" y="330" text-anchor="middle" font-size="12" fill="currentColor" opacity=".65">A1</text>
-
-        <rect id="Z3" class="zona" x="100" y="460" width="300" height="300"/>
-        <text x="250" y="650" text-anchor="middle" font-size="16" fill="currentColor">ZONA 3</text>
-
-        <!-- EJEMPLO: DUPLICA estantes con ids reales (Z1-E2, Z2-E3, A1-E10...) -->
-        <g id="Z1-E2" class="estante-img" data-levels="6" transform="translate(140 35)">
-          <image href="assets/estantes/estante-mod1.png" width="70" height="90"></image>
-          <rect class="nivel-mark" x="0" y="0" width="70" height="15"></rect>
-        </g>
-        <text x="175" y="30" font-size="10" text-anchor="middle" fill="currentColor" opacity=".65">E2</text>
-      </svg>
+    <div id="isoWrap">
+      <svg id="isoMap" viewBox="-600 -120 1200 760" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
 
-    <!-- VISTA ESTANTE -->
+    <!-- VISTA ESTANTE ISO -->
     <div style="padding:14px; border-top:1px solid var(--border);">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
-        <div style="font-weight:800;">Vista estante seleccionado</div>
+        <div style="font-weight:800;">Vista estante (isométrico)</div>
         <div class="pill" id="shelfLabel">—</div>
       </div>
 
-      <div id="shelfPreview" style="border:1px solid var(--border); border-radius:12px; background:var(--chipbg); padding:12px; min-height:220px;">
+      <div id="shelfPreview" style="min-height:280px;">
         <div style="color:var(--muted); font-size:13px;">
-          Selecciona un producto para ver el estante y el nivel resaltado.
+          Selecciona un producto para ver el estante y la celda resaltada.
         </div>
       </div>
     </div>
 
     <div class="map-info">
-      <div class="msg" id="info">Pasa el mouse por la tabla o busca un producto.</div>
+      <div class="msg" id="info">Escribe para buscar o pasa el mouse por los racks.</div>
       <div class="pill" id="resultCountPill">0</div>
     </div>
   </div>
+
 </div>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
@@ -364,60 +437,62 @@
 ========================= */
 const sheetID   = "1IU4wMdVImmEbl93kgcCCQAGPiTc28uQdNNaq0bgTF2o";
 const sheetName = "Mujer";
-const IMG_EST_MAPA  = "assets/estantes/estante-mod1.png";
-const IMG_EST_VISTA = "assets/estantes_vista/estante-mod1-vista1.png";
+
+/* ===== LAYOUT FIJO POR ZONA =====
+   - rows/cols: tu grilla real
+   - order: el orden exacto de racks dentro de la grilla (fila por fila)
+   - si order no incluye un rack que exista en el sheet, ese rack se agregará al final.
+*/
+const ZONE_LAYOUT = {
+  Z1: { rows: 2, cols: 4, order: ["Z1-E1","Z1-E2","Z1-E3","Z1-E4","Z1-E5","Z1-E6","Z1-E7","Z1-E8"] },
+  Z2: { rows: 2, cols: 5, order: ["Z2-E1","Z2-E2","Z2-E3","Z2-E4","Z2-E5","Z2-E6","Z2-E7","Z2-E8","Z2-E9","Z2-E10"] },
+  Z3: { rows: 3, cols: 3, order: ["Z3-E1","Z3-E2","Z3-E3","Z3-E4","Z3-E5","Z3-E6","Z3-E7","Z3-E8","Z3-E9"] },
+  A1: { rows: 3, cols: 4, order: ["A1-E1","A1-E2","A1-E3","A1-E4","A1-E5","A1-E6","A1-E7","A1-E8","A1-E9","A1-E10","A1-E11","A1-E12"] },
+};
+
+/* Vista estante */
+const SLOTS_PER_LEVEL = 5; // “celdas” por nivel en la vista estante
+const DEFAULT_SLOT = 3;    // si tu ubicación no trae slot, se pinta el centro
 
 /* =========================
-   DOM helpers
+   UI refs
 ========================= */
-const $ = (id) => document.getElementById(id);
+const tabla = document.getElementById("tabla");
+const buscador = document.getElementById("buscar");
+const info = document.getElementById("info");
+const metaCount = document.getElementById("metaCount");
+const metaResults = document.getElementById("metaResults");
+const mapBadge = document.getElementById("mapBadge");
+const resultCountPill = document.getElementById("resultCountPill");
 
-const tablaBody = $("tabla");
-const buscador = $("buscar");
-const info = $("info");
-const metaCount = $("metaCount");
-const metaResults = $("metaResults");
-const mapBadge = $("mapBadge");
-const resultCountPill = $("resultCountPill");
+const statusDot = document.getElementById("statusDot");
+const statusText = document.getElementById("statusText");
 
-const statusDot = $("statusDot");
-const statusText = $("statusText");
+const resultCard = document.getElementById("resultCard");
+const pillZona = document.getElementById("pillZona");
+const bigLoc = document.getElementById("bigLoc");
+const subLoc = document.getElementById("subLoc");
 
-const resultCard = $("resultCard");
-const pillZona = $("pillZona");
-const bigLoc = $("bigLoc");
-const subLoc = $("subLoc");
+const kvUbicacion = document.getElementById("kvUbicacion");
+const kvEstante = document.getElementById("kvEstante");
+const kvNivel = document.getElementById("kvNivel");
+const kvAlmacen = document.getElementById("kvAlmacen");
 
-const kvUbicacion = $("kvUbicacion");
-const kvEstante = $("kvEstante");
-const kvNivel = $("kvNivel");
-const kvReserva = $("kvReserva");
+const btnClear = document.getElementById("btnClear");
+const btnPrev = document.getElementById("btnPrev");
+const btnNext = document.getElementById("btnNext");
+const pickerCounter = document.getElementById("pickerCounter");
 
-const btnClear = $("btnClear");
-const btnPrev = $("btnPrev");
-const btnNext = $("btnNext");
-const pickerCounter = $("pickerCounter");
+const chipReducido = document.getElementById("chipReducido");
+const chipDetallado = document.getElementById("chipDetallado");
+const badgeReducido = document.getElementById("badgeReducido");
+const badgeDetallado = document.getElementById("badgeDetallado");
 
-const chipReducido = $("chipReducido");
-const chipDetallado = $("chipDetallado");
-const badgeReducido = $("badgeReducido");
-const badgeDetallado = $("badgeDetallado");
+const shelfPreview = document.getElementById("shelfPreview");
+const shelfLabel = document.getElementById("shelfLabel");
 
-const shelfPreview = $("shelfPreview");
-const shelfLabel = $("shelfLabel");
-
-/* Dark mode */
-const themeToggle = $("themeToggle");
-const themeIcon = $("themeIcon");
-const themeText = $("themeText");
-const themeMini = $("themeMini");
-
-/* Filtro por estante UI */
-const filterBanner = $("filterBanner");
-const filterBannerText = $("filterBannerText");
-const filterBannerMode = $("filterBannerMode");
-const filterActions = $("filterActions");
-const btnClearShelf = $("btnClearShelf");
+const btnDark = document.getElementById("btnDark");
+const isoMap = document.getElementById("isoMap");
 
 /* =========================
    STATE
@@ -427,44 +502,39 @@ let resultadosDetallado = [];
 let resultadosReducido = [];
 let resultadosActuales = [];
 let indiceActual = 0;
-let modo = "reducido";
-let busquedaActiva = false;
-let activeRowEl = null;
+let modo = "reducido"; // default ✅
+let isLoaded = false;
 
-/* Filtros por estante */
-let shelfHoverId = "";
-let shelfPinnedId = "";
+let racksIndex = { Z1:[], Z2:[], Z3:[], A1:[] };
+let rackNodes = new Map();  // rackId -> <g>
+let zoneNodes = new Map();  // zoneId -> <path>
+let lastHoverQuery = null;
 
 /* =========================
-   THEME
+   Feedback
 ========================= */
-function applyTheme(theme){
-  if (theme === "dark"){
-    document.body.setAttribute("data-theme", "dark");
-    themeIcon.textContent = "☀️";
-    themeText.textContent = "Modo claro";
-    themeMini.textContent = "ON";
-  } else {
-    document.body.removeAttribute("data-theme");
-    themeIcon.textContent = "🌙";
-    themeText.textContent = "Modo oscuro";
-    themeMini.textContent = "OFF";
-  }
-  localStorage.setItem("theme", theme);
+let audioCtx = null;
+function beep(freq = 880, ms = 90, vol = 0.06){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = "sine"; o.frequency.value = freq; g.gain.value = vol;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); setTimeout(() => o.stop(), ms);
+  }catch(e){}
 }
-(function initTheme(){
-  const saved = localStorage.getItem("theme");
-  if (saved) return applyTheme(saved);
-  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  applyTheme(prefersDark ? "dark" : "light");
-})();
-themeToggle.addEventListener("click", () => {
-  const isDark = document.body.getAttribute("data-theme") === "dark";
-  applyTheme(isDark ? "light" : "dark");
-});
+function vibrar(pattern = [60, 40, 60]){
+  try{ if (navigator.vibrate) navigator.vibrate(pattern); }catch(e){}
+}
+function feedbackOK(){
+  beep(880, 80, 0.06);
+  setTimeout(() => beep(1320, 70, 0.05), 90);
+  vibrar([50, 35, 50]);
+}
 
 /* =========================
-   UTIL
+   Helpers
 ========================= */
 function setStatus(type, text){
   statusDot.className = "dot" + (type === "ok" ? " ok" : type === "bad" ? " bad" : "");
@@ -472,192 +542,261 @@ function setStatus(type, text){
 }
 function escapeHtml(str){
   return String(str || "")
-    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
+
 function norm(s){
-  return String(s || "").toLowerCase().normalize("NFD")
-    .replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9\s-]/g, " ")
-    .replace(/\s+/g, " ").trim();
+  return String(s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
-function tokensText(s){
+function tokens(s){
   const stop = new Set(["talla","color","de","para","con","sin","un","una","y","el","la","los","las"]);
   return norm(s).split(" ").filter(w => w && !stop.has(w));
 }
-function debounce(fn, ms=160){
-  let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
+function matchAll(textoNorm, qTokens){
+  for (const t of qTokens) if (!textoNorm.includes(t)) return false;
+  return true;
 }
 
 /* =========================
-   PARSE
+   Parse loc: Z1/Z2/Z3/A1
+   expected: z1-e1-n6 / a1-e2-n6
 ========================= */
-function parseCodigo(raw){
+function parseLoc(raw){
   const s = String(raw || "").trim().toUpperCase();
-  const m = s.match(/^(Z[123]|A1)(?:-(E\d+))?(?:-(N\d+))?$/);
-  if (!m) return { zonaId: "", estanteId: "", nivelId: "", pretty: s, nivelNum: 0 };
-  const zonaId = m[1] || "";
-  const e = m[2] || "";
-  const n = m[3] || "";
-  const estanteId = (zonaId && e) ? `${zonaId}-${e}` : "";
-  const nivelId   = (estanteId && n) ? `${estanteId}-${n}` : "";
-  const nivelNum = n ? Number(n.replace("N","")) : 0;
-  return { zonaId, estanteId, nivelId, pretty: s, nivelNum };
+  const m = s.match(/^(Z[123]|A1)-(E\d+)-(N\d+)$/);
+  if (!m) return { zonaId:"", estanteId:"", nivelId:"", levelNum:0, pretty:s };
+  const zonaId = m[1];
+  const estanteId = `${zonaId}-${m[2]}`;
+  const levelNum = parseInt(m[3].replace("N",""), 10) || 0;
+  const nivelId = `${estanteId}-${m[3]}`;
+  return { zonaId, estanteId, nivelId, levelNum, pretty:s };
 }
 
 /* =========================
-   MAPA highlights
+   Vista estante (ISOMÉTRICA)
+   - muestra todos los niveles
+   - dibuja grilla (slots por nivel) en outline
+   - pinta SOLO la celda del producto
 ========================= */
-function clearHover(){
-  document.querySelectorAll(".zona").forEach(z => z.classList.remove("hover"));
-  document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("hover-slot","hover-level"));
-}
-function clearSearchHighlight(){
-  document.querySelectorAll(".zona").forEach(z => z.classList.remove("highlight"));
-  document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("highlight-slot","highlight-level"));
-}
-function clearPinnedVisual(){
-  document.querySelectorAll(".estante-img").forEach(e => e.classList.remove("pinned-slot"));
-}
-function setShelfLevelMark(estanteId, nivelNum, mode){
-  const g = document.getElementById(estanteId);
-  if (!g) return;
-  const img = g.querySelector("image");
-  if (img) img.setAttribute("href", IMG_EST_MAPA);
-  const mark = g.querySelector(".nivel-mark");
-  if (!mark) return;
+const ISO_ANGLE = 30 * (Math.PI / 180);
+const COS_30 = Math.cos(ISO_ANGLE);
+const SIN_30 = Math.sin(ISO_ANGLE);
+const toScreen = (x,y,z)=>({ x:(x-y)*COS_30, y:(x+y)*SIN_30 - z });
 
-  const levels = Number(g.dataset.levels || 6);
-  const w = Number(img?.getAttribute("width") || 60);
-  const h = Number(img?.getAttribute("height") || 90);
-
-  const n = Math.max(1, Math.min(levels, Number(nivelNum || 1)));
-  const bandH = h / levels;
-  const y = (n - 1) * bandH;
-
-  mark.setAttribute("x", 0);
-  mark.setAttribute("y", y);
-  mark.setAttribute("width", w);
-  mark.setAttribute("height", bandH);
-
-  g.classList.toggle("hover-level", mode === "hover");
-  g.classList.toggle("highlight-level", mode === "search");
-}
-function addSearchHighlight(zonaId, estanteId, nivelId){
-  if (zonaId) document.getElementById(zonaId)?.classList.add("highlight");
-  if (estanteId){
-    const g = document.getElementById(estanteId);
-    g?.classList.add("highlight-slot");
-    const m = (nivelId || "").match(/-N(\d+)$/i);
-    const nivelNum = m ? Number(m[1]) : 1;
-    if (g?.classList.contains("estante-img")) setShelfLevelMark(estanteId, nivelNum, "search");
+function svgEl(tag, attrs = {}, children = []){
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k,v] of Object.entries(attrs)){
+    if (v === null || v === undefined) continue;
+    el.setAttribute(k, String(v));
   }
+  for (const c of children) el.appendChild(c);
+  return el;
 }
-function applySearchHighlightMulti(main, reserva){
-  clearSearchHighlight();
-  if (main) addSearchHighlight(main.zonaId, main.estanteId, main.nivelId);
-  if (reserva) addSearchHighlight(reserva.zonaId, reserva.estanteId, reserva.nivelId);
+function isoFace(coords, attrs){
+  const d = `M ${coords[0].x} ${coords[0].y} L ${coords[1].x} ${coords[1].y} L ${coords[2].x} ${coords[2].y} L ${coords[3].x} ${coords[3].y} Z`;
+  return svgEl("path", { d, ...attrs });
 }
-function applyHover(zonaId, estanteId, nivelId){
-  clearHover();
-  if (zonaId) document.getElementById(zonaId)?.classList.add("hover");
-  if (estanteId){
-    const g = document.getElementById(estanteId);
-    g?.classList.add("hover-slot");
-    const m = (nivelId || "").match(/-N(\d+)$/i);
-    const nivelNum = m ? Number(m[1]) : 1;
-    if (g?.classList.contains("estante-img")) setShelfLevelMark(estanteId, nivelNum, "hover");
+function isoLine(from, to, attrs){
+  return svgEl("line", { x1:from.x, y1:from.y, x2:to.x, y2:to.y, ...attrs });
+}
+
+function renderShelfIso(estanteId, levelNum, slotNum){
+  const isAlmacen = estanteId.startsWith("A1-");
+  const levels = isAlmacen ? 8 : 6;
+  const slots = SLOTS_PER_LEVEL;
+
+  const rackW = 220;
+  const rackD = 90;
+  const rackH = 220;
+  const shelfSpacing = rackH / levels;
+
+  const viewBox = "-260 -300 520 440";
+  const svg = svgEl("svg", { class:"shelfIsoSvg", viewBox, preserveAspectRatio:"xMidYMid meet" });
+
+  // floor tile
+  svg.appendChild(isoFace(
+    [toScreen(-20,-20,0), toScreen(rackW+20,-20,0), toScreen(rackW+20,rackD+20,0), toScreen(-20,rackD+20,0)],
+    {
+      fill: document.body.classList.contains("dark") ? "#0b1220" : "#f8fafc",
+      stroke: document.body.classList.contains("dark") ? "#1f2937" : "#cbd5e1",
+      "stroke-width":"1"
+    }
+  ));
+
+  // posts
+  const postStyle = { stroke: document.body.classList.contains("dark") ? "#94a3b8" : "#64748b", "stroke-width":"3", "stroke-linecap":"round" };
+  // back
+  svg.appendChild(isoLine(toScreen(0,0,0), toScreen(0,0,rackH), postStyle));
+  svg.appendChild(isoLine(toScreen(rackW,0,0), toScreen(rackW,0,rackH), postStyle));
+
+  // shelves + grid slots
+  const thickness = 3;
+  const slotW = rackW / slots;
+  const fillHL = "#f97316";
+  const strokeHL = "#ea580c";
+
+  for (let i=0;i<levels;i++){
+    const z = i*shelfSpacing + 10;
+    const lvl = i + 1;
+    const isTargetLevel = lvl === levelNum;
+
+    // shelf surfaces
+    const top = [toScreen(0,0,z), toScreen(rackW,0,z), toScreen(rackW,rackD,z), toScreen(0,rackD,z)];
+    const front = [toScreen(0,rackD,z), toScreen(rackW,rackD,z), toScreen(rackW,rackD,z-thickness), toScreen(0,rackD,z-thickness)];
+    const right = [toScreen(rackW,0,z), toScreen(rackW,rackD,z), toScreen(rackW,rackD,z-thickness), toScreen(rackW,0,z-thickness)];
+
+    svg.appendChild(isoFace(top, {
+      fill: document.body.classList.contains("dark") ? "#243045" : "#e2e8f0",
+      stroke: document.body.classList.contains("dark") ? "#94a3b8" : "#94a3b8",
+      "stroke-width":"0.7",
+      opacity: isTargetLevel ? "1" : "0.85"
+    }));
+    svg.appendChild(isoFace(front, { fill: document.body.classList.contains("dark") ? "#1f2a3d" : "#cbd5e1", opacity:"0.85" }));
+    svg.appendChild(isoFace(right, { fill: document.body.classList.contains("dark") ? "#22314b" : "#b6c2d3", opacity:"0.85" }));
+
+    // label N#
+    const labelPos = toScreen(-16, rackD/2, z + shelfSpacing/2);
+    const txt = svgEl("text", {
+      x: labelPos.x, y: labelPos.y,
+      "text-anchor":"middle",
+      "font-size": isTargetLevel ? "12" : "10",
+      "font-weight": isTargetLevel ? "900" : "700",
+      fill: isTargetLevel ? "#f97316" : (document.body.classList.contains("dark") ? "#94a3b8" : "#94a3b8"),
+      "font-family":"monospace"
+    });
+    txt.textContent = `N${lvl}`;
+    svg.appendChild(txt);
+
+    // slots grid (outlines only)
+    for (let s=1;s<=slots;s++){
+      const x0 = (s-1)*slotW + 3;
+      const w = slotW - 6;
+
+      // a thin “cell” on the shelf top (like a tile)
+      const cellTop = [
+        toScreen(x0, 8, z + 1),
+        toScreen(x0+w, 8, z + 1),
+        toScreen(x0+w, rackD-8, z + 1),
+        toScreen(x0, rackD-8, z + 1),
+      ];
+
+      const isTargetCell = (lvl === levelNum) && (s === slotNum);
+
+      svg.appendChild(isoFace(cellTop, {
+        fill: isTargetCell ? fillHL : "transparent",
+        stroke: isTargetCell ? strokeHL : (document.body.classList.contains("dark") ? "rgba(148,163,184,.30)" : "rgba(148,163,184,.35)"),
+        "stroke-width": isTargetCell ? "1.6" : "0.8",
+        opacity: isTargetCell ? "0.95" : "1"
+      }));
+    }
   }
-}
 
-/* =========================
-   VISTA ESTANTE (TODOS LOS NIVELES)
-========================= */
-function generarVistaEstanteConImagen(estanteId, nivelNum, totalNiveles){
-  const n = Math.max(1, Math.min(totalNiveles, Number(nivelNum || 1)));
+  // front posts last
+  svg.appendChild(isoLine(toScreen(0,rackD,0), toScreen(0,rackD,rackH), postStyle));
+  svg.appendChild(isoLine(toScreen(rackW,rackD,0), toScreen(rackW,rackD,rackH), postStyle));
 
-  const usable = 76; // altura útil
-  const start  = 10; // margen inferior base
-  const band   = usable / totalNiveles;
+  // top label
+  const lp = toScreen(rackW/2, rackD/2, rackH + 16);
+  svg.appendChild(svgEl("rect", {
+    x: lp.x - 50, y: lp.y - 12, width: 100, height: 20, rx: 6,
+    fill: document.body.classList.contains("dark") ? "#0b1220" : "#ffffff",
+    stroke: "#f97316", "stroke-width":"2"
+  }));
+  const tl = svgEl("text", {
+    x: lp.x, y: lp.y + 4,
+    "text-anchor":"middle", "font-size":"12", "font-weight":"900", "font-family":"monospace",
+    fill: document.body.classList.contains("dark") ? "#e5e7eb" : "#1e293b"
+  });
+  tl.textContent = estanteId;
+  svg.appendChild(tl);
 
-  const boxes = [];
-  for(let i=1;i<=totalNiveles;i++){
-    const bottomPct = start + ((i - 1) * band);
-    const hPct = band - 1.2; // gap
-    boxes.push(`
-      <div class="shelf-level-box ${i === n ? "level-highlight" : ""}"
-           style="bottom:${bottomPct}%; height:${hPct}%;">
-        <span class="level-tag">N${i}</span>
-      </div>
-    `);
-  }
-
-  return `
-    <div class="shelf-image-wrap" aria-label="${estanteId}">
-      <img class="shelf-image" src="${IMG_EST_VISTA}" alt="Vista de estante" />
-      ${boxes.join("")}
+  // container
+  const wrap = document.createElement("div");
+  wrap.className = "shelfIsoWrap";
+  wrap.innerHTML = `
+    <div class="shelfIsoTopbar">
+      <span>Slots por nivel: <b>${slots}</b></span>
+      <span>Celda pintada: <b>N${levelNum}</b> / <b>Pos ${slotNum}</b></span>
     </div>
   `;
+  wrap.appendChild(svg);
+
+  return wrap;
 }
 
-function mostrarVistaEstante(estanteId, nivelId){
+function mostrarVistaEstante(estanteId, levelNum){
   if (!estanteId){
     shelfLabel.textContent = "—";
     shelfPreview.innerHTML = `<div style="color:var(--muted); font-size:13px;">
-      Selecciona un producto para ver el estante y el nivel resaltado.
+      Selecciona un producto para ver el estante y la celda resaltada.
     </div>`;
     return;
   }
 
-  const m = (nivelId || "").match(/-N(\d+)$/i);
-  const nivelNum = m ? Number(m[1]) : 1;
-
-  const totalNiveles = estanteId.startsWith("A1-") ? 8 : 6;
-
   shelfLabel.textContent = estanteId;
-  shelfPreview.innerHTML = generarVistaEstanteConImagen(estanteId, nivelNum, totalNiveles);
+
+  // Como tu formato NO trae “slot”, usamos uno default (centro)
+  // Si luego agregas slot a tu nomenclatura, lo parseamos sin problema.
+  const slotNum = DEFAULT_SLOT;
+
+  shelfPreview.innerHTML = "";
+  shelfPreview.appendChild(renderShelfIso(estanteId, levelNum || 1, slotNum));
 }
 
 /* =========================
-   SEARCH / GROUP
+   Reducido por nombre
 ========================= */
-function isSizeLetter(t){ return ["xs","s","m","l","xl","xxl","2xl"].includes(t); }
-function isPureNumber(t){ return /^\d{1,4}$/.test(t); }
-function matchAll(textoNorm, qTokens){ for (const t of qTokens) if (!textoNorm.includes(t)) return false; return true; }
-function hasTallaNumero(nvNorm, num){ return new RegExp(`\\btalla\\s*${num}\\b`).test(nvNorm); }
-
 function agruparPorNombre(listaDetallada){
   const map = new Map();
   for (const p of listaDetallada){
     const key = (p.nombreNormKey || p.nombreNorm || p.nombre || "").trim();
     if (!key) continue;
-    const cur = map.get(key);
-    if (!cur) map.set(key, { count: 1, representante: p });
-    else {
-      cur.count++;
-      if ((p._score||0) > (cur.representante._score||0)) cur.representante = p;
+
+    if (!map.has(key)){
+      map.set(key, { key, count: 1, representante: p, grupo: [p] });
+    } else {
+      const g = map.get(key);
+      g.count++;
+      g.grupo.push(p);
+      if ((p._score||0) > (g.representante._score||0)) g.representante = p;
     }
   }
+
   const reducido = [];
   for (const g of map.values()){
-    reducido.push({ ...g.representante, variante: `${g.count} variantes`, _count: g.count, _representante: g.representante });
+    reducido.push({
+      ...g.representante,
+      variante: `${g.count} variantes`,
+      _grupo: g.grupo,
+      _count: g.count,
+      _representante: g.representante
+    });
   }
-  reducido.sort((a,b) => String(a.nombre||"").localeCompare(String(b.nombre||""), "es"));
+
+  reducido.sort((a,b) => (b._score||0) - (a._score||0));
   return reducido;
 }
 
 /* =========================
-   TABLE
+   Table render
 ========================= */
-function renderTabla(lista){
-  const rows = new Array(lista.length);
+function renderTabla(lista, activeIndex = -1){
+  let html = "";
   for (let i=0;i<lista.length;i++){
     const p = lista[i];
-    const isActive = i === indiceActual && (busquedaActiva || shelfHoverId || shelfPinnedId);
-    rows[i] = `
-      <tr ${isActive ? "class='active'" : ""} data-i="${i}"
-          data-zona="${p.zonaId || ''}"
-          data-estante="${p.estanteId || ''}"
-          data-nivel="${p.nivelId || ''}">
+    const active = i === activeIndex ? " class='active'" : "";
+    html += `
+      <tr${active} data-i="${i}">
         <td>${escapeHtml(p.barras || "")}</td>
         <td>${escapeHtml(p.nombre || "")}</td>
         <td>${escapeHtml(p.variante || "")}</td>
@@ -665,47 +804,44 @@ function renderTabla(lista){
         <td>${escapeHtml(p.almacen || "")}</td>
       </tr>`;
   }
-  tablaBody.innerHTML = rows.join("");
-  activeRowEl = null;
+  tabla.innerHTML = html;
+  enlazarTabla();
 }
-function setActiveRow(index, smooth=false){
-  if (activeRowEl) activeRowEl.classList.remove("active");
-  const tr = tablaBody.querySelector(`tr[data-i="${index}"]`);
-  if (tr){
-    tr.classList.add("active");
-    activeRowEl = tr;
-    if (smooth) tr.scrollIntoView({ block:"nearest", behavior:"smooth" });
-  }
-}
+function enlazarTabla(){
+  const rows = tabla.querySelectorAll("tr");
+  rows.forEach(tr => {
+    tr.addEventListener("mouseenter", () => {
+      const i = Number(tr.getAttribute("data-i"));
+      const fila = resultadosActuales.length ? resultadosActuales[i] : productos[i];
+      const item = (fila && fila._representante) ? fila._representante : fila;
+      if (!item) return;
 
-/* Tabla hover/click */
-tablaBody.addEventListener("mousemove", (e) => {
-  const tr = e.target.closest("tr");
-  if (!tr || !tablaBody.contains(tr)) return;
-  applyHover(tr.dataset.zona || "", tr.dataset.estante || "", tr.dataset.nivel || "");
-  const zid = tr.dataset.zona || "";
-  mapBadge.textContent = zid ? (zid === "A1" ? "ALMACÉN" : zid) : "—";
-});
-tablaBody.addEventListener("mouseleave", () => {
-  clearHover();
-  if (busquedaActiva || shelfHoverId || shelfPinnedId) aplicarResultadoActivo(false);
-  else {
-    mapBadge.textContent = "—";
-    info.textContent = "Pasa el mouse por la tabla o busca un producto.";
-  }
-});
-tablaBody.addEventListener("click", (e) => {
-  const tr = e.target.closest("tr");
-  if (!tr || !tablaBody.contains(tr)) return;
-  const i = Number(tr.dataset.i);
-  if (!Number.isNaN(i)){
-    indiceActual = i;
-    aplicarResultadoActivo(true);
-  }
-});
+      applyHoverHL(item.mainLoc?.estanteId || "", item.storeLoc?.estanteId || "");
+      mapBadge.textContent = item.mainLoc?.zonaId || "—";
+    });
+
+    tr.addEventListener("click", () => {
+      const i = Number(tr.getAttribute("data-i"));
+      if (!Number.isNaN(i)){
+        indiceActual = i;
+        aplicarResultadoActivo(true);
+      }
+    });
+  });
+
+  tabla.addEventListener("mouseleave", () => {
+    clearHoverHL();
+    if (resultadosActuales.length){
+      aplicarResultadoActivo(false);
+    } else {
+      mapBadge.textContent = "—";
+      info.textContent = "Escribe para buscar o pasa el mouse por los racks.";
+    }
+  }, { once:false });
+}
 
 /* =========================
-   RESULT UI
+   Picker
 ========================= */
 function setPickerState(){
   const total = resultadosActuales.length;
@@ -713,344 +849,429 @@ function setPickerState(){
   btnPrev.disabled = total <= 1;
   btnNext.disabled = total <= 1;
 }
-function hideResultUI(){
-  resultCard.style.display = "none";
-  clearSearchHighlight();
-  mostrarVistaEstante("", "");
-  metaResults.textContent = "0 resultados";
-  resultCountPill.textContent = "0";
-  mapBadge.textContent = "—";
-  pillZona.textContent = "—";
-  info.textContent = "Pasa el mouse por la tabla o busca un producto.";
-}
-function aplicarResultadoActivo(){
-  const effectiveActive = busquedaActiva || !!shelfHoverId || !!shelfPinnedId;
-  if (!effectiveActive){
-    hideResultUI();
-    return;
-  }
-
-  const total = resultadosActuales.length;
-  metaResults.textContent = `${total} resultados`;
-  resultCountPill.textContent = String(total);
-
-  if (!total){
-    hideResultUI();
-    return;
-  }
-  if (indiceActual < 0) indiceActual = 0;
-  if (indiceActual >= total) indiceActual = total - 1;
-
-  const filaActiva = resultadosActuales[indiceActual];
-  const activo = (modo === "reducido" && filaActiva._representante) ? filaActiva._representante : filaActiva;
-
-  renderTabla(resultadosActuales);
-  setActiveRow(indiceActual, true);
-
-  const main = activo._main || null;
-  const reserva = activo._reserva || null;
-  applySearchHighlightMulti(main, reserva);
-
-  const zonas = [];
-  if (main?.zonaId) zonas.push(main.zonaId === "A1" ? "ALMACÉN" : main.zonaId);
-  if (reserva?.zonaId && reserva.zonaId !== main?.zonaId) zonas.push(reserva.zonaId === "A1" ? "ALMACÉN" : reserva.zonaId);
-
-  mapBadge.textContent = zonas.length ? zonas.join(" + ") : "—";
-  pillZona.textContent = zonas.length ? zonas.join(" + ") : "—";
-
-  const ubicTxt = (activo.ubic || "—");
-  const almTxt = (activo.almacen || "");
-
-  info.textContent = almTxt
-    ? `📍 Ubicación: ${ubicTxt}  |  📦 Reserva en ALMACÉN: ${almTxt}`
-    : `📍 Ubicación: ${ubicTxt}`;
-
-  resultCard.style.display = "block";
-  bigLoc.textContent = ubicTxt;
-
-  if (modo === "reducido" && filaActiva._count){
-    subLoc.textContent = `${filaActiva.nombre || "—"} • ${filaActiva._count} variantes`;
-  } else {
-    subLoc.textContent = `${activo.nombre || "—"} • ${activo.variante || "—"} • ${activo.barras || "—"}`;
-  }
-
-  kvUbicacion.textContent = ubicTxt;
-  kvEstante.textContent = main?.estanteId || "—";
-  kvNivel.textContent = main?.nivelId || "—";
-  kvReserva.textContent = almTxt || "—";
-
-  mostrarVistaEstante(main?.estanteId || "", main?.nivelId || "");
-  setPickerState();
-}
 
 /* =========================
-   MODO chips
+   Chips
 ========================= */
 function setModo(nuevo){
   modo = nuevo;
   chipReducido.classList.toggle("active", modo === "reducido");
   chipDetallado.classList.toggle("active", modo === "detallado");
 
-  rebuildCurrentResults();
-  indiceActual = 0;
-  renderTabla(resultadosActuales);
-
-  if (busquedaActiva || shelfHoverId || shelfPinnedId) aplicarResultadoActivo();
-  else hideResultUI();
+  if (buscador.value.trim()){
+    resultadosActuales = (modo === "reducido") ? resultadosReducido : resultadosDetallado;
+    indiceActual = 0;
+    aplicarResultadoActivo(false);
+  } else {
+    resultadosActuales = [];
+    indiceActual = 0;
+    renderTabla(productos);
+    resultCard.style.display = "none";
+    clearAllHL();
+    mostrarVistaEstante("", 0);
+    metaResults.textContent = "0 resultados";
+    resultCountPill.textContent = "0";
+  }
 }
 chipReducido.addEventListener("click", () => setModo("reducido"));
 chipDetallado.addEventListener("click", () => setModo("detallado"));
 
 /* =========================
-   LIMPIAR
+   Clear
 ========================= */
 function limpiarBusqueda(){
   buscador.value = "";
-  busquedaActiva = false;
+  resultadosDetallado = [];
+  resultadosReducido = [];
+  resultadosActuales = [];
   indiceActual = 0;
 
-  shelfHoverId = "";
-  shelfPinnedId = "";
-  updateShelfFilterUI();
+  metaResults.textContent = "0 resultados";
+  resultCountPill.textContent = "0";
+  badgeDetallado.textContent = "0";
+  badgeReducido.textContent = "0";
 
-  modo = "reducido";
-  chipReducido.classList.add("active");
-  chipDetallado.classList.remove("active");
+  resultCard.style.display = "none";
+  clearAllHL();
 
-  resultadosDetallado = productos;
-  resultadosActuales = agruparPorNombre(productos);
+  info.textContent = "Escribe para buscar o pasa el mouse por los racks.";
+  mapBadge.textContent = "—";
+  mostrarVistaEstante("", 0);
 
-  clearPinnedVisual();
-  renderTabla(resultadosActuales);
-  hideResultUI();
+  renderTabla(productos);
   buscador.focus();
 }
 btnClear.addEventListener("click", limpiarBusqueda);
 
 /* =========================
-   SHELF FILTER UI + RESULTS
+   Search
 ========================= */
-function getEffectiveShelfFilter(){ return shelfHoverId || shelfPinnedId || ""; }
+function recalcularResultados(triggerFeedback=false){
+  if (!isLoaded) return;
 
-function updateShelfFilterUI(){
-  const effective = getEffectiveShelfFilter();
-  if (effective){
-    filterBanner.style.display = "block";
-    filterBannerText.textContent = effective;
-    const isHoverPreview = !!shelfHoverId;
-    filterBannerMode.textContent = isHoverPreview ? "Preview:" : "Fijo:";
-    filterActions.style.display = shelfPinnedId ? "flex" : "none";
-  } else {
-    filterBanner.style.display = "none";
-    filterBannerText.textContent = "—";
-    filterActions.style.display = "none";
-  }
-
-  clearPinnedVisual();
-  if (shelfPinnedId) document.getElementById(shelfPinnedId)?.classList.add("pinned-slot");
-}
-
-btnClearShelf.addEventListener("click", () => {
-  shelfPinnedId = "";
-  shelfHoverId = "";
-  updateShelfFilterUI();
-  rebuildCurrentResults();
-  indiceActual = 0;
-  renderTabla(resultadosActuales);
-  if (busquedaActiva) aplicarResultadoActivo();
-  else hideResultUI();
-});
-
-/* ===== PRO MAX: elegir el mejor resultado del estante clickeado ===== */
-function proMaxPickIndexForShelf(shelfId){
-  if (!resultadosActuales.length) return 0;
-
-  if (modo === "detallado") return 0;
-
-  let bestIdx = 0;
-  let bestScore = -1;
-
-  for (let i=0;i<resultadosActuales.length;i++){
-    const row = resultadosActuales[i];
-    const rep = row._representante || row;
-
-    const inShelf =
-      (rep._main?.estanteId === shelfId) ||
-      (rep._reserva?.estanteId === shelfId) ||
-      (row.estanteId === shelfId);
-
-    if (!inShelf) continue;
-
-    let s = 0;
-    if (busquedaActiva) s = Number(rep._score || 0);
-    else {
-      const levelNum = rep._main?.nivelNum || 99;
-      s = 100 - Math.min(levelNum, 99);
-      if (rep._main?.estanteId === shelfId) s += 20;
-    }
-
-    if (s > bestScore){
-      bestScore = s;
-      bestIdx = i;
-    }
-  }
-
-  return bestIdx;
-}
-
-function rebuildCurrentResults(){
-  const q = tokensText(buscador.value);
-  busquedaActiva = q.length > 0;
-
-  let baseDet;
-  if (busquedaActiva) baseDet = resultadosDetallado;
-  else baseDet = productos;
-
-  const shelf = getEffectiveShelfFilter();
-  const det = shelf
-    ? baseDet.filter(p => (p._main?.estanteId === shelf) || (p._reserva?.estanteId === shelf))
-    : baseDet;
-
-  const red = agruparPorNombre(det);
-  resultadosActuales = (modo === "reducido") ? red : det;
-
-  badgeDetallado.textContent = String(det.length || 0);
-  badgeReducido.textContent = String(red.length || 0);
-}
-
-/* =========================
-   BÚSQUEDA
-========================= */
-function recalcularResultados(){
-  const q = tokensText(buscador.value);
-  busquedaActiva = q.length > 0;
-
-  if (!busquedaActiva){
+  const qRaw = buscador.value.trim();
+  if (!qRaw){
     resultadosDetallado = [];
-    rebuildCurrentResults();
-    renderTabla(resultadosActuales);
-
-    if (getEffectiveShelfFilter()){
-      indiceActual = 0;
-      aplicarResultadoActivo();
-    } else {
-      hideResultUI();
-    }
+    resultadosReducido = [];
+    resultadosActuales = [];
+    indiceActual = 0;
+    metaResults.textContent = "0 resultados";
+    resultCountPill.textContent = "0";
+    badgeDetallado.textContent = "0";
+    badgeReducido.textContent = "0";
+    resultCard.style.display = "none";
+    clearAllHL();
+    mostrarVistaEstante("", 0);
+    renderTabla(productos);
     return;
   }
+
+  const q = tokens(qRaw);
 
   resultadosDetallado = productos
     .filter(p => matchAll(p.fulltextNorm, q))
     .map(p => {
       let score = 0;
-      for (const t of q){
-        const inNV = p.nvNorm.includes(t);
-        if (isSizeLetter(t)){ score += inNV ? 20 : 5; continue; }
-        if (isPureNumber(t)){
-          if (hasTallaNumero(p.nvNorm, t)) score += 18;
-          else score += inNV ? 6 : 2;
-          continue;
-        }
-        score += inNV ? 10 : 2;
-      }
-      const code3 = q.find(t => /^\d{3}$/.test(t));
-      if (code3 && p.nvNorm.includes(code3)) score += 12;
+      for (const t of q) score += p.nvNorm.includes(t) ? 10 : 2;
       return { ...p, _score: score };
     })
     .sort((a,b) => (b._score||0) - (a._score||0));
 
-  rebuildCurrentResults();
+  resultadosReducido = agruparPorNombre(resultadosDetallado);
+  resultadosActuales = (modo === "reducido") ? resultadosReducido : resultadosDetallado;
   indiceActual = 0;
-  renderTabla(resultadosActuales);
-  aplicarResultadoActivo();
+  aplicarResultadoActivo(triggerFeedback);
 }
-buscador.addEventListener("input", debounce(recalcularResultados, 180));
+buscador.addEventListener("input", () => recalcularResultados(false));
 
 btnPrev.addEventListener("click", () => {
   if (resultadosActuales.length <= 1) return;
   indiceActual = (indiceActual - 1 + resultadosActuales.length) % resultadosActuales.length;
-  aplicarResultadoActivo();
+  aplicarResultadoActivo(true);
 });
 btnNext.addEventListener("click", () => {
   if (resultadosActuales.length <= 1) return;
   indiceActual = (indiceActual + 1) % resultadosActuales.length;
-  aplicarResultadoActivo();
+  aplicarResultadoActivo(true);
 });
 
 /* =========================
-   MAPA: hover preview + click pin (PRO MAX)
+   Dark mode
 ========================= */
-const mapaSvg = document.getElementById("mapa");
-
-mapaSvg.addEventListener("mouseover", (e) => {
-  const g = e.target.closest(".estante-img");
-  if (!g || !mapaSvg.contains(g)) return;
-  const id = g.id;
-  if (!id) return;
-
-  if (shelfHoverId !== id){
-    shelfHoverId = id;
-    updateShelfFilterUI();
-    rebuildCurrentResults();
-
-    indiceActual = 0;
-    renderTabla(resultadosActuales);
-    if (resultadosActuales.length) aplicarResultadoActivo();
-    else hideResultUI();
-  }
+(function initDark(){
+  const saved = localStorage.getItem("darkMode");
+  if (saved === "1") document.body.classList.add("dark");
+  btnDark.textContent = document.body.classList.contains("dark") ? "☀️ Modo claro" : "🌙 Modo oscuro";
+})();
+btnDark.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("darkMode", document.body.classList.contains("dark") ? "1" : "0");
+  btnDark.textContent = document.body.classList.contains("dark") ? "☀️ Modo claro" : "🌙 Modo oscuro";
+  setTimeout(()=>renderIsometric(), 30);
+  // Re-render shelf if visible
+  if (resultadosActuales.length) setTimeout(()=>aplicarResultadoActivo(false), 50);
 });
 
-mapaSvg.addEventListener("mouseout", (e) => {
-  const g = e.target.closest(".estante-img");
-  if (!g || !mapaSvg.contains(g)) return;
+/* =========================
+   ISO MAP (plano general)
+========================= */
+function drawZones(){
+  zoneNodes.clear();
 
-  const related = e.relatedTarget;
-  if (related && g.contains(related)) return;
+  const zones = [
+    { id:"Z1", cls:"z1", label:"ZONA 1", x:0,   y:0,   w:260, d:220, color:"#14b8a6" },
+    { id:"Z2", cls:"z2", label:"ZONA 2", x:280, y:0,   w:320, d:220, color:"#2dd4bf" },
+    { id:"Z3", cls:"z3", label:"ZONA 3", x:0,   y:240, w:260, d:300, color:"#5eead4" },
+    { id:"A1", cls:"a1", label:"ALMACÉN (A1)", x:280, y:240, w:320, d:300, color:"#93c5fd" },
+  ];
 
-  shelfHoverId = "";
-  updateShelfFilterUI();
-  rebuildCurrentResults();
+  const gZones = svgEl("g", { id:"zones" });
 
-  indiceActual = 0;
-  renderTabla(resultadosActuales);
+  const floor = isoFace(
+    [toScreen(0,0,0), toScreen(640,0,0), toScreen(640,560,0), toScreen(0,560,0)],
+    { fill: document.body.classList.contains("dark") ? "#0b1220" : "#f8fafc", stroke: document.body.classList.contains("dark") ? "#1f2937" : "#cbd5e1", "stroke-width":"1" }
+  );
+  gZones.appendChild(floor);
 
-  if (busquedaActiva || shelfPinnedId){
-    if (resultadosActuales.length) aplicarResultadoActivo();
-    else hideResultUI();
+  for (const z of zones){
+    const poly = isoFace(
+      [toScreen(z.x,z.y,0), toScreen(z.x+z.w,z.y,0), toScreen(z.x+z.w,z.y+z.d,0), toScreen(z.x,z.y+z.d,0)],
+      { id:z.id, class:`iso-zone ${z.cls}`, "stroke-width":"2" }
+    );
+    zoneNodes.set(z.id, poly);
+    gZones.appendChild(poly);
+
+    const pos = toScreen(z.x + z.w*0.5, z.y + z.d*0.5, 0);
+    const t = svgEl("text", {
+      x: pos.x, y: pos.y,
+      "text-anchor":"middle",
+      "font-size":"46",
+      "font-weight":"900",
+      fill: z.color,
+      "fill-opacity":"0.15",
+    });
+    t.textContent = z.label;
+    gZones.appendChild(t);
+  }
+
+  isoMap.appendChild(gZones);
+}
+
+function drawRack(rack, zoneColor){
+  const { x, y, w, d, h, levels, id } = rack;
+  const g = svgEl("g", { class:"rack", "data-rack-id": id });
+
+  const postsBack = [{x:x, y:y},{x:x+w, y:y}];
+  for (const p of postsBack){
+    g.appendChild(isoLine(toScreen(p.x,p.y,0), toScreen(p.x,p.y,h), { class:"post" }));
+  }
+
+  const spacing = h / levels;
+  const thickness = 2;
+
+  for (let i=0;i<levels;i++){
+    const z = i*spacing + 10;
+    const top = [toScreen(x,y,z), toScreen(x+w,y,z), toScreen(x+w,y+d,z), toScreen(x,y+d,z)];
+    const front = [toScreen(x,y+d,z), toScreen(x+w,y+d,z), toScreen(x+w,y+d,z-thickness), toScreen(x,y+d,z-thickness)];
+    const right = [toScreen(x+w,y,z), toScreen(x+w,y+d,z), toScreen(x+w,y+d,z-thickness), toScreen(x+w,y,z-thickness)];
+
+    g.appendChild(isoFace(top,   { class:"shelfTop" }));
+    g.appendChild(isoFace(front, { class:"shelfFront" }));
+    g.appendChild(isoFace(right, { class:"shelfRight" }));
+  }
+
+  const postsFront = [{x:x+w, y:y+d},{x:x, y:y+d}];
+  for (const p of postsFront){
+    g.appendChild(isoLine(toScreen(p.x,p.y,0), toScreen(p.x,p.y,h), { class:"post" }));
+  }
+
+  const lp = toScreen(x + w/2, y + d/2, h + 18);
+  const rect = svgEl("rect", {
+    x: lp.x - 18, y: lp.y - 12, width: 36, height: 20, rx: 5,
+    fill: "#ffffff", stroke: zoneColor, "stroke-width":"2"
+  });
+  const txt = svgEl("text", {
+    x: lp.x, y: lp.y + 5,
+    "text-anchor":"middle", "font-size":"11", "font-weight":"900", "font-family":"monospace",
+    fill: "#1e293b"
+  });
+  txt.textContent = id.split("-")[1]; // E#
+  g.appendChild(rect);
+  g.appendChild(txt);
+
+  return g;
+}
+
+/* === LAYOUT EXACTO (sin “auto grilla”) === */
+function placeZoneRacks(zoneId, rackIds){
+  const layout = ZONE_LAYOUT[zoneId] || { rows: 2, cols: 4, order: [] };
+
+  const origin = {
+    Z1:{ ox:20,  oy:20,  w:240, d:200 },
+    Z2:{ ox:300, oy:20,  w:300, d:200 },
+    Z3:{ ox:20,  oy:260, w:240, d:280 },
+    A1:{ ox:300, oy:260, w:300, d:280 },
+  }[zoneId];
+
+  const rackW = 55;
+  const rackD = 120;
+  const rackH = 120;
+  const levels = (zoneId === "A1") ? 8 : 6;
+
+  const gapX = (origin.w - (layout.cols * rackW)) / Math.max(1, (layout.cols - 1));
+  const gapY = (origin.d - (layout.rows * rackD)) / Math.max(1, (layout.rows - 1));
+
+  // orden final: primero order, luego los que falten
+  const orderSet = new Set(layout.order);
+  const missing = rackIds.filter(id => !orderSet.has(id));
+  const finalOrder = [...layout.order.filter(id => rackIds.includes(id)), ...missing];
+
+  const placed = [];
+  for (let i=0;i<finalOrder.length;i++){
+    const id = finalOrder[i];
+    const col = i % layout.cols;
+    const row = Math.floor(i / layout.cols);
+
+    const x = origin.ox + col * (rackW + gapX);
+    const y = origin.oy + row * (rackD + gapY);
+
+    placed.push({ id, zone:zoneId, x, y, w:rackW, d:rackD, h:rackH, levels });
+  }
+  return placed;
+}
+
+function computeRacksLayoutFromSheet(){
+  const zones = ["Z1","Z2","Z3","A1"];
+  const sets = { Z1:new Set(), Z2:new Set(), Z3:new Set(), A1:new Set() };
+
+  for (const p of productos){
+    if (p.mainLoc?.estanteId && sets[p.mainLoc.zonaId]) sets[p.mainLoc.zonaId].add(p.mainLoc.estanteId);
+    if (p.storeLoc?.estanteId && sets[p.storeLoc.zonaId]) sets[p.storeLoc.zonaId].add(p.storeLoc.estanteId);
+  }
+
+  racksIndex = { Z1:[], Z2:[], Z3:[], A1:[] };
+  for (const z of zones){
+    const ids = [...sets[z]];
+    racksIndex[z] = placeZoneRacks(z, ids);
+  }
+}
+
+function renderIsometric(){
+  isoMap.innerHTML = "";
+  rackNodes.clear();
+  zoneNodes.clear();
+
+  drawZones();
+  computeRacksLayoutFromSheet();
+
+  const all = [...racksIndex.Z1, ...racksIndex.Z2, ...racksIndex.Z3, ...racksIndex.A1];
+  all.sort((a,b)=> (a.x+a.y+a.w+a.d) - (b.x+b.y+b.w+b.d));
+
+  const zoneColor = { Z1:"#14b8a6", Z2:"#2dd4bf", Z3:"#5eead4", A1:"#93c5fd" };
+  const gRacks = svgEl("g", { id:"racks" });
+
+  for (const r of all){
+    const node = drawRack(r, zoneColor[r.zone]);
+    node.id = r.id;
+    rackNodes.set(r.id, node);
+
+    node.addEventListener("mouseenter", () => {
+      clearHoverHL();
+      node.classList.add("hoverHL");
+      mapBadge.textContent = r.zone;
+
+      if (document.activeElement === buscador) return;
+      if (lastHoverQuery === null) lastHoverQuery = buscador.value;
+      buscador.value = r.id.toLowerCase();
+      recalcularResultados(false);
+    });
+
+    node.addEventListener("mouseleave", () => {
+      node.classList.remove("hoverHL");
+      mapBadge.textContent = "—";
+      if (document.activeElement === buscador) return;
+
+      if (lastHoverQuery !== null){
+        buscador.value = lastHoverQuery;
+        lastHoverQuery = null;
+        recalcularResultados(false);
+      }
+    });
+
+    node.addEventListener("click", () => {
+      lastHoverQuery = null;
+      buscador.value = r.id.toLowerCase();
+      recalcularResultados(true);
+    });
+
+    gRacks.appendChild(node);
+  }
+
+  isoMap.appendChild(gRacks);
+
+  if (resultadosActuales.length){
+    aplicarResultadoActivo(false);
+  }
+}
+
+function clearAllHL(){ clearMainHL(); clearStoreHL(); clearHoverHL(); }
+function clearMainHL(){
+  for (const z of zoneNodes.values()) z.classList.remove("mainHL");
+  for (const r of rackNodes.values()) r.classList.remove("mainHL");
+}
+function clearStoreHL(){
+  for (const z of zoneNodes.values()) z.classList.remove("storeHL");
+  for (const r of rackNodes.values()) r.classList.remove("storeHL");
+}
+function clearHoverHL(){ for (const r of rackNodes.values()) r.classList.remove("hoverHL"); }
+
+function applyHoverHL(mainRackId, storeRackId){
+  clearHoverHL();
+  if (mainRackId && rackNodes.get(mainRackId)) rackNodes.get(mainRackId).classList.add("hoverHL");
+  if (storeRackId && rackNodes.get(storeRackId)) rackNodes.get(storeRackId).classList.add("hoverHL");
+}
+
+function applyMainStoreHL(mainLoc, storeLoc){
+  clearMainHL(); clearStoreHL();
+
+  if (mainLoc?.zonaId && zoneNodes.get(mainLoc.zonaId)) zoneNodes.get(mainLoc.zonaId).classList.add("mainHL");
+  if (mainLoc?.estanteId && rackNodes.get(mainLoc.estanteId)) rackNodes.get(mainLoc.estanteId).classList.add("mainHL");
+
+  if (storeLoc?.zonaId && zoneNodes.get(storeLoc.zonaId)) zoneNodes.get(storeLoc.zonaId).classList.add("storeHL");
+  if (storeLoc?.estanteId && rackNodes.get(storeLoc.estanteId)) rackNodes.get(storeLoc.estanteId).classList.add("storeHL");
+
+  const hasSelection = !!(mainLoc?.estanteId || storeLoc?.estanteId);
+  if (hasSelection){
+    for (const node of rackNodes.values()){
+      const keep = node.classList.contains("mainHL") || node.classList.contains("storeHL");
+      node.classList.toggle("dim", !keep);
+    }
   } else {
-    resultadosDetallado = [];
-    resultadosActuales = (modo === "reducido") ? agruparPorNombre(productos) : productos;
-    badgeDetallado.textContent = String(productos.length || 0);
-    badgeReducido.textContent = String(agruparPorNombre(productos).length || 0);
-    renderTabla(resultadosActuales);
-    hideResultUI();
+    for (const node of rackNodes.values()) node.classList.remove("dim");
   }
-});
+}
 
-mapaSvg.addEventListener("click", (e) => {
-  const g = e.target.closest(".estante-img");
-  if (!g || !mapaSvg.contains(g)) return;
-  const id = g.id;
-  if (!id) return;
+/* =========================
+   Active result + highlight
+========================= */
+function aplicarResultadoActivo(triggerFeedback = false){
+  const total = resultadosActuales.length;
 
-  if (shelfPinnedId === id) shelfPinnedId = "";
-  else shelfPinnedId = id;
+  metaResults.textContent = `${total} resultados`;
+  resultCountPill.textContent = String(total);
 
-  updateShelfFilterUI();
-  rebuildCurrentResults();
-  renderTabla(resultadosActuales);
+  badgeDetallado.textContent = String(resultadosDetallado.length || 0);
+  badgeReducido.textContent = String(resultadosReducido.length || 0);
 
-  if (!shelfPinnedId){
-    if (busquedaActiva) { indiceActual = 0; aplicarResultadoActivo(); }
-    else hideResultUI();
+  if (!total){
+    resultCard.style.display = "none";
+    clearAllHL();
+    info.textContent = "Escribe para buscar o pasa el mouse por los racks.";
+    mapBadge.textContent = "—";
+    mostrarVistaEstante("", 0);
     return;
   }
 
-  indiceActual = proMaxPickIndexForShelf(shelfPinnedId);
+  if (indiceActual < 0) indiceActual = 0;
+  if (indiceActual >= total) indiceActual = total - 1;
 
-  if (resultadosActuales.length) aplicarResultadoActivo();
-  else hideResultUI();
-});
+  const filaActiva = resultadosActuales[indiceActual];
+  const activo = (modo === "reducido" && filaActiva._representante)
+    ? filaActiva._representante
+    : filaActiva;
+
+  renderTabla(resultadosActuales, indiceActual);
+
+  applyMainStoreHL(activo.mainLoc, activo.storeLoc);
+
+  mapBadge.textContent = activo.mainLoc?.zonaId || "—";
+  pillZona.textContent = activo.mainLoc?.zonaId || "—";
+
+  const mainPretty = activo.mainLoc?.pretty || "—";
+  const storePretty = (activo.storeLoc?.pretty && activo.storeLoc?.zonaId) ? activo.storeLoc.pretty : "";
+
+  info.textContent = storePretty
+    ? `📍 Ubicación: ${mainPretty}  •  📦 Almacén: ${storePretty}`
+    : `📍 Ubicación: ${mainPretty}`;
+
+  resultCard.style.display = "block";
+  bigLoc.textContent = storePretty ? `${mainPretty}  |  ALMACÉN: ${storePretty}` : mainPretty;
+
+  subLoc.textContent = (modo === "reducido" && filaActiva._count)
+    ? `${filaActiva.nombre || "—"} • ${filaActiva._count} variantes`
+    : `${activo.nombre || "—"} • ${activo.variante || "—"} • ${activo.barras || "—"}`;
+
+  kvUbicacion.textContent = mainPretty || "—";
+  kvEstante.textContent = activo.mainLoc?.estanteId || "—";
+  kvNivel.textContent = activo.mainLoc?.nivelId || "—";
+  kvAlmacen.textContent = storePretty || "—";
+
+  // ✅ Vista Estante isométrica
+  mostrarVistaEstante(activo.mainLoc?.estanteId || "", activo.mainLoc?.levelNum || 1);
+
+  setPickerState();
+  if (triggerFeedback) feedbackOK();
+}
 
 /* =========================
    LOAD SHEET
@@ -1071,23 +1292,20 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
       const nombre = r.c[12]?.v || "";
       const variante = r.c[13]?.v || "";
 
-      const ubicRaw = r.c[20]?.v || "";
-      const almacenRaw = String(r.c[21]?.v || "").toUpperCase().trim();
+      const ubicRaw = r.c[20]?.v || "";    // z1-e1-n6
+      const almacenRaw = r.c[21]?.v || ""; // a1-e2-n6 (o vacío)
 
-      const main = parseCodigo(ubicRaw);
-      const reserva = almacenRaw ? parseCodigo(almacenRaw) : { zonaId:"", estanteId:"", nivelId:"", pretty:"", nivelNum:0 };
+      const mainLoc = parseLoc(ubicRaw);
+      const storeLoc = parseLoc(almacenRaw);
 
       const p = {
-        barras, nombre, variante,
-        ubic: main.pretty || "",
-        almacen: almacenRaw,
-
-        zonaId: main.zonaId || "",
-        estanteId: main.estanteId || "",
-        nivelId: main.nivelId || "",
-
-        _main: (main.zonaId ? main : null),
-        _reserva: (reserva.zonaId ? reserva : null),
+        barras,
+        nombre,
+        variante,
+        ubic: mainLoc.pretty || "",
+        almacen: storeLoc.pretty || "",
+        mainLoc,
+        storeLoc
       };
 
       if (!barras && !nombre) continue;
@@ -1101,27 +1319,21 @@ fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sh
     }
 
     metaCount.textContent = `${productos.length} productos`;
+    renderTabla(productos);
 
-    modo = "reducido";
-    resultadosActuales = agruparPorNombre(productos);
-
-    badgeDetallado.textContent = String(productos.length || 0);
-    badgeReducido.textContent = String(resultadosActuales.length || 0);
-
-    renderTabla(resultadosActuales);
-    hideResultUI();
-    updateShelfFilterUI();
-
+    isLoaded = true;
     setStatus("ok", `Listo • ${productos.length} productos cargados`);
+
+    renderIsometric();
   })
   .catch(() => setStatus("bad", "Error cargando la hoja. Revisa permisos del Sheet."));
 
 /* =========================
    Scanner
 ========================= */
-const btnScan = $("btnScan");
-const btnCerrar = $("btnCerrar");
-const readerDiv = $("reader");
+const btnScan = document.getElementById("btnScan");
+const btnCerrar = document.getElementById("btnCerrar");
+const readerDiv = document.getElementById("reader");
 let html5QrCode = null;
 
 btnScan.addEventListener("click", () => {
@@ -1141,8 +1353,9 @@ btnScan.addEventListener("click", () => {
           readerDiv.style.display = "none";
           btnCerrar.style.display = "none";
         });
+        feedbackOK();
         buscador.value = codigo;
-        recalcularResultados();
+        recalcularResultados(false);
       }
     );
   });
