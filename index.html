@@ -254,6 +254,7 @@
   }
   .map-info .msg{ font-size:13px; color:var(--muted); line-height:1.4; }
 
+  /* ===== Vista Estante Isométrica ===== */
   .shelfIsoWrap{
     width:100%;
     border:1px solid var(--border);
@@ -295,13 +296,14 @@
     <button class="toggle" id="btnDark">🌙 Modo oscuro</button>
     <div class="status">
       <span class="dot" id="statusDot"></span>
-      <span id="statusText">Cargando hoja “Mujer”...</span>
+      <span id="statusText">Cargando hoja…</span>
     </div>
   </div>
 </div>
 
 <div class="layout">
 
+  <!-- IZQUIERDA -->
   <div class="card">
     <div class="card-header">
       <div>
@@ -313,7 +315,7 @@
 
     <div class="controls">
       <div class="search">
-        <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s  |  z1-e1-n6  |  z1-e1-n6-p2  |  a1-e2-n6-p1" autocomplete="off" />
+        <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s  |  z1-e1-n6-s2  |  a1-e2-n6-s3" autocomplete="off" />
       </div>
 
       <div class="chiprow">
@@ -345,26 +347,11 @@
         <div class="sub" id="subLoc">—</div>
 
         <div class="kv">
-          <div class="kv-row">
-            <b>📍 Ubicación</b>
-            <span id="kvUbicacion">—</span>
-          </div>
-          <div class="kv-row">
-            <b>🧱 Estante</b>
-            <span id="kvEstante">—</span>
-          </div>
-          <div class="kv-row">
-            <b>📚 Nivel</b>
-            <span id="kvNivel">—</span>
-          </div>
-          <div class="kv-row">
-            <b>🎯 Slot</b>
-            <span id="kvSlot">—</span>
-          </div>
-          <div class="kv-row">
-            <b>📦 Almacén</b>
-            <span id="kvAlmacen">—</span>
-          </div>
+          <div class="kv-row"><b>📍 Ubicación</b><span id="kvUbicacion">—</span></div>
+          <div class="kv-row"><b>🧱 Estante</b><span id="kvEstante">—</span></div>
+          <div class="kv-row"><b>📚 Nivel</b><span id="kvNivel">—</span></div>
+          <div class="kv-row"><b>🎯 Slot</b><span id="kvSlot">—</span></div>
+          <div class="kv-row"><b>📦 Almacén</b><span id="kvAlmacen">—</span></div>
         </div>
 
         <div class="picker">
@@ -385,8 +372,8 @@
               <th style="width:140px;">Barras</th>
               <th>Nombre</th>
               <th style="width:160px;">Variante</th>
-              <th style="width:160px;">Ubicación</th>
-              <th style="width:160px;">Almacén</th>
+              <th style="width:170px;">Ubicación</th>
+              <th style="width:170px;">Almacén</th>
             </tr>
           </thead>
           <tbody id="tabla"></tbody>
@@ -395,6 +382,7 @@
     </div>
   </div>
 
+  <!-- DERECHA -->
   <div class="card sticky">
     <div class="card-header">
       <div>
@@ -408,6 +396,7 @@
       <svg id="isoMap" viewBox="-600 -120 1200 760" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
 
+    <!-- VISTA ESTANTE ISO -->
     <div style="padding:14px; border-top:1px solid var(--border);">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
         <div style="font-weight:800;">Vista estante (isométrico)</div>
@@ -438,16 +427,17 @@
 const sheetID   = "1IU4wMdVImmEbl93kgcCCQAGPiTc28uQdNNaq0bgTF2o";
 const sheetName = "Mujer";
 
+/* ===== LAYOUT FIJO POR ZONA ===== */
 const ZONE_LAYOUT = {
-  Z1: { rows: 1, cols: 4, order: ["Z1-E1","Z1-E2","Z1-E3","Z1-E4"] },
-  Z2: { rows: 2, cols: 4, order: ["Z2-E1","Z2-E2","Z2-E3","Z2-E4","Z2-E5","Z2-E6","Z2-E7","Z2-E8"] },
-  Z3: { rows: 2, cols: 4, order: ["Z3-E1","Z3-E2","Z3-E3","Z3-E4","Z3-E5","Z3-E6","Z3-E7","Z3-E8"] },
-  A1: { rows: 2, cols: 4, order: ["A1-E1","A1-E2","A1-E3","A1-E4","A1-E5","A1-E6","A1-E7","A1-E8"] },
+  Z1: { rows: 2, cols: 4, order: ["Z1-E1","Z1-E2","Z1-E3","Z1-E4","Z1-E5","Z1-E6","Z1-E7","Z1-E8"] },
+  Z2: { rows: 2, cols: 5, order: ["Z2-E1","Z2-E2","Z2-E3","Z2-E4","Z2-E5","Z2-E6","Z2-E7","Z2-E8","Z2-E9","Z2-E10"] },
+  Z3: { rows: 3, cols: 3, order: ["Z3-E1","Z3-E2","Z3-E3","Z3-E4","Z3-E5","Z3-E6","Z3-E7","Z3-E8","Z3-E9"] },
+  A1: { rows: 3, cols: 4, order: ["A1-E1","A1-E2","A1-E3","A1-E4","A1-E5","A1-E6","A1-E7","A1-E8","A1-E9","A1-E10","A1-E11","A1-E12"] },
 };
 
-/* ✅ Vista estante: 3 slots */
-const SLOTS_PER_LEVEL = 3;
-const DEFAULT_SLOT = 2;
+/* Vista estante */
+const DEFAULT_SLOT = 2;    // si no viene slot, usamos el medio (ahora sí soporta slot)
+const SLOTS_PER_LEVEL = 3; // ✅ lo que pediste: estante con 3 espacios por nivel
 
 /* =========================
    UI refs
@@ -564,39 +554,28 @@ function matchAll(textoNorm, qTokens){
 }
 
 /* =========================
-   Parse loc con SLOT opcional
-   ✅ acepta:
-   - Z1-E1-N6
-   - Z1-E1-N6-P2  (o ...-S2)
+   Parse loc: Z1/Z2/Z3/A1
+   expected:
+     z1-e1-n6
+     z1-e1-n6-s2   ✅ ahora soporta slot
 ========================= */
-function clamp(n, min, max){
-  return Math.max(min, Math.min(max, n));
-}
 function parseLoc(raw){
   const s = String(raw || "").trim().toUpperCase();
-
-  // grupo4 opcional: -P# o -S#
-  const m = s.match(/^(Z[123]|A1)-(E\d+)-(N\d+)(?:-([PS])(\d+))?$/);
+  // slot opcional: -S\d+
+  const m = s.match(/^(Z[123]|A1)-(E\d+)-(N\d+)(?:-(S\d+))?$/);
   if (!m) return { zonaId:"", estanteId:"", nivelId:"", levelNum:0, slotNum:0, pretty:s };
 
   const zonaId = m[1];
   const estanteId = `${zonaId}-${m[2]}`;
-
   const levelNum = parseInt(m[3].replace("N",""), 10) || 0;
+  const slotNum = m[4] ? (parseInt(m[4].replace("S",""), 10) || 0) : 0;
+
   const nivelId = `${estanteId}-${m[3]}`;
-
-  let slotNum = 0;
-  if (m[5]){
-    slotNum = parseInt(m[5], 10) || 0;
-    // ✅ como tus estantes tienen 3 slots, acotamos 1..3
-    slotNum = clamp(slotNum, 1, SLOTS_PER_LEVEL);
-  }
-
   return { zonaId, estanteId, nivelId, levelNum, slotNum, pretty:s };
 }
 
 /* =========================
-   Vista estante (ISOMÉTRICA)
+   ISOMETRIC helpers
 ========================= */
 const ISO_ANGLE = 30 * (Math.PI / 180);
 const COS_30 = Math.cos(ISO_ANGLE);
@@ -620,12 +599,22 @@ function isoLine(from, to, attrs){
   return svgEl("line", { x1:from.x, y1:from.y, x2:to.x, y2:to.y, ...attrs });
 }
 
+/* =========================
+   Vista estante (ISOMÉTRICA)
+   - muestra todos los niveles
+   - 3 slots por nivel
+   - pinta SOLO la celda del producto (por slot)
+========================= */
 function renderShelfIso(estanteId, levelNum, slotNum){
   const isAlmacen = estanteId.startsWith("A1-");
   const levels = isAlmacen ? 8 : 6;
-  const slots = SLOTS_PER_LEVEL; // 3
+  const slots = SLOTS_PER_LEVEL;
 
-  const rackW = 190;
+  // clamp
+  const safeLevel = Math.max(1, Math.min(levels, levelNum || 1));
+  const safeSlot  = Math.max(1, Math.min(slots, slotNum || DEFAULT_SLOT));
+
+  const rackW = 190;                 // más corto porque 3 slots
   const rackD = 90;
   const rackH = 220;
   const shelfSpacing = rackH / levels;
@@ -633,6 +622,7 @@ function renderShelfIso(estanteId, levelNum, slotNum){
   const viewBox = "-240 -300 480 440";
   const svg = svgEl("svg", { class:"shelfIsoSvg", viewBox, preserveAspectRatio:"xMidYMid meet" });
 
+  // floor tile
   svg.appendChild(isoFace(
     [toScreen(-20,-20,0), toScreen(rackW+20,-20,0), toScreen(rackW+20,rackD+20,0), toScreen(-20,rackD+20,0)],
     {
@@ -642,7 +632,9 @@ function renderShelfIso(estanteId, levelNum, slotNum){
     }
   ));
 
+  // posts
   const postStyle = { stroke: document.body.classList.contains("dark") ? "#94a3b8" : "#64748b", "stroke-width":"3", "stroke-linecap":"round" };
+  // back
   svg.appendChild(isoLine(toScreen(0,0,0), toScreen(0,0,rackH), postStyle));
   svg.appendChild(isoLine(toScreen(rackW,0,0), toScreen(rackW,0,rackH), postStyle));
 
@@ -651,13 +643,12 @@ function renderShelfIso(estanteId, levelNum, slotNum){
   const fillHL = "#f97316";
   const strokeHL = "#ea580c";
 
-  const safeSlot = clamp(slotNum || DEFAULT_SLOT, 1, slots);
-
   for (let i=0;i<levels;i++){
     const z = i*shelfSpacing + 10;
     const lvl = i + 1;
-    const isTargetLevel = lvl === levelNum;
+    const isTargetLevel = lvl === safeLevel;
 
+    // shelf surfaces
     const top = [toScreen(0,0,z), toScreen(rackW,0,z), toScreen(rackW,rackD,z), toScreen(0,rackD,z)];
     const front = [toScreen(0,rackD,z), toScreen(rackW,rackD,z), toScreen(rackW,rackD,z-thickness), toScreen(0,rackD,z-thickness)];
     const right = [toScreen(rackW,0,z), toScreen(rackW,rackD,z), toScreen(rackW,rackD,z-thickness), toScreen(rackW,0,z-thickness)];
@@ -671,6 +662,7 @@ function renderShelfIso(estanteId, levelNum, slotNum){
     svg.appendChild(isoFace(front, { fill: document.body.classList.contains("dark") ? "#1f2a3d" : "#cbd5e1", opacity:"0.85" }));
     svg.appendChild(isoFace(right, { fill: document.body.classList.contains("dark") ? "#22314b" : "#b6c2d3", opacity:"0.85" }));
 
+    // label N#
     const labelPos = toScreen(-16, rackD/2, z + shelfSpacing/2);
     const txt = svgEl("text", {
       x: labelPos.x, y: labelPos.y,
@@ -683,6 +675,7 @@ function renderShelfIso(estanteId, levelNum, slotNum){
     txt.textContent = `N${lvl}`;
     svg.appendChild(txt);
 
+    // slots grid
     for (let s=1;s<=slots;s++){
       const x0 = (s-1)*slotW + 3;
       const w = slotW - 6;
@@ -694,7 +687,7 @@ function renderShelfIso(estanteId, levelNum, slotNum){
         toScreen(x0, rackD-8, z + 1),
       ];
 
-      const isTargetCell = (lvl === levelNum) && (s === safeSlot);
+      const isTargetCell = (lvl === safeLevel) && (s === safeSlot);
 
       svg.appendChild(isoFace(cellTop, {
         fill: isTargetCell ? fillHL : "transparent",
@@ -705,12 +698,14 @@ function renderShelfIso(estanteId, levelNum, slotNum){
     }
   }
 
+  // front posts last
   svg.appendChild(isoLine(toScreen(0,rackD,0), toScreen(0,rackD,rackH), postStyle));
   svg.appendChild(isoLine(toScreen(rackW,rackD,0), toScreen(rackW,rackD,rackH), postStyle));
 
+  // top label
   const lp = toScreen(rackW/2, rackD/2, rackH + 16);
   svg.appendChild(svgEl("rect", {
-    x: lp.x - 50, y: lp.y - 12, width: 100, height: 20, rx: 6,
+    x: lp.x - 52, y: lp.y - 12, width: 104, height: 20, rx: 6,
     fill: document.body.classList.contains("dark") ? "#0b1220" : "#ffffff",
     stroke: "#f97316", "stroke-width":"2"
   }));
@@ -727,7 +722,7 @@ function renderShelfIso(estanteId, levelNum, slotNum){
   wrap.innerHTML = `
     <div class="shelfIsoTopbar">
       <span>Slots por nivel: <b>${slots}</b></span>
-      <span>Celda pintada: <b>N${levelNum}</b> / <b>Pos ${safeSlot}</b></span>
+      <span>Celda pintada: <b>N${safeLevel}</b> / <b>S${safeSlot}</b></span>
     </div>
   `;
   wrap.appendChild(svg);
@@ -744,12 +739,8 @@ function mostrarVistaEstante(estanteId, levelNum, slotNum){
     return;
   }
   shelfLabel.textContent = estanteId;
-
-  // ✅ si no viene slot en la ubicación, cae al centro
-  const slot = clamp(slotNum || DEFAULT_SLOT, 1, SLOTS_PER_LEVEL);
-
   shelfPreview.innerHTML = "";
-  shelfPreview.appendChild(renderShelfIso(estanteId, levelNum || 1, slot));
+  shelfPreview.appendChild(renderShelfIso(estanteId, levelNum || 1, slotNum || DEFAULT_SLOT));
 }
 
 /* =========================
@@ -1053,7 +1044,7 @@ function drawRack(rack, zoneColor){
     "text-anchor":"middle", "font-size":"11", "font-weight":"900", "font-family":"monospace",
     fill: "#1e293b"
   });
-  txt.textContent = id.split("-")[1];
+  txt.textContent = id.split("-")[1]; // E#
   g.appendChild(rect);
   g.appendChild(txt);
 
@@ -1070,7 +1061,7 @@ function placeZoneRacks(zoneId, rackIds){
     A1:{ ox:300, oy:260, w:300, d:280 },
   }[zoneId];
 
-  const rackW = 40;
+  const rackW = 55;
   const rackD = 120;
   const rackH = 120;
   const levels = (zoneId === "A1") ? 8 : 6;
@@ -1260,74 +1251,89 @@ function aplicarResultadoActivo(triggerFeedback = false){
   kvUbicacion.textContent = mainPretty || "—";
   kvEstante.textContent = activo.mainLoc?.estanteId || "—";
   kvNivel.textContent = activo.mainLoc?.nivelId || "—";
-  kvSlot.textContent = (activo.mainLoc?.slotNum ? `P${activo.mainLoc.slotNum}` : "—");
+  kvSlot.textContent = activo.mainLoc?.slotNum ? ("S" + activo.mainLoc.slotNum) : "—";
   kvAlmacen.textContent = storePretty || "—";
 
-  // ✅ ahora usa SLOT real si existe, sino centro
-  mostrarVistaEstante(
-    activo.mainLoc?.estanteId || "",
-    activo.mainLoc?.levelNum || 1,
-    activo.mainLoc?.slotNum || 0
-  );
+  // ✅ Vista Estante isométrica (usa slot real si viene)
+  mostrarVistaEstante(activo.mainLoc?.estanteId || "", activo.mainLoc?.levelNum || 1, activo.mainLoc?.slotNum || DEFAULT_SLOT);
 
   setPickerState();
   if (triggerFeedback) feedbackOK();
 }
 
 /* =========================
-   LOAD SHEET
+   GOOGLE SHEET LOADER (corregido para GitHub Pages)
+   - parse robusto (sin substring mágico)
+   - cachebust para evitar respuestas cacheadas raras
 ========================= */
-setStatus("warn", "Cargando hoja “Mujer”...");
+setStatus("warn", `Cargando hoja “${sheetName}”...`);
 
-fetch(`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`)
-  .then(res => res.text())
-  .then(text => {
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
+function parseGVizTextToJson(text){
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start === -1 || end === -1) throw new Error("Respuesta gviz sin JSON.");
+  return JSON.parse(text.substring(start, end + 1));
+}
 
-    productos = [];
-    for (const r of rows){
-      if (!r.c) continue;
+(function loadSheet(){
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tqx=out:json&cachebust=${Date.now()}`;
+  fetch(url)
+    .then(res => res.text())
+    .then(text => {
+      if (text.includes("<html") || text.includes("<!DOCTYPE")) {
+        throw new Error("Google devolvió HTML (permisos/login). Publica la hoja o habilita acceso.");
+      }
+      const json = parseGVizTextToJson(text);
+      const rows = json?.table?.rows || [];
 
-      const barras = r.c[10]?.v || "";
-      const nombre = r.c[12]?.v || "";
-      const variante = r.c[13]?.v || "";
+      productos = [];
+      for (const r of rows){
+        if (!r.c) continue;
 
-      const ubicRaw = r.c[20]?.v || "";
-      const almacenRaw = r.c[21]?.v || "";
+        // ⚠️ columnas según tu sheet actual
+        const barras = r.c[10]?.v || "";
+        const nombre = r.c[12]?.v || "";
+        const variante = r.c[13]?.v || "";
 
-      const mainLoc = parseLoc(ubicRaw);
-      const storeLoc = parseLoc(almacenRaw);
+        const ubicRaw = r.c[20]?.v || "";    // z1-e1-n6-s2
+        const almacenRaw = r.c[21]?.v || ""; // a1-e2-n6-s3
 
-      const p = {
-        barras,
-        nombre,
-        variante,
-        ubic: mainLoc.pretty || "",
-        almacen: storeLoc.pretty || "",
-        mainLoc,
-        storeLoc
-      };
+        const mainLoc = parseLoc(ubicRaw);
+        const storeLoc = parseLoc(almacenRaw);
 
-      if (!barras && !nombre) continue;
+        const p = {
+          barras,
+          nombre,
+          variante,
+          ubic: mainLoc.pretty || "",
+          almacen: storeLoc.pretty || "",
+          mainLoc,
+          storeLoc
+        };
 
-      p.nvNorm = norm((p.nombre || "") + " " + (p.variante || ""));
-      p.fulltextNorm = norm((p.barras||"") + " " + (p.nombre||"") + " " + (p.variante||"") + " " + (p.ubic||"") + " " + (p.almacen||""));
-      p.nombreNorm = norm(p.nombre);
-      p.nombreNormKey = p.nombreNorm;
+        if (!barras && !nombre) continue;
 
-      productos.push(p);
-    }
+        p.nvNorm = norm((p.nombre || "") + " " + (p.variante || ""));
+        p.fulltextNorm = norm((p.barras||"") + " " + (p.nombre||"") + " " + (p.variante||"") + " " + (p.ubic||"") + " " + (p.almacen||""));
+        p.nombreNorm = norm(p.nombre);
+        p.nombreNormKey = p.nombreNorm;
 
-    metaCount.textContent = `${productos.length} productos`;
-    renderTabla(productos);
+        productos.push(p);
+      }
 
-    isLoaded = true;
-    setStatus("ok", `Listo • ${productos.length} productos cargados`);
+      metaCount.textContent = `${productos.length} productos`;
+      renderTabla(productos);
 
-    renderIsometric();
-  })
-  .catch(() => setStatus("bad", "Error cargando la hoja. Revisa permisos del Sheet.")));
+      isLoaded = true;
+      setStatus("ok", `Listo • ${productos.length} productos cargados`);
+      renderIsometric();
+    })
+    .catch(err => {
+      console.error("SHEET ERROR:", err);
+      setStatus("bad", "Error cargando la hoja (revisa permisos/columnas).");
+      info.textContent = `❌ ${err.message}`;
+    });
+})();
 
 /* =========================
    Scanner
