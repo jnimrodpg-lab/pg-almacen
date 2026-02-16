@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>TIENDAS PG • Localizador</title>
+<title>TIENDAS PG • Localizador (PRO)</title>
 
 <style>
   :root{
@@ -49,7 +49,7 @@
     padding:6px 10px; border-radius:999px; width:max-content;
   }
 
-  .topActions{ display:flex; gap:10px; align-items:center; }
+  .topActions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
   .toggle{
     border:1px solid var(--border);
     background:var(--card);
@@ -59,8 +59,13 @@
     cursor:pointer;
     box-shadow:0 6px 18px rgba(0,0,0,.05);
     font-size:13px;
+    font-weight:800;
+    display:inline-flex; align-items:center; gap:8px;
   }
-
+  .toggle.primary{
+    border-color: rgba(37,99,235,.35);
+    box-shadow: 0 0 0 4px rgba(37,99,235,.08);
+  }
   .status{
     display:flex; align-items:center; gap:8px;
     padding:10px 12px; border:1px solid var(--border);
@@ -107,6 +112,7 @@
     flex:1; min-width:140px; border:none; border-radius:12px;
     padding:12px; font-size:14px; cursor:pointer; color:#fff;
     display:flex; align-items:center; justify-content:center; gap:8px;
+    font-weight:900;
   }
   .btn.primary{ background:var(--primary); }
   .btn.danger{ background:var(--danger); }
@@ -144,6 +150,8 @@
     background: rgba(37,99,235,.08);
     color: #1f3b8f;
   }
+  body.dark .chip.active .badge{ color:#93c5fd; }
+
   .hint{ font-size:12px; color:var(--muted); line-height:1.4; }
 
   .result-card{
@@ -152,7 +160,7 @@
   }
   body.dark .result-card{ background:rgba(255,255,255,.03); }
   .result-title{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .bigloc{ margin-top:8px; font-size:22px; font-weight:800; letter-spacing:.5px; }
+  .bigloc{ margin-top:8px; font-size:18px; font-weight:900; letter-spacing:.2px; }
   .sub{ margin-top:6px; font-size:12px; color:var(--muted); }
 
   .kv{ margin-top:10px; display:grid; gap:8px; }
@@ -168,7 +176,7 @@
   .picker button{
     border:1px solid var(--border); background:var(--card); color:var(--text);
     border-radius:12px; padding:10px 12px; cursor:pointer;
-    flex:1; min-width:120px; font-weight:700;
+    flex:1; min-width:120px; font-weight:900;
   }
   .picker button:disabled{ opacity:.45; cursor:not-allowed; }
   .picker .counter{
@@ -202,6 +210,7 @@
     border-radius:12px;
     background:var(--card);
     display:block;
+    touch-action:none;
   }
 
   .iso-zone{ transition:.18s; }
@@ -216,6 +225,7 @@
 
   .iso-zone.mainHL{ fill:rgba(251,191,36,.25) !important; stroke:#f97316 !important; stroke-width:3; }
   .iso-zone.storeHL{ fill:rgba(34,197,94,.18) !important; stroke:#16a34a !important; stroke-width:3; }
+  .iso-zone.selected{ stroke:#2563eb !important; stroke-width:3.3; fill:rgba(37,99,235,.10) !important; }
 
   .rack{ cursor:pointer; transition:.18s; }
   .rack.dim{ opacity:.25; }
@@ -242,17 +252,8 @@
   .rack.hoverHL .post{ stroke:#2563eb; }
   .rack.hoverHL .shelfTop{ fill:rgba(37,99,235,.15); stroke:#2563eb; }
 
-  #reader{ display:none; padding:0 14px 14px 14px; }
-  .pill{
-    padding:6px 10px; border-radius:999px;
-    font-size:12px; border:1px solid var(--border);
-    background:var(--card); color:var(--muted); white-space:nowrap;
-  }
-  .map-info{
-    padding:12px 14px; border-top:1px solid var(--border);
-    display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
-  }
-  .map-info .msg{ font-size:13px; color:var(--muted); line-height:1.4; }
+  .rack.selected .post{ stroke:#2563eb; }
+  .rack.selected .shelfTop{ stroke:#2563eb; stroke-width:1.6; fill:rgba(37,99,235,.14); }
 
   /* ===== Vista Estante Isométrica ===== */
   .shelfIsoWrap{
@@ -277,23 +278,234 @@
     height:260px;
     display:block;
   }
+
+  /* ===== Editor sticky top ===== */
+  .editorTop{
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 14px;
+    display:none;
+  }
+  .editorTop.on{ display:block; }
+  .editorTop .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+  .editorTop .left, .editorTop .right{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .pill{
+    padding:6px 10px; border-radius:999px;
+    font-size:12px; border:1px solid var(--border);
+    background:var(--card); color:var(--muted); white-space:nowrap;
+  }
+
+  .map-info{
+    padding:12px 14px; border-top:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+  }
+  .map-info .msg{ font-size:13px; color:var(--muted); line-height:1.4; }
+
+  #reader{ display:none; padding:0 14px 14px 14px; }
+
+  /* ===== Orthogonal split panel (inside right card) ===== */
+  .splitWrap{ padding:14px; border-top:1px solid var(--border); display:none; }
+  .splitWrap.on{ display:block; }
+  .splitGrid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+  }
+  @media (max-width: 980px){
+    .splitGrid{ grid-template-columns:1fr; }
+  }
+  .miniCard{
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:var(--card);
+    overflow:hidden;
+  }
+  .miniHead{
+    padding:10px 12px;
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    font-size:12px; color:var(--muted);
+  }
+  .miniHead b{ color:var(--text); }
+  #orthoMap{
+    width:100%; height:360px; display:block;
+    background:var(--card);
+    touch-action:none;
+  }
+
+  /* ===== Orthogonal styles ===== */
+  .ortho-zone{ fill:rgba(37,99,235,.08); stroke:rgba(37,99,235,.55); stroke-width:0.35; }
+  body.dark .ortho-zone{ fill:rgba(37,99,235,.06); stroke:rgba(147,197,253,.55); }
+  .ortho-zone.selected{ fill:rgba(251,191,36,.12); stroke:#f97316; stroke-width:0.55; }
+  .ortho-rack{ fill:rgba(100,116,139,.12); stroke:rgba(100,116,139,.65); stroke-width:0.2; }
+  body.dark .ortho-rack{ fill:rgba(148,163,184,.10); stroke:rgba(148,163,184,.50); }
+  .vtx{ fill:#2563eb; }
+  .vtx-hit{ fill:rgba(37,99,235,.06); stroke:rgba(37,99,235,.35); stroke-width:0.2; cursor:pointer; }
+  .edge-hit{ fill:transparent; stroke:transparent; stroke-width:3; cursor:crosshair; }
+
+  .dims line{ stroke: rgba(245,158,11,.65); stroke-width:0.18; stroke-dasharray: 0.6 0.6; }
+  .dims text{ fill:#f59e0b; font-size:1.8px; font-family: monospace; font-weight:900; }
+  body.dark .dims text{ fill:#fbbf24; }
+
+  .guides line{ stroke: rgba(37,99,235,.55); stroke-width:0.18; stroke-dasharray: 0.8 0.6; }
+  body.dark .guides line{ stroke: rgba(147,197,253,.55); }
+
+  /* ===== Bridges / corridors ===== */
+  .bridgeLine{
+    stroke: rgba(168,85,247,.85);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 10 7;
+    opacity: .85;
+  }
+  body.dark .bridgeLine{ stroke: rgba(216,180,254,.85); }
+  .corridorPoly{
+    fill: rgba(168,85,247,.10);
+    stroke: rgba(168,85,247,.55);
+    stroke-width: 2;
+  }
+  body.dark .corridorPoly{
+    fill: rgba(216,180,254,.08);
+    stroke: rgba(216,180,254,.55);
+  }
+
+  /* ===== Modal Zone Editor ===== */
+  .zmodal{ position:fixed; inset:0; display:none; z-index:9999; }
+  .zmodal[aria-hidden="false"]{ display:block; }
+  .zmodal__backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.55); backdrop-filter: blur(2px); }
+  .zmodal__panel{
+    position:relative;
+    width:min(1100px, calc(100vw - 24px));
+    height:min(760px, calc(100vh - 24px));
+    margin:12px auto;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:0 18px 50px rgba(0,0,0,.35);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .zmodal__head{
+    padding:14px 16px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .zmodal__title{ font-weight:900; font-size:16px; }
+  .zmodal__sub{ font-size:12px; color:var(--muted); margin-top:4px; }
+  .zmodal__toolbar{
+    padding:10px 12px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+  }
+  .zpill{
+    padding:8px 10px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:var(--card);
+    color:var(--muted);
+    font-size:12px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .zselect{
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:6px 8px;
+    background:var(--card);
+    color:var(--text);
+    font-weight:800;
+  }
+  .zbtn{
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    border-radius:12px;
+    padding:10px 12px;
+    cursor:pointer;
+    font-weight:900;
+    font-size:13px;
+  }
+  .zbtn--ghost{ box-shadow:0 8px 18px rgba(0,0,0,.06); }
+  .zbtn--primary{ border-color: rgba(37,99,235,.35); background: rgba(37,99,235,.12); }
+  .zbtn--danger{ border-color: rgba(220,38,38,.35); background: rgba(220,38,38,.10); }
+  .zspacer{ flex:1; }
+
+  .zmodal__body{
+    flex:1;
+    display:grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap:12px;
+    padding:12px;
+  }
+  @media (max-width: 980px){
+    .zmodal__body{ grid-template-columns:1fr; }
+  }
+  .zcanvas{
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+    background:var(--card);
+  }
+  #zoneMap{
+    width:100%;
+    height:100%;
+    min-height:520px;
+    display:block;
+    touch-action:none;
+  }
+  .zhelp{
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:var(--card);
+    padding:12px;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.45;
+  }
+  .zhelp ul{ margin:8px 0 0 18px; }
+  .zmini{ margin-top:10px; padding:10px 12px; border:1px dashed var(--border); border-radius:12px; }
+
+  .zoneHit{
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 14;
+    cursor: pointer;
+  }
+
+  /* hide editor-only elements in viewer mode */
+  body.viewer .editorTop,
+  body.viewer .splitWrap,
+  body.viewer #editorPanel { display:none !important; }
+  body.editor #editorPanel { display:block; }
 </style>
 </head>
 
-<body>
+<body class="viewer">
 
 <div class="topbar">
   <div class="brand">
     <div class="logoMark"><div class="logoBase"></div></div>
     <div class="brandText">
       <div class="title">TIENDAS PG</div>
-      <div class="subtitle">Localizador de inventario</div>
-      <div class="tag">🏬 TIENDA</div>
+      <div class="subtitle">Localizador de inventario (PRO)</div>
+      <div class="tag" id="modeTag">👁️ VISUALIZADOR</div>
     </div>
   </div>
 
   <div class="topActions">
+    <button class="toggle primary" id="btnModeViewer">👁️ Visualizador</button>
+    <button class="toggle" id="btnModeEditor">🛠️ Editor</button>
     <button class="toggle" id="btnDark">🌙 Modo oscuro</button>
+
     <div class="status">
       <span class="dot" id="statusDot"></span>
       <span id="statusText">Cargando hoja…</span>
@@ -315,7 +527,7 @@
 
     <div class="controls">
       <div class="search">
-        <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s  |  z1-e1-n6-s2  |  a1-e2-n6-s3" autocomplete="off" />
+        <input id="buscar" type="text" placeholder="Ej: bvd emperador blanco s  |  z1-e1-n6-p2  |  a1-e2-n6-s1" autocomplete="off" />
       </div>
 
       <div class="chiprow">
@@ -347,11 +559,26 @@
         <div class="sub" id="subLoc">—</div>
 
         <div class="kv">
-          <div class="kv-row"><b>📍 Ubicación</b><span id="kvUbicacion">—</span></div>
-          <div class="kv-row"><b>🧱 Estante</b><span id="kvEstante">—</span></div>
-          <div class="kv-row"><b>📚 Nivel</b><span id="kvNivel">—</span></div>
-          <div class="kv-row"><b>🎯 Slot</b><span id="kvSlot">—</span></div>
-          <div class="kv-row"><b>📦 Almacén</b><span id="kvAlmacen">—</span></div>
+          <div class="kv-row">
+            <b>📍 Ubicación</b>
+            <span id="kvUbicacion">—</span>
+          </div>
+          <div class="kv-row">
+            <b>🧱 Estante</b>
+            <span id="kvEstante">—</span>
+          </div>
+          <div class="kv-row">
+            <b>📚 Nivel</b>
+            <span id="kvNivel">—</span>
+          </div>
+          <div class="kv-row">
+            <b>🧩 Slot</b>
+            <span id="kvSlot">—</span>
+          </div>
+          <div class="kv-row">
+            <b>📦 Almacén</b>
+            <span id="kvAlmacen">—</span>
+          </div>
         </div>
 
         <div class="picker">
@@ -372,8 +599,8 @@
               <th style="width:140px;">Barras</th>
               <th>Nombre</th>
               <th style="width:160px;">Variante</th>
-              <th style="width:170px;">Ubicación</th>
-              <th style="width:170px;">Almacén</th>
+              <th style="width:180px;">Ubicación</th>
+              <th style="width:140px;">Almacén</th>
             </tr>
           </thead>
           <tbody id="tabla"></tbody>
@@ -384,10 +611,52 @@
 
   <!-- DERECHA -->
   <div class="card sticky">
+
+    <!-- EDITOR TOP (NO SCROLL) -->
+    <div class="editorTop" id="editorTop">
+      <div class="row">
+        <div class="left">
+          <span class="pill" id="editPill">EDIT: OFF</span>
+          <button class="toggle" id="btnEditMode" type="button">🧲 Activar edición</button>
+
+          <span class="pill" id="toolPill">Herr: Selección</span>
+          <button class="toggle" id="btnToolSelect" type="button">🖱️ Selección</button>
+          <button class="toggle" id="btnToolZone" type="button">🧩 Zonas</button>
+          <button class="toggle" id="btnToolRack" type="button">🧱 Estantes</button>
+          <button class="toggle" id="btnToolBridge" type="button">🌉 Puente</button>
+
+          <button class="toggle" id="btnEditZoneModal" type="button">🪟 Editar zona</button>
+        </div>
+
+        <div class="right">
+          <span class="pill" id="selLabel">Sel: —</span>
+
+          <span class="pill">Snap</span>
+          <select id="snapSelect" style="padding:8px 10px; border-radius:12px; border:1px solid var(--border); background:var(--card); color:var(--text); font-weight:900;">
+            <option value="0">OFF</option>
+            <option value="0.05">0.05 m</option>
+            <option value="0.10" selected>0.10 m</option>
+            <option value="0.25">0.25 m</option>
+            <option value="0.50">0.50 m</option>
+            <option value="1.00">1.00 m</option>
+          </select>
+
+          <button class="toggle" id="btnShowOrtho" type="button">🗺️ Orto: OFF</button>
+          <button class="toggle" id="btnSaveLayout" type="button">💾 Guardar</button>
+          <button class="toggle" id="btnUndo" type="button">↩ Undo</button>
+          <button class="toggle" id="btnRedo" type="button">↪ Redo</button>
+          <button class="toggle" id="btnReset" type="button">🧨 Reset</button>
+        </div>
+      </div>
+      <div class="hint" style="margin-top:10px;">
+        PRO: En edición, las zonas/estantes se mueven con drag. Zonas: vértices grandes + agregar vértices. Puente: click 2 zonas → crea pasillo automático.
+      </div>
+    </div>
+
     <div class="card-header">
       <div>
         <h2>Plano general</h2>
-        <div class="meta">Isométrico • Hover filtra por estante</div>
+        <div class="meta">Isométrico • Hover filtra por estante (solo visualizador)</div>
       </div>
       <div class="meta" id="mapBadge">—</div>
     </div>
@@ -396,10 +665,42 @@
       <svg id="isoMap" viewBox="-600 -120 1200 760" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
 
+    <!-- SPLIT VIEW (ORTHO + ISO) -->
+    <div class="splitWrap" id="splitWrap">
+      <div class="splitGrid">
+        <div class="miniCard">
+          <div class="miniHead">
+            <span><b>Ortogonal</b> (edición precisa)</span>
+            <span class="pill" id="orthoBadge">—</span>
+          </div>
+          <svg id="orthoMap" viewBox="0 0 100 80" preserveAspectRatio="xMidYMid meet"></svg>
+          <div style="padding:10px 12px; border-top:1px solid var(--border); display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <button class="toggle" id="btnOrthoDims">📏 Cotas: OFF</button>
+            <button class="toggle" id="btnOrthoRacks">🧱 Estantes: ON</button>
+            <button class="toggle" id="btnOrthoAddVertex">➕ Vértice</button>
+            <button class="toggle" id="btnOrthoDelVertex">➖ Vértice</button>
+          </div>
+          <div style="padding:10px 12px; color:var(--muted); font-size:12px; border-top:1px dashed var(--border);">
+            Tip: para mover vértice → click + arrastrar (hitbox grande). Agregar vértice → activa “➕ Vértice” y haz click en borde.
+          </div>
+        </div>
+
+        <div class="miniCard">
+          <div class="miniHead">
+            <span><b>Isométrico</b> (referencia)</span>
+            <span class="pill">Se actualiza en vivo</span>
+          </div>
+          <div style="padding:12px; color:var(--muted); font-size:12px;">
+            Usa el ortogonal para precisión. El isométrico refleja cambios automáticamente.
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- VISTA ESTANTE ISO -->
     <div style="padding:14px; border-top:1px solid var(--border);">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
-        <div style="font-weight:800;">Vista estante (isométrico)</div>
+        <div style="font-weight:900;">Vista estante (isométrico)</div>
         <div class="pill" id="shelfLabel">—</div>
       </div>
 
@@ -418,26 +719,92 @@
 
 </div>
 
+<!-- ===== MODAL: Editor por Zona ===== -->
+<div id="zoneModal" class="zmodal" aria-hidden="true">
+  <div class="zmodal__backdrop" id="zoneModalBackdrop"></div>
+
+  <div class="zmodal__panel" role="dialog" aria-modal="true" aria-labelledby="zoneModalTitle">
+    <div class="zmodal__head">
+      <div>
+        <div class="zmodal__title" id="zoneModalTitle">Editor de Zona</div>
+        <div class="zmodal__sub" id="zoneModalSub">—</div>
+      </div>
+      <div class="zmodal__headActions">
+        <button class="zbtn zbtn--ghost" id="zoneModalCloseBtn" type="button">✖ Cerrar</button>
+      </div>
+    </div>
+
+    <div class="zmodal__toolbar">
+      <div class="zpill">
+        Herramienta:
+        <select id="zoneTool" class="zselect">
+          <option value="vtx-move" selected>Mover vértices</option>
+          <option value="add-vertex">Agregar vértice (clic en borde)</option>
+          <option value="del-vertex">Eliminar vértice (clic en vértice)</option>
+          <option value="move-zone">Mover zona completa</option>
+        </select>
+      </div>
+
+      <div class="zpill">
+        Snap:
+        <select id="zoneSnap" class="zselect">
+          <option value="0">OFF</option>
+          <option value="0.05">0.05 m</option>
+          <option value="0.10" selected>0.10 m</option>
+          <option value="0.25">0.25 m</option>
+          <option value="0.50">0.50 m</option>
+        </select>
+      </div>
+
+      <div class="zpill">
+        Alineación:
+        <select id="zoneAlign" class="zselect">
+          <option value="0">OFF</option>
+          <option value="0.20" selected>0.20 m</option>
+          <option value="0.10">0.10 m</option>
+          <option value="0.05">0.05 m</option>
+        </select>
+      </div>
+
+      <button class="zbtn zbtn--ghost" id="zoneToggleDims" type="button">📏 Cotas: OFF</button>
+      <button class="zbtn zbtn--ghost" id="zoneToggleRacks" type="button">🧱 Estantes: ON</button>
+
+      <div class="zspacer"></div>
+
+      <button class="zbtn zbtn--ghost" id="zoneUndo" type="button">↩ Undo</button>
+      <button class="zbtn zbtn--ghost" id="zoneRedo" type="button">↪ Redo</button>
+
+      <button class="zbtn zbtn--primary" id="zoneApply" type="button">✅ Aplicar</button>
+      <button class="zbtn zbtn--danger" id="zoneCancel" type="button">⛔ Cancelar</button>
+    </div>
+
+    <div class="zmodal__body">
+      <div class="zcanvas">
+        <svg id="zoneMap" viewBox="0 0 100 70" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+
+      <div class="zhelp">
+        <div><b>Tips:</b></div>
+        <ul>
+          <li><b>Mover vértices:</b> click + arrastrar (hitbox grande).</li>
+          <li><b>Agregar vértice:</b> clic en el borde (tolerante).</li>
+          <li><b>Eliminar vértice:</b> clic en vértice (mín. 3).</li>
+          <li><b>Mover zona:</b> arrastra dentro del polígono.</li>
+        </ul>
+        <div class="zmini" id="zoneMiniInfo">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
 /* =========================
-   CONFIG
+   CONFIG SHEET
 ========================= */
 const sheetID   = "1IU4wMdVImmEbl93kgcCCQAGPiTc28uQdNNaq0bgTF2o";
 const sheetName = "Mujer";
-
-/* ===== LAYOUT FIJO POR ZONA ===== */
-const ZONE_LAYOUT = {
-  Z1: { rows: 2, cols: 4, order: ["Z1-E1","Z1-E2","Z1-E3","Z1-E4","Z1-E5","Z1-E6","Z1-E7","Z1-E8"] },
-  Z2: { rows: 2, cols: 5, order: ["Z2-E1","Z2-E2","Z2-E3","Z2-E4","Z2-E5","Z2-E6","Z2-E7","Z2-E8","Z2-E9","Z2-E10"] },
-  Z3: { rows: 3, cols: 3, order: ["Z3-E1","Z3-E2","Z3-E3","Z3-E4","Z3-E5","Z3-E6","Z3-E7","Z3-E8","Z3-E9"] },
-  A1: { rows: 3, cols: 4, order: ["A1-E1","A1-E2","A1-E3","A1-E4","A1-E5","A1-E6","A1-E7","A1-E8","A1-E9","A1-E10","A1-E11","A1-E12"] },
-};
-
-/* Vista estante */
-const DEFAULT_SLOT = 2;    // si no viene slot, usamos el medio (ahora sí soporta slot)
-const SLOTS_PER_LEVEL = 3; // ✅ lo que pediste: estante con 3 espacios por nivel
 
 /* =========================
    UI refs
@@ -480,8 +847,57 @@ const shelfLabel = document.getElementById("shelfLabel");
 const btnDark = document.getElementById("btnDark");
 const isoMap = document.getElementById("isoMap");
 
+const btnModeViewer = document.getElementById("btnModeViewer");
+const btnModeEditor = document.getElementById("btnModeEditor");
+const modeTag = document.getElementById("modeTag");
+
+const editorTop = document.getElementById("editorTop");
+const editPill  = document.getElementById("editPill");
+const btnEditMode   = document.getElementById("btnEditMode");
+const selLabel  = document.getElementById("selLabel");
+const toolPill  = document.getElementById("toolPill");
+
+const btnToolSelect = document.getElementById("btnToolSelect");
+const btnToolZone = document.getElementById("btnToolZone");
+const btnToolRack = document.getElementById("btnToolRack");
+const btnToolBridge = document.getElementById("btnToolBridge");
+const btnEditZoneModal = document.getElementById("btnEditZoneModal");
+
+const snapSelect = document.getElementById("snapSelect");
+const btnShowOrtho = document.getElementById("btnShowOrtho");
+const splitWrap = document.getElementById("splitWrap");
+const orthoMap = document.getElementById("orthoMap");
+const orthoBadge = document.getElementById("orthoBadge");
+
+const btnOrthoDims = document.getElementById("btnOrthoDims");
+const btnOrthoRacks = document.getElementById("btnOrthoRacks");
+const btnOrthoAddVertex = document.getElementById("btnOrthoAddVertex");
+const btnOrthoDelVertex = document.getElementById("btnOrthoDelVertex");
+
+const btnSaveLayout = document.getElementById("btnSaveLayout");
+const btnUndo = document.getElementById("btnUndo");
+const btnRedo = document.getElementById("btnRedo");
+const btnReset = document.getElementById("btnReset");
+
+/* Modal zone editor refs */
+const zoneModal = document.getElementById("zoneModal");
+const zoneModalBackdrop = document.getElementById("zoneModalBackdrop");
+const zoneModalCloseBtn = document.getElementById("zoneModalCloseBtn");
+const zoneModalSub = document.getElementById("zoneModalSub");
+const zoneMap = document.getElementById("zoneMap");
+const zoneTool = document.getElementById("zoneTool");
+const zoneSnap = document.getElementById("zoneSnap");
+const zoneAlign = document.getElementById("zoneAlign");
+const zoneToggleDims = document.getElementById("zoneToggleDims");
+const zoneToggleRacks = document.getElementById("zoneToggleRacks");
+const zoneUndoBtn = document.getElementById("zoneUndo");
+const zoneRedoBtn = document.getElementById("zoneRedo");
+const zoneApply = document.getElementById("zoneApply");
+const zoneCancel = document.getElementById("zoneCancel");
+const zoneMiniInfo = document.getElementById("zoneMiniInfo");
+
 /* =========================
-   STATE
+   STATE: products/search
 ========================= */
 let productos = [];
 let resultadosDetallado = [];
@@ -491,10 +907,30 @@ let indiceActual = 0;
 let modo = "reducido";
 let isLoaded = false;
 
-let racksIndex = { Z1:[], Z2:[], Z3:[], A1:[] };
-let rackNodes = new Map();
-let zoneNodes = new Map();
-let lastHoverQuery = null;
+/* =========================
+   STATE: app modes
+========================= */
+let APP_MODE = "viewer"; // viewer/editor
+let EDIT_MODE = false;
+
+function setAppMode(m){
+  APP_MODE = m;
+  document.body.classList.toggle("viewer", APP_MODE === "viewer");
+  document.body.classList.toggle("editor", APP_MODE === "editor");
+  modeTag.textContent = APP_MODE === "editor" ? "🛠️ EDITOR" : "👁️ VISUALIZADOR";
+  btnModeViewer.classList.toggle("primary", APP_MODE === "viewer");
+  btnModeEditor.classList.toggle("primary", APP_MODE === "editor");
+  editorTop.classList.toggle("on", APP_MODE === "editor");
+  if (APP_MODE === "viewer"){
+    EDIT_MODE = false;
+    setEditModeUI();
+    splitWrap.classList.remove("on");
+    btnShowOrtho.textContent = "🗺️ Orto: OFF";
+  }
+  refreshAllRenders(false);
+}
+btnModeViewer.addEventListener("click", ()=> setAppMode("viewer"));
+btnModeEditor.addEventListener("click", ()=> setAppMode("editor"));
 
 /* =========================
    Feedback
@@ -534,7 +970,6 @@ function escapeHtml(str){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
-
 function norm(s){
   return String(s || "")
     .toLowerCase()
@@ -555,27 +990,23 @@ function matchAll(textoNorm, qTokens){
 
 /* =========================
    Parse loc: Z1/Z2/Z3/A1
-   expected:
-     z1-e1-n6
-     z1-e1-n6-s2   ✅ ahora soporta slot
 ========================= */
 function parseLoc(raw){
   const s = String(raw || "").trim().toUpperCase();
-  // slot opcional: -S\d+
-  const m = s.match(/^(Z[123]|A1)-(E\d+)-(N\d+)(?:-(S\d+))?$/);
+  const m = s.match(/^(Z[123]|A1)-(E\d+)-(N\d+)(?:-(P\d+|S\d+))?$/);
   if (!m) return { zonaId:"", estanteId:"", nivelId:"", levelNum:0, slotNum:0, pretty:s };
-
   const zonaId = m[1];
   const estanteId = `${zonaId}-${m[2]}`;
   const levelNum = parseInt(m[3].replace("N",""), 10) || 0;
-  const slotNum = m[4] ? (parseInt(m[4].replace("S",""), 10) || 0) : 0;
-
+  const slotRaw = m[4] || "";
+  const slotNum = slotRaw ? (parseInt(slotRaw.replace(/[PS]/,""),10) || 0) : 0;
   const nivelId = `${estanteId}-${m[3]}`;
-  return { zonaId, estanteId, nivelId, levelNum, slotNum, pretty:s };
+  const pretty = slotRaw ? `${zonaId}-${m[2]}-${m[3]}-${slotRaw}` : `${zonaId}-${m[2]}-${m[3]}`;
+  return { zonaId, estanteId, nivelId, levelNum, slotNum, pretty };
 }
 
 /* =========================
-   ISOMETRIC helpers
+   Vista estante (ISOMÉTRICA)
 ========================= */
 const ISO_ANGLE = 30 * (Math.PI / 180);
 const COS_30 = Math.cos(ISO_ANGLE);
@@ -598,43 +1029,35 @@ function isoFace(coords, attrs){
 function isoLine(from, to, attrs){
   return svgEl("line", { x1:from.x, y1:from.y, x2:to.x, y2:to.y, ...attrs });
 }
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
-/* =========================
-   Vista estante (ISOMÉTRICA)
-   - muestra todos los niveles
-   - 3 slots por nivel
-   - pinta SOLO la celda del producto (por slot)
-========================= */
+/* Vista estante */
+const SLOTS_PER_LEVEL = 3;
+const DEFAULT_SLOT = 2;
+
 function renderShelfIso(estanteId, levelNum, slotNum){
   const isAlmacen = estanteId.startsWith("A1-");
   const levels = isAlmacen ? 8 : 6;
   const slots = SLOTS_PER_LEVEL;
 
-  // clamp
-  const safeLevel = Math.max(1, Math.min(levels, levelNum || 1));
-  const safeSlot  = Math.max(1, Math.min(slots, slotNum || DEFAULT_SLOT));
-
-  const rackW = 190;                 // más corto porque 3 slots
-  const rackD = 90;
+  const rackW = 160;
+  const rackD = 85;
   const rackH = 220;
   const shelfSpacing = rackH / levels;
 
-  const viewBox = "-240 -300 480 440";
+  const viewBox = "-220 -290 440 420";
   const svg = svgEl("svg", { class:"shelfIsoSvg", viewBox, preserveAspectRatio:"xMidYMid meet" });
 
-  // floor tile
+  const isDark = document.body.classList.contains("dark");
+  const floorFill = isDark ? "#0b1220" : "#f8fafc";
+  const floorStroke = isDark ? "#1f2937" : "#cbd5e1";
+
   svg.appendChild(isoFace(
     [toScreen(-20,-20,0), toScreen(rackW+20,-20,0), toScreen(rackW+20,rackD+20,0), toScreen(-20,rackD+20,0)],
-    {
-      fill: document.body.classList.contains("dark") ? "#0b1220" : "#f8fafc",
-      stroke: document.body.classList.contains("dark") ? "#1f2937" : "#cbd5e1",
-      "stroke-width":"1"
-    }
+    { fill: floorFill, stroke: floorStroke, "stroke-width":"1" }
   ));
 
-  // posts
-  const postStyle = { stroke: document.body.classList.contains("dark") ? "#94a3b8" : "#64748b", "stroke-width":"3", "stroke-linecap":"round" };
-  // back
+  const postStyle = { stroke: isDark ? "#94a3b8" : "#64748b", "stroke-width":"3", "stroke-linecap":"round" };
   svg.appendChild(isoLine(toScreen(0,0,0), toScreen(0,0,rackH), postStyle));
   svg.appendChild(isoLine(toScreen(rackW,0,0), toScreen(rackW,0,rackH), postStyle));
 
@@ -643,39 +1066,39 @@ function renderShelfIso(estanteId, levelNum, slotNum){
   const fillHL = "#f97316";
   const strokeHL = "#ea580c";
 
+  const safeLevel = clamp(levelNum || 1, 1, levels);
+  const safeSlot  = clamp(slotNum || DEFAULT_SLOT, 1, slots);
+
   for (let i=0;i<levels;i++){
     const z = i*shelfSpacing + 10;
     const lvl = i + 1;
     const isTargetLevel = lvl === safeLevel;
 
-    // shelf surfaces
     const top = [toScreen(0,0,z), toScreen(rackW,0,z), toScreen(rackW,rackD,z), toScreen(0,rackD,z)];
     const front = [toScreen(0,rackD,z), toScreen(rackW,rackD,z), toScreen(rackW,rackD,z-thickness), toScreen(0,rackD,z-thickness)];
     const right = [toScreen(rackW,0,z), toScreen(rackW,rackD,z), toScreen(rackW,rackD,z-thickness), toScreen(rackW,0,z-thickness)];
 
     svg.appendChild(isoFace(top, {
-      fill: document.body.classList.contains("dark") ? "#243045" : "#e2e8f0",
-      stroke: document.body.classList.contains("dark") ? "#94a3b8" : "#94a3b8",
+      fill: isDark ? "#243045" : "#e2e8f0",
+      stroke: isDark ? "#94a3b8" : "#94a3b8",
       "stroke-width":"0.7",
       opacity: isTargetLevel ? "1" : "0.85"
     }));
-    svg.appendChild(isoFace(front, { fill: document.body.classList.contains("dark") ? "#1f2a3d" : "#cbd5e1", opacity:"0.85" }));
-    svg.appendChild(isoFace(right, { fill: document.body.classList.contains("dark") ? "#22314b" : "#b6c2d3", opacity:"0.85" }));
+    svg.appendChild(isoFace(front, { fill: isDark ? "#1f2a3d" : "#cbd5e1", opacity:"0.85" }));
+    svg.appendChild(isoFace(right, { fill: isDark ? "#22314b" : "#b6c2d3", opacity:"0.85" }));
 
-    // label N#
     const labelPos = toScreen(-16, rackD/2, z + shelfSpacing/2);
     const txt = svgEl("text", {
       x: labelPos.x, y: labelPos.y,
       "text-anchor":"middle",
       "font-size": isTargetLevel ? "12" : "10",
       "font-weight": isTargetLevel ? "900" : "700",
-      fill: isTargetLevel ? "#f97316" : (document.body.classList.contains("dark") ? "#94a3b8" : "#94a3b8"),
+      fill: isTargetLevel ? "#f97316" : (isDark ? "#94a3b8" : "#94a3b8"),
       "font-family":"monospace"
     });
     txt.textContent = `N${lvl}`;
     svg.appendChild(txt);
 
-    // slots grid
     for (let s=1;s<=slots;s++){
       const x0 = (s-1)*slotW + 3;
       const w = slotW - 6;
@@ -691,28 +1114,26 @@ function renderShelfIso(estanteId, levelNum, slotNum){
 
       svg.appendChild(isoFace(cellTop, {
         fill: isTargetCell ? fillHL : "transparent",
-        stroke: isTargetCell ? strokeHL : (document.body.classList.contains("dark") ? "rgba(148,163,184,.30)" : "rgba(148,163,184,.35)"),
+        stroke: isTargetCell ? strokeHL : (isDark ? "rgba(148,163,184,.30)" : "rgba(148,163,184,.35)"),
         "stroke-width": isTargetCell ? "1.6" : "0.8",
         opacity: isTargetCell ? "0.95" : "1"
       }));
     }
   }
 
-  // front posts last
   svg.appendChild(isoLine(toScreen(0,rackD,0), toScreen(0,rackD,rackH), postStyle));
   svg.appendChild(isoLine(toScreen(rackW,rackD,0), toScreen(rackW,rackD,rackH), postStyle));
 
-  // top label
   const lp = toScreen(rackW/2, rackD/2, rackH + 16);
   svg.appendChild(svgEl("rect", {
-    x: lp.x - 52, y: lp.y - 12, width: 104, height: 20, rx: 6,
-    fill: document.body.classList.contains("dark") ? "#0b1220" : "#ffffff",
+    x: lp.x - 58, y: lp.y - 12, width: 116, height: 20, rx: 6,
+    fill: isDark ? "#0b1220" : "#ffffff",
     stroke: "#f97316", "stroke-width":"2"
   }));
   const tl = svgEl("text", {
     x: lp.x, y: lp.y + 4,
     "text-anchor":"middle", "font-size":"12", "font-weight":"900", "font-family":"monospace",
-    fill: document.body.classList.contains("dark") ? "#e5e7eb" : "#1e293b"
+    fill: isDark ? "#e5e7eb" : "#1e293b"
   });
   tl.textContent = estanteId;
   svg.appendChild(tl);
@@ -722,11 +1143,10 @@ function renderShelfIso(estanteId, levelNum, slotNum){
   wrap.innerHTML = `
     <div class="shelfIsoTopbar">
       <span>Slots por nivel: <b>${slots}</b></span>
-      <span>Celda pintada: <b>N${safeLevel}</b> / <b>S${safeSlot}</b></span>
+      <span>Celda pintada: <b>N${safeLevel}</b> / <b>Pos ${safeSlot}</b></span>
     </div>
   `;
   wrap.appendChild(svg);
-
   return wrap;
 }
 
@@ -739,8 +1159,9 @@ function mostrarVistaEstante(estanteId, levelNum, slotNum){
     return;
   }
   shelfLabel.textContent = estanteId;
+  const s = slotNum || DEFAULT_SLOT;
   shelfPreview.innerHTML = "";
-  shelfPreview.appendChild(renderShelfIso(estanteId, levelNum || 1, slotNum || DEFAULT_SLOT));
+  shelfPreview.appendChild(renderShelfIso(estanteId, levelNum || 1, s));
 }
 
 /* =========================
@@ -751,7 +1172,6 @@ function agruparPorNombre(listaDetallada){
   for (const p of listaDetallada){
     const key = (p.nombreNormKey || p.nombreNorm || p.nombre || "").trim();
     if (!key) continue;
-
     if (!map.has(key)){
       map.set(key, { key, count: 1, representante: p, grupo: [p] });
     } else {
@@ -761,7 +1181,6 @@ function agruparPorNombre(listaDetallada){
       if ((p._score||0) > (g.representante._score||0)) g.representante = p;
     }
   }
-
   const reducido = [];
   for (const g of map.values()){
     reducido.push({
@@ -772,7 +1191,6 @@ function agruparPorNombre(listaDetallada){
       _representante: g.representante
     });
   }
-
   reducido.sort((a,b) => (b._score||0) - (a._score||0));
   return reducido;
 }
@@ -797,6 +1215,7 @@ function renderTabla(lista, activeIndex = -1){
   tabla.innerHTML = html;
   enlazarTabla();
 }
+
 function enlazarTabla(){
   const rows = tabla.querySelectorAll("tr");
   rows.forEach(tr => {
@@ -805,7 +1224,6 @@ function enlazarTabla(){
       const fila = resultadosActuales.length ? resultadosActuales[i] : productos[i];
       const item = (fila && fila._representante) ? fila._representante : fila;
       if (!item) return;
-
       applyHoverHL(item.mainLoc?.estanteId || "", item.storeLoc?.estanteId || "");
       mapBadge.textContent = item.mainLoc?.zonaId || "—";
     });
@@ -957,60 +1375,457 @@ btnDark.addEventListener("click", () => {
   document.body.classList.toggle("dark");
   localStorage.setItem("darkMode", document.body.classList.contains("dark") ? "1" : "0");
   btnDark.textContent = document.body.classList.contains("dark") ? "☀️ Modo claro" : "🌙 Modo oscuro";
-  setTimeout(()=>renderIsometric(), 30);
-  if (resultadosActuales.length) setTimeout(()=>aplicarResultadoActivo(false), 50);
+  refreshAllRenders(false);
+  if (resultadosActuales.length) setTimeout(()=>aplicarResultadoActivo(false), 30);
 });
 
 /* =========================
-   ISO MAP (plano general)
+   LAYOUT MODEL (PRO)
 ========================= */
-function drawZones(){
-  zoneNodes.clear();
+const LAYOUT_KEY = "pg_layout_pro_v1";
+const HISTORY_KEY = "pg_layout_pro_hist_v1";
 
-  const zones = [
-    { id:"Z1", cls:"z1", label:"ZONA 1", x:0,   y:0,   w:260, d:220, color:"#14b8a6" },
-    { id:"Z2", cls:"z2", label:"ZONA 2", x:280, y:0,   w:320, d:220, color:"#2dd4bf" },
-    { id:"Z3", cls:"z3", label:"ZONA 3", x:0,   y:240, w:260, d:300, color:"#5eead4" },
-    { id:"A1", cls:"a1", label:"ALMACÉN (A1)", x:280, y:240, w:320, d:300, color:"#93c5fd" },
-  ];
+const DEFAULT_LAYOUT = {
+  zones: [
+    { id:"Z1", label:"ZONA 1", poly:[{x:2,y:2},{x:28,y:2},{x:28,y:24},{x:2,y:24}] },
+    { id:"Z2", label:"ZONA 2", poly:[{x:30,y:2},{x:62,y:2},{x:62,y:24},{x:30,y:24}] },
+    { id:"Z3", label:"ZONA 3", poly:[{x:2,y:26},{x:28,y:26},{x:28,y:56},{x:2,y:56}] },
+    { id:"A1", label:"ALMACÉN (A1)", poly:[{x:30,y:26},{x:62,y:26},{x:62,y:56},{x:30,y:56}] },
+  ],
+  racks: [
+    // Z1
+    { id:"Z1-E1", zone:"Z1", x:4, y:4, w:4.5, d:11, rot:0 },
+    { id:"Z1-E2", zone:"Z1", x:9, y:4, w:4.5, d:11, rot:0 },
+    { id:"Z1-E3", zone:"Z1", x:14, y:4, w:4.5, d:11, rot:0 },
+    { id:"Z1-E4", zone:"Z1", x:19, y:4, w:4.5, d:11, rot:0 },
+    { id:"Z1-E5", zone:"Z1", x:4, y:16, w:4.5, d:11, rot:0 },
+    { id:"Z1-E6", zone:"Z1", x:9, y:16, w:4.5, d:11, rot:0 },
+    { id:"Z1-E7", zone:"Z1", x:14, y:16, w:4.5, d:11, rot:0 },
+    { id:"Z1-E8", zone:"Z1", x:19, y:16, w:4.5, d:11, rot:0 },
+
+    // Z2
+    { id:"Z2-E1", zone:"Z2", x:32, y:4, w:4.5, d:11, rot:0 },
+    { id:"Z2-E2", zone:"Z2", x:37, y:4, w:4.5, d:11, rot:0 },
+    { id:"Z2-E3", zone:"Z2", x:42, y:4, w:4.5, d:11, rot:0 },
+    { id:"Z2-E4", zone:"Z2", x:47, y:4, w:4.5, d:11, rot:0 },
+    { id:"Z2-E5", zone:"Z2", x:52, y:4, w:4.5, d:11, rot:0 },
+    { id:"Z2-E6", zone:"Z2", x:32, y:16, w:4.5, d:11, rot:0 },
+    { id:"Z2-E7", zone:"Z2", x:37, y:16, w:4.5, d:11, rot:0 },
+    { id:"Z2-E8", zone:"Z2", x:42, y:16, w:4.5, d:11, rot:0 },
+    { id:"Z2-E9", zone:"Z2", x:47, y:16, w:4.5, d:11, rot:0 },
+    { id:"Z2-E10", zone:"Z2", x:52, y:16, w:4.5, d:11, rot:0 },
+
+    // Z3
+    { id:"Z3-E1", zone:"Z3", x:4, y:28, w:4.5, d:11, rot:0 },
+    { id:"Z3-E2", zone:"Z3", x:9, y:28, w:4.5, d:11, rot:0 },
+    { id:"Z3-E3", zone:"Z3", x:14, y:28, w:4.5, d:11, rot:0 },
+    { id:"Z3-E4", zone:"Z3", x:4, y:40, w:4.5, d:11, rot:0 },
+    { id:"Z3-E5", zone:"Z3", x:9, y:40, w:4.5, d:11, rot:0 },
+    { id:"Z3-E6", zone:"Z3", x:14, y:40, w:4.5, d:11, rot:0 },
+    { id:"Z3-E7", zone:"Z3", x:4, y:52, w:4.5, d:11, rot:0 },
+    { id:"Z3-E8", zone:"Z3", x:9, y:52, w:4.5, d:11, rot:0 },
+    { id:"Z3-E9", zone:"Z3", x:14, y:52, w:4.5, d:11, rot:0 },
+
+    // A1
+    { id:"A1-E1", zone:"A1", x:32, y:28, w:4.5, d:11, rot:0 },
+    { id:"A1-E2", zone:"A1", x:37, y:28, w:4.5, d:11, rot:0 },
+    { id:"A1-E3", zone:"A1", x:42, y:28, w:4.5, d:11, rot:0 },
+    { id:"A1-E4", zone:"A1", x:47, y:28, w:4.5, d:11, rot:0 },
+    { id:"A1-E5", zone:"A1", x:52, y:28, w:4.5, d:11, rot:0 },
+    { id:"A1-E6", zone:"A1", x:32, y:40, w:4.5, d:11, rot:0 },
+    { id:"A1-E7", zone:"A1", x:37, y:40, w:4.5, d:11, rot:0 },
+    { id:"A1-E8", zone:"A1", x:42, y:40, w:4.5, d:11, rot:0 },
+    { id:"A1-E9", zone:"A1", x:47, y:40, w:4.5, d:11, rot:0 },
+    { id:"A1-E10", zone:"A1", x:52, y:40, w:4.5, d:11, rot:0 },
+    { id:"A1-E11", zone:"A1", x:32, y:52, w:4.5, d:11, rot:0 },
+    { id:"A1-E12", zone:"A1", x:37, y:52, w:4.5, d:11, rot:0 },
+  ],
+  bridges: [] // { id, aZone, bZone, aPt:{x,y}, bPt:{x,y}, width }
+};
+
+let layout = loadLayout();
+let history = loadHistory();
+if (!history || !history.stack || !history.stack.length){
+  history = { stack:[JSON.stringify(layout)], idx:0 };
+  saveHistory();
+}
+
+function loadLayout(){
+  try{
+    const raw = localStorage.getItem(LAYOUT_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_LAYOUT));
+    const obj = JSON.parse(raw);
+    if (!obj.zones || !obj.racks) return JSON.parse(JSON.stringify(DEFAULT_LAYOUT));
+    if (!obj.bridges) obj.bridges = [];
+    return obj;
+  }catch(e){
+    return JSON.parse(JSON.stringify(DEFAULT_LAYOUT));
+  }
+}
+function saveLayout(){
+  localStorage.setItem(LAYOUT_KEY, JSON.stringify(layout));
+}
+function loadHistory(){
+  try{
+    const raw = localStorage.getItem(HISTORY_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function saveHistory(){
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+function pushHistory(label="change"){
+  const snap = JSON.stringify(layout);
+  history.stack = history.stack.slice(0, history.idx+1);
+  history.stack.push(snap);
+  history.idx++;
+  saveHistory();
+}
+function undo(){
+  if (history.idx <= 0) return;
+  history.idx--;
+  layout = JSON.parse(history.stack[history.idx]);
+  saveLayout();
+  refreshAllRenders(true);
+}
+function redo(){
+  if (history.idx >= history.stack.length-1) return;
+  history.idx++;
+  layout = JSON.parse(history.stack[history.idx]);
+  saveLayout();
+  refreshAllRenders(true);
+}
+
+btnUndo.addEventListener("click", ()=>{ if(APP_MODE==="editor") undo(); });
+btnRedo.addEventListener("click", ()=>{ if(APP_MODE==="editor") redo(); });
+btnReset.addEventListener("click", ()=>{
+  if (APP_MODE!=="editor") return;
+  localStorage.removeItem(LAYOUT_KEY);
+  localStorage.removeItem(HISTORY_KEY);
+  layout = JSON.parse(JSON.stringify(DEFAULT_LAYOUT));
+  history = { stack:[JSON.stringify(layout)], idx:0 };
+  saveLayout(); saveHistory();
+  EDIT_MODE = false;
+  setEditModeUI();
+  selected = { type:"none", id:"" };
+  refreshAllRenders(true);
+});
+btnSaveLayout.addEventListener("click", ()=>{
+  if (APP_MODE!=="editor") return;
+  saveLayout();
+  feedbackOK();
+});
+
+/* =========================
+   Editor tools / selection
+========================= */
+let TOOL = "select"; // select | zone | rack | bridge
+let SNAP_M = parseFloat(snapSelect.value);
+
+snapSelect.addEventListener("change", ()=> SNAP_M = parseFloat(snapSelect.value));
+
+function setTool(t){
+  TOOL = t;
+  toolPill.textContent = `Herr: ${
+    t==="select" ? "Selección" :
+    t==="zone" ? "Zonas" :
+    t==="rack" ? "Estantes" : "Puente"
+  }`;
+  btnToolSelect.classList.toggle("primary", t==="select");
+  btnToolZone.classList.toggle("primary", t==="zone");
+  btnToolRack.classList.toggle("primary", t==="rack");
+  btnToolBridge.classList.toggle("primary", t==="bridge");
+  clearTempBridge();
+}
+btnToolSelect.addEventListener("click", ()=> setTool("select"));
+btnToolZone.addEventListener("click", ()=> setTool("zone"));
+btnToolRack.addEventListener("click", ()=> setTool("rack"));
+btnToolBridge.addEventListener("click", ()=> setTool("bridge"));
+
+function setEditMode(on){
+  if (APP_MODE !== "editor") return;
+  EDIT_MODE = !!on;
+  setEditModeUI();
+  refreshAllRenders(false);
+}
+function setEditModeUI(){
+  editPill.textContent = EDIT_MODE ? "EDIT: ON" : "EDIT: OFF";
+  btnEditMode.textContent = EDIT_MODE ? "🧲 Desactivar edición" : "🧲 Activar edición";
+  isoMap.classList.toggle("editing", EDIT_MODE);
+}
+btnEditMode.addEventListener("click", ()=> setEditMode(!EDIT_MODE));
+
+/* =========================
+   Ortho view toggles
+========================= */
+let ORTHO_ON = false;
+let ORTHO_SHOW_DIMS = false;
+let ORTHO_SHOW_RACKS = true;
+let ORTHO_ADD_VTX = false;
+let ORTHO_DEL_VTX = false;
+
+btnShowOrtho.addEventListener("click", ()=>{
+  if (APP_MODE !== "editor") return;
+  ORTHO_ON = !ORTHO_ON;
+  splitWrap.classList.toggle("on", ORTHO_ON);
+  btnShowOrtho.textContent = ORTHO_ON ? "🗺️ Orto: ON" : "🗺️ Orto: OFF";
+  refreshAllRenders(false);
+});
+btnOrthoDims.addEventListener("click", ()=>{
+  ORTHO_SHOW_DIMS = !ORTHO_SHOW_DIMS;
+  btnOrthoDims.textContent = ORTHO_SHOW_DIMS ? "📏 Cotas: ON" : "📏 Cotas: OFF";
+  renderOrtho();
+});
+btnOrthoRacks.addEventListener("click", ()=>{
+  ORTHO_SHOW_RACKS = !ORTHO_SHOW_RACKS;
+  btnOrthoRacks.textContent = ORTHO_SHOW_RACKS ? "🧱 Estantes: ON" : "🧱 Estantes: OFF";
+  renderOrtho();
+});
+btnOrthoAddVertex.addEventListener("click", ()=>{
+  ORTHO_ADD_VTX = !ORTHO_ADD_VTX;
+  ORTHO_DEL_VTX = false;
+  btnOrthoAddVertex.classList.toggle("primary", ORTHO_ADD_VTX);
+  btnOrthoDelVertex.classList.remove("primary");
+  orthoBadge.textContent = ORTHO_ADD_VTX ? "Modo: +Vértice" : "—";
+});
+btnOrthoDelVertex.addEventListener("click", ()=>{
+  ORTHO_DEL_VTX = !ORTHO_DEL_VTX;
+  ORTHO_ADD_VTX = false;
+  btnOrthoDelVertex.classList.toggle("primary", ORTHO_DEL_VTX);
+  btnOrthoAddVertex.classList.remove("primary");
+  orthoBadge.textContent = ORTHO_DEL_VTX ? "Modo: -Vértice" : "—";
+});
+
+/* =========================
+   Geometry helpers
+========================= */
+function snapM(n){
+  if (!SNAP_M || SNAP_M<=0) return n;
+  return Math.round(n / SNAP_M) * SNAP_M;
+}
+function snapPt(p){ return { x:snapM(p.x), y:snapM(p.y) }; }
+
+function polyToPath(poly){
+  if (!poly || !poly.length) return "";
+  return "M " + poly.map(p=>`${p.x} ${p.y}`).join(" L ") + " Z";
+}
+function centroid(poly){
+  let x=0,y=0;
+  for(const p of poly){ x+=p.x; y+=p.y; }
+  return { x:x/poly.length, y:y/poly.length };
+}
+function bbox(poly){
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  for(const p of poly){
+    minX=Math.min(minX,p.x); minY=Math.min(minY,p.y);
+    maxX=Math.max(maxX,p.x); maxY=Math.max(maxY,p.y);
+  }
+  return { minX,minY,maxX,maxY, w:maxX-minX, h:maxY-minY };
+}
+function pointInPoly(pt, poly){
+  let inside=false;
+  for(let i=0,j=poly.length-1; i<poly.length; j=i++){
+    const xi=poly[i].x, yi=poly[i].y;
+    const xj=poly[j].x, yj=poly[j].y;
+    const intersect = ((yi>pt.y)!==(yj>pt.y)) &&
+      (pt.x < (xj-xi)*(pt.y-yi)/(yj-yi+1e-9) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+function distPointSeg(p,a,b){
+  const abx=b.x-a.x, aby=b.y-a.y;
+  const apx=p.x-a.x, apy=p.y-a.y;
+  const ab2=abx*abx+aby*aby || 1e-9;
+  let t=(apx*abx+apy*aby)/ab2;
+  t=Math.max(0,Math.min(1,t));
+  const proj={ x:a.x+t*abx, y:a.y+t*aby };
+  const d=Math.hypot(p.x-proj.x, p.y-proj.y);
+  return { d, proj, t };
+}
+function nearestEdge(poly, p){
+  let best={ d:Infinity, i:-1, proj:null };
+  for (let i=0;i<poly.length;i++){
+    const a=poly[i], b=poly[(i+1)%poly.length];
+    const hit=distPointSeg(p,a,b);
+    if (hit.d < best.d){
+      best={ d:hit.d, i, proj:hit.proj };
+    }
+  }
+  return best;
+}
+
+/* alignment snap (global) */
+function alignSnapPoint(p, excludeZoneId=null, threshold=0.20){
+  let bestX=null, bestY=null, dxBest=Infinity, dyBest=Infinity;
+  for (const z of layout.zones){
+    if (excludeZoneId && z.id === excludeZoneId) continue;
+    for (const v of z.poly){
+      const dx=Math.abs(p.x-v.x);
+      const dy=Math.abs(p.y-v.y);
+      if (dx < dxBest && dx <= threshold){ dxBest=dx; bestX=v.x; }
+      if (dy < dyBest && dy <= threshold){ dyBest=dy; bestY=v.y; }
+    }
+  }
+  const out={...p};
+  if(bestX!==null) out.x=bestX;
+  if(bestY!==null) out.y=bestY;
+  return out;
+}
+
+/* SVG point helper for a given svg element */
+function getSVGPoint(svg, evt){
+  const pt = svg.createSVGPoint();
+  pt.x = evt.clientX;
+  pt.y = evt.clientY;
+  const ctm = svg.getScreenCTM();
+  return pt.matrixTransform(ctm.inverse());
+}
+
+/* =========================
+   ISO RENDER (from layout)
+========================= */
+let rackNodes = new Map();
+let zoneNodes = new Map();
+let bridgeNodes = new Map();
+
+function drawIsometric(){
+  isoMap.innerHTML = "";
+  rackNodes.clear();
+  zoneNodes.clear();
+  bridgeNodes.clear();
+
+  const isDark = document.body.classList.contains("dark");
 
   const gZones = svgEl("g", { id:"zones" });
 
+  // floor
   const floor = isoFace(
     [toScreen(0,0,0), toScreen(640,0,0), toScreen(640,560,0), toScreen(0,560,0)],
-    { fill: document.body.classList.contains("dark") ? "#0b1220" : "#f8fafc", stroke: document.body.classList.contains("dark") ? "#1f2937" : "#cbd5e1", "stroke-width":"1" }
+    { fill: isDark ? "#0b1220" : "#f8fafc", stroke: isDark ? "#1f2937" : "#cbd5e1", "stroke-width":"1" }
   );
   gZones.appendChild(floor);
 
-  for (const z of zones){
-    const poly = isoFace(
-      [toScreen(z.x,z.y,0), toScreen(z.x+z.w,z.y,0), toScreen(z.x+z.w,z.y+z.d,0), toScreen(z.x,z.y+z.d,0)],
-      { id:z.id, class:`iso-zone ${z.cls}`, "stroke-width":"2" }
-    );
+  // zones -> convert from ortho coords (0..~70) to iso world coords (0..640,0..560)
+  // mapping: 1 ortho unit = 10 iso units
+  const K = 10;
+
+  for (const z of layout.zones){
+    const pts = z.poly.map(p => toScreen(p.x*K, p.y*K, 0));
+    // polygon path iso
+    const d = "M " + pts.map(p=>`${p.x} ${p.y}`).join(" L ") + " Z";
+    const cls = z.id==="Z1" ? "z1" : z.id==="Z2" ? "z2" : z.id==="Z3" ? "z3" : "a1";
+    const poly = svgEl("path", { d, id:z.id, class:`iso-zone ${cls}`, "stroke-width":"2" });
     zoneNodes.set(z.id, poly);
     gZones.appendChild(poly);
 
-    const pos = toScreen(z.x + z.w*0.5, z.y + z.d*0.5, 0);
-    const t = svgEl("text", {
-      x: pos.x, y: pos.y,
-      "text-anchor":"middle",
-      "font-size":"46",
-      "font-weight":"900",
-      fill: z.color,
-      "fill-opacity":"0.15",
-    });
-    t.textContent = z.label;
-    gZones.appendChild(t);
+    // HIT overlay (thick invisible stroke) for easier selection
+    const hit = svgEl("path", { d, class:"zoneHit", "data-zone-id": z.id });
+    gZones.appendChild(hit);
   }
 
   isoMap.appendChild(gZones);
+
+  // corridors & bridges
+  drawBridgesIso(K);
+
+  // racks
+  const zoneColor = { Z1:"#14b8a6", Z2:"#2dd4bf", Z3:"#5eead4", A1:"#93c5fd" };
+  const gRacks = svgEl("g", { id:"racks" });
+
+  for (const r of layout.racks){
+    const node = drawRackIso(r, zoneColor[r.zone], K);
+    node.id = r.id;
+    rackNodes.set(r.id, node);
+
+    // viewer hover filter
+    node.addEventListener("mouseenter", () => {
+      if (APP_MODE!=="viewer") return;
+      clearHoverHL();
+      node.classList.add("hoverHL");
+      mapBadge.textContent = r.zone;
+      if (document.activeElement === buscador) return;
+      if (isoMap._lastHoverQuery === undefined) isoMap._lastHoverQuery = buscador.value;
+      buscador.value = r.id.toLowerCase();
+      recalcularResultados(false);
+    });
+    node.addEventListener("mouseleave", () => {
+      if (APP_MODE!=="viewer") return;
+      node.classList.remove("hoverHL");
+      mapBadge.textContent = "—";
+      if (document.activeElement === buscador) return;
+      if (isoMap._lastHoverQuery !== undefined){
+        buscador.value = isoMap._lastHoverQuery;
+        isoMap._lastHoverQuery = undefined;
+        recalcularResultados(false);
+      }
+    });
+    node.addEventListener("click", () => {
+      if (APP_MODE!=="viewer") return;
+      isoMap._lastHoverQuery = undefined;
+      buscador.value = r.id.toLowerCase();
+      recalcularResultados(true);
+    });
+
+    // editor selection
+    node.addEventListener("pointerdown", (ev)=>{
+      if (APP_MODE!=="editor" || !EDIT_MODE) return;
+      if (TOOL !== "rack" && TOOL !== "select") return;
+      ev.preventDefault(); ev.stopPropagation();
+      selectItem("rack", r.id);
+      startDragIso(ev, "rack", r.id);
+    });
+
+    gRacks.appendChild(node);
+  }
+  isoMap.appendChild(gRacks);
+
+  // zone interactions (hit overlays)
+  isoMap.querySelectorAll(".zoneHit").forEach(hit=>{
+    hit.addEventListener("pointerdown",(ev)=>{
+      if (APP_MODE!=="editor" || !EDIT_MODE) return;
+      if (TOOL !== "zone" && TOOL !== "select" && TOOL !== "bridge") return;
+      ev.preventDefault(); ev.stopPropagation();
+      const zid = hit.getAttribute("data-zone-id");
+      if (!zid) return;
+
+      if (TOOL === "bridge"){
+        handleBridgePick(zid);
+        return;
+      }
+
+      selectItem("zone", zid);
+      startDragIso(ev, "zone", zid);
+    });
+  });
+
+  // background click clears selection (editor only)
+  isoMap.addEventListener("pointerdown",(ev)=>{
+    if (APP_MODE!=="editor" || !EDIT_MODE) return;
+    if (ev.target === isoMap){
+      selectItem("none", "");
+      clearGuidesIso();
+      clearTempBridge();
+    }
+  });
+
+  // highlight selection
+  applySelectionHighlight();
 }
 
-function drawRack(rack, zoneColor){
-  const { x, y, w, d, h, levels, id } = rack;
-  const g = svgEl("g", { class:"rack", "data-rack-id": id });
+function drawRackIso(r, zoneColor, K){
+  const x = r.x*K, y=r.y*K, w=r.w*K, d=r.d*K;
+  const h = (r.zone==="A1") ? 140 : 120;
+  const levels = (r.zone==="A1") ? 8 : 6;
+  const rot = r.rot || 0;
 
-  const postsBack = [{x:x, y:y},{x:x+w, y:y}];
+  const g = svgEl("g", { class:"rack", "data-rack-id": r.id });
+
+  let W=w, D=d;
+  const rr = ((rot%360)+360)%360;
+  if (rr===90 || rr===270){ W=d; D=w; }
+
+  const postsBack = [{x:x, y:y},{x:x+W, y:y}];
   for (const p of postsBack){
     g.appendChild(isoLine(toScreen(p.x,p.y,0), toScreen(p.x,p.y,h), { class:"post" }));
   }
@@ -1020,21 +1835,20 @@ function drawRack(rack, zoneColor){
 
   for (let i=0;i<levels;i++){
     const z = i*spacing + 10;
-    const top = [toScreen(x,y,z), toScreen(x+w,y,z), toScreen(x+w,y+d,z), toScreen(x,y+d,z)];
-    const front = [toScreen(x,y+d,z), toScreen(x+w,y+d,z), toScreen(x+w,y+d,z-thickness), toScreen(x,y+d,z-thickness)];
-    const right = [toScreen(x+w,y,z), toScreen(x+w,y+d,z), toScreen(x+w,y+d,z-thickness), toScreen(x+w,y,z-thickness)];
-
+    const top = [toScreen(x,y,z), toScreen(x+W,y,z), toScreen(x+W,y+D,z), toScreen(x,y+D,z)];
+    const front = [toScreen(x,y+D,z), toScreen(x+W,y+D,z), toScreen(x+W,y+D,z-thickness), toScreen(x,y+D,z-thickness)];
+    const right = [toScreen(x+W,y,z), toScreen(x+W,y+D,z), toScreen(x+W,y+D,z-thickness), toScreen(x+W,y,z-thickness)];
     g.appendChild(isoFace(top,   { class:"shelfTop" }));
     g.appendChild(isoFace(front, { class:"shelfFront" }));
     g.appendChild(isoFace(right, { class:"shelfRight" }));
   }
 
-  const postsFront = [{x:x+w, y:y+d},{x:x, y:y+d}];
+  const postsFront = [{x:x+W, y:y+D},{x:x, y:y+D}];
   for (const p of postsFront){
     g.appendChild(isoLine(toScreen(p.x,p.y,0), toScreen(p.x,p.y,h), { class:"post" }));
   }
 
-  const lp = toScreen(x + w/2, y + d/2, h + 18);
+  const lp = toScreen(x + W/2, y + D/2, h + 18);
   const rect = svgEl("rect", {
     x: lp.x - 18, y: lp.y - 12, width: 36, height: 20, rx: 5,
     fill: "#ffffff", stroke: zoneColor, "stroke-width":"2"
@@ -1044,124 +1858,90 @@ function drawRack(rack, zoneColor){
     "text-anchor":"middle", "font-size":"11", "font-weight":"900", "font-family":"monospace",
     fill: "#1e293b"
   });
-  txt.textContent = id.split("-")[1]; // E#
+  txt.textContent = r.id.split("-")[1];
   g.appendChild(rect);
   g.appendChild(txt);
 
   return g;
 }
 
-function placeZoneRacks(zoneId, rackIds){
-  const layout = ZONE_LAYOUT[zoneId] || { rows: 2, cols: 4, order: [] };
-
-  const origin = {
-    Z1:{ ox:20,  oy:20,  w:240, d:200 },
-    Z2:{ ox:300, oy:20,  w:300, d:200 },
-    Z3:{ ox:20,  oy:260, w:240, d:280 },
-    A1:{ ox:300, oy:260, w:300, d:280 },
-  }[zoneId];
-
-  const rackW = 55;
-  const rackD = 120;
-  const rackH = 120;
-  const levels = (zoneId === "A1") ? 8 : 6;
-
-  const gapX = (origin.w - (layout.cols * rackW)) / Math.max(1, (layout.cols - 1));
-  const gapY = (origin.d - (layout.rows * rackD)) / Math.max(1, (layout.rows - 1));
-
-  const orderSet = new Set(layout.order);
-  const missing = rackIds.filter(id => !orderSet.has(id));
-  const finalOrder = [...layout.order.filter(id => rackIds.includes(id)), ...missing];
-
-  const placed = [];
-  for (let i=0;i<finalOrder.length;i++){
-    const id = finalOrder[i];
-    const col = i % layout.cols;
-    const row = Math.floor(i / layout.cols);
-
-    const x = origin.ox + col * (rackW + gapX);
-    const y = origin.oy + row * (rackD + gapY);
-
-    placed.push({ id, zone:zoneId, x, y, w:rackW, d:rackD, h:rackH, levels });
+/* =========================
+   Bridges: create corridor automatically
+========================= */
+function clearTempBridge(){ isoMap._bridgePick = null; }
+function handleBridgePick(zoneId){
+  if (!isoMap._bridgePick){
+    isoMap._bridgePick = zoneId;
+    info.textContent = `🌉 Puente: selecciona la segunda zona para conectar con ${zoneId}`;
+    return;
   }
-  return placed;
+  const a = isoMap._bridgePick;
+  const b = zoneId;
+  isoMap._bridgePick = null;
+
+  if (a === b){
+    info.textContent = "🌉 Puente cancelado (misma zona).";
+    return;
+  }
+
+  // create bridge model
+  const id = `BR-${Date.now().toString(36)}`;
+  const width = 3; // ortho units (~0.3m if 1u=0.1m). Ajusta si quieres.
+  layout.bridges.push({ id, aZone:a, bZone:b, width });
+  pushHistory("add bridge");
+  saveLayout();
+  refreshAllRenders(true);
+  feedbackOK();
 }
 
-function computeRacksLayoutFromSheet(){
-  const zones = ["Z1","Z2","Z3","A1"];
-  const sets = { Z1:new Set(), Z2:new Set(), Z3:new Set(), A1:new Set() };
-
-  for (const p of productos){
-    if (p.mainLoc?.estanteId && sets[p.mainLoc.zonaId]) sets[p.mainLoc.zonaId].add(p.mainLoc.estanteId);
-    if (p.storeLoc?.estanteId && sets[p.storeLoc.zonaId]) sets[p.storeLoc.zonaId].add(p.storeLoc.estanteId);
-  }
-
-  racksIndex = { Z1:[], Z2:[], Z3:[], A1:[] };
-  for (const z of zones){
-    const ids = [...sets[z]];
-    racksIndex[z] = placeZoneRacks(z, ids);
-  }
+function zoneCenterOrtho(zoneId){
+  const z = layout.zones.find(z=>z.id===zoneId);
+  if (!z) return {x:0,y:0};
+  return centroid(z.poly);
 }
 
-function renderIsometric(){
-  isoMap.innerHTML = "";
-  rackNodes.clear();
-  zoneNodes.clear();
-
-  drawZones();
-  computeRacksLayoutFromSheet();
-
-  const all = [...racksIndex.Z1, ...racksIndex.Z2, ...racksIndex.Z3, ...racksIndex.A1];
-  all.sort((a,b)=> (a.x+a.y+a.w+a.d) - (b.x+b.y+b.w+b.d));
-
-  const zoneColor = { Z1:"#14b8a6", Z2:"#2dd4bf", Z3:"#5eead4", A1:"#93c5fd" };
-  const gRacks = svgEl("g", { id:"racks" });
-
-  for (const r of all){
-    const node = drawRack(r, zoneColor[r.zone]);
-    node.id = r.id;
-    rackNodes.set(r.id, node);
-
-    node.addEventListener("mouseenter", () => {
-      clearHoverHL();
-      node.classList.add("hoverHL");
-      mapBadge.textContent = r.zone;
-
-      if (document.activeElement === buscador) return;
-      if (lastHoverQuery === null) lastHoverQuery = buscador.value;
-      buscador.value = r.id.toLowerCase();
-      recalcularResultados(false);
-    });
-
-    node.addEventListener("mouseleave", () => {
-      node.classList.remove("hoverHL");
-      mapBadge.textContent = "—";
-      if (document.activeElement === buscador) return;
-
-      if (lastHoverQuery !== null){
-        buscador.value = lastHoverQuery;
-        lastHoverQuery = null;
-        recalcularResultados(false);
-      }
-    });
-
-    node.addEventListener("click", () => {
-      lastHoverQuery = null;
-      buscador.value = r.id.toLowerCase();
-      recalcularResultados(true);
-    });
-
-    gRacks.appendChild(node);
-  }
-
-  isoMap.appendChild(gRacks);
-
-  if (resultadosActuales.length){
-    aplicarResultadoActivo(false);
-  }
+function corridorFromCenters(a, b, width){
+  // "pasillo" rectangular alrededor de la línea centro-centro
+  const dx = b.x-a.x, dy=b.y-a.y;
+  const len = Math.hypot(dx,dy) || 1e-9;
+  const nx = -dy/len, ny = dx/len; // normal
+  const w = width/2;
+  return [
+    {x:a.x + nx*w, y:a.y + ny*w},
+    {x:b.x + nx*w, y:b.y + ny*w},
+    {x:b.x - nx*w, y:b.y - ny*w},
+    {x:a.x - nx*w, y:a.y - ny*w},
+  ];
 }
 
-function clearAllHL(){ clearMainHL(); clearStoreHL(); clearHoverHL(); }
+function drawBridgesIso(K){
+  if (!layout.bridges || !layout.bridges.length) return;
+
+  const g = svgEl("g",{ id:"bridges" });
+  for (const br of layout.bridges){
+    const aC = zoneCenterOrtho(br.aZone);
+    const bC = zoneCenterOrtho(br.bZone);
+
+    // corridor polygon in ortho -> iso
+    const cor = corridorFromCenters(aC, bC, br.width || 3);
+    const pts = cor.map(p => toScreen(p.x*K, p.y*K, 0));
+    const dPoly = "M " + pts.map(p=>`${p.x} ${p.y}`).join(" L ") + " Z";
+    g.appendChild(svgEl("path",{ d:dPoly, class:"corridorPoly" }));
+
+    // bridge center line
+    const aIso = toScreen(aC.x*K, aC.y*K, 0);
+    const bIso = toScreen(bC.x*K, bC.y*K, 0);
+    g.appendChild(svgEl("line",{
+      x1:aIso.x, y1:aIso.y, x2:bIso.x, y2:bIso.y,
+      class:"bridgeLine"
+    }));
+  }
+  isoMap.appendChild(g);
+}
+
+/* =========================
+   HL helpers
+========================= */
 function clearMainHL(){
   for (const z of zoneNodes.values()) z.classList.remove("mainHL");
   for (const r of rackNodes.values()) r.classList.remove("mainHL");
@@ -1170,7 +1950,10 @@ function clearStoreHL(){
   for (const z of zoneNodes.values()) z.classList.remove("storeHL");
   for (const r of rackNodes.values()) r.classList.remove("storeHL");
 }
-function clearHoverHL(){ for (const r of rackNodes.values()) r.classList.remove("hoverHL"); }
+function clearHoverHL(){
+  for (const r of rackNodes.values()) r.classList.remove("hoverHL");
+}
+function clearAllHL(){ clearMainHL(); clearStoreHL(); clearHoverHL(); }
 
 function applyHoverHL(mainRackId, storeRackId){
   clearHoverHL();
@@ -1251,89 +2034,105 @@ function aplicarResultadoActivo(triggerFeedback = false){
   kvUbicacion.textContent = mainPretty || "—";
   kvEstante.textContent = activo.mainLoc?.estanteId || "—";
   kvNivel.textContent = activo.mainLoc?.nivelId || "—";
-  kvSlot.textContent = activo.mainLoc?.slotNum ? ("S" + activo.mainLoc.slotNum) : "—";
+  kvSlot.textContent = (activo.mainLoc?.slotNum ? `P${activo.mainLoc.slotNum}` : "—");
   kvAlmacen.textContent = storePretty || "—";
 
-  // ✅ Vista Estante isométrica (usa slot real si viene)
-  mostrarVistaEstante(activo.mainLoc?.estanteId || "", activo.mainLoc?.levelNum || 1, activo.mainLoc?.slotNum || DEFAULT_SLOT);
+  mostrarVistaEstante(
+    activo.mainLoc?.estanteId || "",
+    activo.mainLoc?.levelNum || 1,
+    activo.mainLoc?.slotNum || DEFAULT_SLOT
+  );
 
   setPickerState();
   if (triggerFeedback) feedbackOK();
 }
 
 /* =========================
-   GOOGLE SHEET LOADER (corregido para GitHub Pages)
-   - parse robusto (sin substring mágico)
-   - cachebust para evitar respuestas cacheadas raras
+   SHEET LOADER (FIX robust)
 ========================= */
 setStatus("warn", `Cargando hoja “${sheetName}”...`);
 
-function parseGVizTextToJson(text){
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("Respuesta gviz sin JSON.");
-  return JSON.parse(text.substring(start, end + 1));
+function parseGViz(text){
+  // robust extract of setResponse({...})
+  const m = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);\s*$/);
+  if (!m) throw new Error("GViz wrapper not found");
+  return JSON.parse(m[1]);
 }
 
-(function loadSheet(){
-  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?sheet=${encodeURIComponent(sheetName)}&tqx=out:json&cachebust=${Date.now()}`;
-  fetch(url)
-    .then(res => res.text())
-    .then(text => {
-      if (text.includes("<html") || text.includes("<!DOCTYPE")) {
-        throw new Error("Google devolvió HTML (permisos/login). Publica la hoja o habilita acceso.");
-      }
-      const json = parseGVizTextToJson(text);
-      const rows = json?.table?.rows || [];
+async function fetchSheet(){
+  const bust = Date.now();
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&tq=${encodeURIComponent("select *")}&sheet=${encodeURIComponent(sheetName)}&cachebust=${bust}`;
+  const res = await fetch(url, { cache:"no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const text = await res.text();
+  return parseGViz(text);
+}
 
-      productos = [];
-      for (const r of rows){
-        if (!r.c) continue;
+fetchSheet()
+  .then(json => {
+    const rows = json.table.rows || [];
 
-        // ⚠️ columnas según tu sheet actual
-        const barras = r.c[10]?.v || "";
-        const nombre = r.c[12]?.v || "";
-        const variante = r.c[13]?.v || "";
+    productos = [];
+    for (const r of rows){
+      if (!r.c) continue;
 
-        const ubicRaw = r.c[20]?.v || "";    // z1-e1-n6-s2
-        const almacenRaw = r.c[21]?.v || ""; // a1-e2-n6-s3
+      // Mantengo tus columnas (10,12,13,20,21)
+      const barras = r.c[10]?.v || "";
+      const nombre = r.c[12]?.v || "";
+      const variante = r.c[13]?.v || "";
 
-        const mainLoc = parseLoc(ubicRaw);
-        const storeLoc = parseLoc(almacenRaw);
+      const ubicRaw = r.c[20]?.v || "";
+      const almacenRaw = r.c[21]?.v || "";
 
-        const p = {
-          barras,
-          nombre,
-          variante,
-          ubic: mainLoc.pretty || "",
-          almacen: storeLoc.pretty || "",
-          mainLoc,
-          storeLoc
-        };
+      const mainLoc = parseLoc(ubicRaw);
+      const storeLoc = parseLoc(almacenRaw);
 
-        if (!barras && !nombre) continue;
+      const p = { barras, nombre, variante, ubic: mainLoc.pretty || "", almacen: storeLoc.pretty || "", mainLoc, storeLoc };
+      if (!barras && !nombre) continue;
 
-        p.nvNorm = norm((p.nombre || "") + " " + (p.variante || ""));
-        p.fulltextNorm = norm((p.barras||"") + " " + (p.nombre||"") + " " + (p.variante||"") + " " + (p.ubic||"") + " " + (p.almacen||""));
-        p.nombreNorm = norm(p.nombre);
-        p.nombreNormKey = p.nombreNorm;
+      p.nvNorm = norm((p.nombre || "") + " " + (p.variante || ""));
+      p.fulltextNorm = norm((p.barras||"") + " " + (p.nombre||"") + " " + (p.variante||"") + " " + (p.ubic||"") + " " + (p.almacen||""));
+      p.nombreNorm = norm(p.nombre);
+      p.nombreNormKey = p.nombreNorm;
 
-        productos.push(p);
-      }
+      productos.push(p);
+    }
 
-      metaCount.textContent = `${productos.length} productos`;
-      renderTabla(productos);
+    metaCount.textContent = `${productos.length} productos`;
+    renderTabla(productos);
 
-      isLoaded = true;
-      setStatus("ok", `Listo • ${productos.length} productos cargados`);
-      renderIsometric();
-    })
-    .catch(err => {
-      console.error("SHEET ERROR:", err);
-      setStatus("bad", "Error cargando la hoja (revisa permisos/columnas).");
-      info.textContent = `❌ ${err.message}`;
-    });
-})();
+    isLoaded = true;
+    setStatus("ok", `Listo • ${productos.length} productos cargados`);
+
+    // Optional: auto-create missing racks from sheet racks ids (non destructive)
+    hydrateRacksFromSheet();
+    pushHistory("load");
+    saveLayout();
+    saveHistory();
+
+    refreshAllRenders(false);
+  })
+  .catch((e) => {
+    console.error(e);
+    setStatus("bad", "Error cargando la hoja. Verifica: (1) Sheet público, (2) nombre de hoja exacto, (3) columnas correctas.");
+  });
+
+/* If the sheet includes rack IDs not in layout, add them */
+function hydrateRacksFromSheet(){
+  const ids = new Set(layout.racks.map(r=>r.id));
+  for (const p of productos){
+    const a = p.mainLoc?.estanteId;
+    const b = p.storeLoc?.estanteId;
+    if (a && !ids.has(a)){ ids.add(a); layout.racks.push(makeRackDefault(a)); }
+    if (b && !ids.has(b)){ ids.add(b); layout.racks.push(makeRackDefault(b)); }
+  }
+}
+function makeRackDefault(rid){
+  const zid = rid.split("-")[0];
+  const z = layout.zones.find(z=>z.id===zid) || layout.zones[0];
+  const bb = bbox(z.poly);
+  return { id:rid, zone:zid, x:bb.minX+1, y:bb.minY+1, w:4.5, d:11, rot:0 };
+}
 
 /* =========================
    Scanner
@@ -1376,6 +2175,731 @@ btnCerrar.addEventListener("click", () => {
     });
   }
 });
+
+/* =========================
+   Selection (global)
+========================= */
+let selected = { type:"none", id:"" };
+
+function selectItem(type, id){
+  selected = { type, id };
+  selLabel.textContent = `Sel: ${type==="none" ? "—" : `${type.toUpperCase()} ${id}`}`;
+  applySelectionHighlight();
+  if (ORTHO_ON) renderOrtho();
+}
+
+function applySelectionHighlight(){
+  for (const z of zoneNodes.values()) z.classList.remove("selected");
+  for (const r of rackNodes.values()) r.classList.remove("selected");
+
+  if (selected.type==="zone" && selected.id){
+    const zn = zoneNodes.get(selected.id);
+    if (zn) zn.classList.add("selected");
+  }
+  if (selected.type==="rack" && selected.id){
+    const rn = rackNodes.get(selected.id);
+    if (rn) rn.classList.add("selected");
+  }
+}
+
+/* =========================
+   Editor Drag on ISO (zones/racks)
+========================= */
+let isoDragging = false;
+let isoDrag = null;
+let isoGuideLayer = null;
+
+function ensureGuidesIso(){
+  if (isoGuideLayer) return isoGuideLayer;
+  isoGuideLayer = svgEl("g",{ class:"guides" });
+  isoMap.appendChild(isoGuideLayer);
+  return isoGuideLayer;
+}
+function clearGuidesIso(){ if (isoGuideLayer) isoGuideLayer.innerHTML=""; }
+
+function drawGuidesIsoText(msg){
+  const g = ensureGuidesIso();
+  g.innerHTML = "";
+  const t = svgEl("text",{ x:-560, y:-90, "font-family":"monospace", "font-weight":"900", "font-size":"14", fill:"#2563eb" });
+  t.textContent = msg;
+  g.appendChild(t);
+}
+function screenToWorld(dxScreen, dyScreen){
+  const x = (dxScreen / COS_30 + dyScreen / SIN_30) / 2;
+  const y = (dyScreen / SIN_30 - dxScreen / COS_30) / 2;
+  return { x, y };
+}
+function getSVGPointIso(evt){
+  const pt = isoMap.createSVGPoint();
+  pt.x = evt.clientX;
+  pt.y = evt.clientY;
+  const ctm = isoMap.getScreenCTM();
+  return pt.matrixTransform(ctm.inverse());
+}
+
+function startDragIso(ev, kind, id){
+  const p0 = getSVGPointIso(ev);
+
+  isoDragging = true;
+  isoDrag = { kind, id, start:{x:p0.x,y:p0.y}, moved:false };
+
+  if (kind==="rack"){
+    const r = layout.racks.find(r=>r.id===id);
+    if (!r) return;
+    isoDrag.r0 = { x:r.x, y:r.y };
+  }
+
+  if (kind==="zone"){
+    const z = layout.zones.find(z=>z.id===id);
+    if (!z) return;
+    isoDrag.poly0 = z.poly.map(p=>({x:p.x,y:p.y}));
+    // also: move racks of zone together (PRO)
+    isoDrag.racks0 = layout.racks.filter(r=>r.zone===id).map(r=>({ id:r.id, x:r.x, y:r.y }));
+  }
+
+  isoMap.setPointerCapture(ev.pointerId);
+}
+
+isoMap.addEventListener("pointermove",(ev)=>{
+  if (!isoDragging || !isoDrag) return;
+  const p = getSVGPointIso(ev);
+  const dxS = p.x - isoDrag.start.x;
+  const dyS = p.y - isoDrag.start.y;
+
+  const dW = screenToWorld(dxS, dyS); // in ISO world units (same as K*ortho)
+  const K = 10;
+  const dxO = (dW.x)/K;
+  const dyO = (dW.y)/K;
+
+  if (Math.hypot(dxO,dyO) > 0.05) isoDrag.moved = true;
+
+  if (isoDrag.kind==="rack"){
+    const r = layout.racks.find(r=>r.id===isoDrag.id);
+    if (!r) return;
+    r.x = snapM(isoDrag.r0.x + dxO);
+    r.y = snapM(isoDrag.r0.y + dyO);
+    drawGuidesIsoText(`${r.id}  X:${r.x.toFixed(2)}  Y:${r.y.toFixed(2)}`);
+    drawIsometric();
+    renderOrthoThrottled();
+  }
+
+  if (isoDrag.kind==="zone"){
+    const z = layout.zones.find(z=>z.id===isoDrag.id);
+    if (!z) return;
+
+    const dx = snapM(dxO);
+    const dy = snapM(dyO);
+
+    z.poly = isoDrag.poly0.map(p=>({ x:p.x+dx, y:p.y+dy }));
+
+    // move all racks belonging to that zone (PRO)
+    for (const r0 of isoDrag.racks0){
+      const rr = layout.racks.find(r=>r.id===r0.id);
+      if (rr){
+        rr.x = snapM(r0.x + dx);
+        rr.y = snapM(r0.y + dy);
+      }
+    }
+
+    drawGuidesIsoText(`${z.id} movida  dX:${dx.toFixed(2)}  dY:${dy.toFixed(2)}`);
+    drawIsometric();
+    renderOrthoThrottled();
+  }
+});
+
+isoMap.addEventListener("pointerup",(ev)=>{
+  if (!isoDragging || !isoDrag) return;
+  isoDragging = false;
+
+  if (isoDrag.moved){
+    pushHistory("drag");
+    saveLayout();
+    feedbackOK();
+  }
+  isoDrag = null;
+  clearGuidesIso();
+});
+isoMap.addEventListener("pointercancel",()=>{
+  isoDragging=false; isoDrag=null; clearGuidesIso();
+});
+
+/* =========================
+   Orthogonal editor
+========================= */
+let orthoGuidesLayer = null;
+let orthoDimsLayer = null;
+let orthoDragging = false;
+let orthoDrag = null;
+
+function orthoViewBox(){
+  // global bbox of all zones + padding
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  for (const z of layout.zones){
+    const bb = bbox(z.poly);
+    minX=Math.min(minX,bb.minX);
+    minY=Math.min(minY,bb.minY);
+    maxX=Math.max(maxX,bb.maxX);
+    maxY=Math.max(maxY,bb.maxY);
+  }
+  const pad = 4;
+  return { x:minX-pad, y:minY-pad, w:(maxX-minX)+pad*2, h:(maxY-minY)+pad*2 };
+}
+
+function drawAlignmentGuides(svg, p){
+  if (!orthoGuidesLayer){
+    orthoGuidesLayer = svgEl("g",{ class:"guides" });
+    svg.appendChild(orthoGuidesLayer);
+  }
+  orthoGuidesLayer.innerHTML = "";
+  orthoGuidesLayer.appendChild(svgEl("line",{ x1:p.x-999, y1:p.y, x2:p.x+999, y2:p.y }));
+  orthoGuidesLayer.appendChild(svgEl("line",{ x1:p.x, y1:p.y-999, x2:p.x, y2:p.y+999 }));
+}
+
+function drawEdgeDimsForPoly(svg, poly){
+  if (!orthoDimsLayer){
+    orthoDimsLayer = svgEl("g",{ class:"dims" });
+    svg.appendChild(orthoDimsLayer);
+  }
+  orthoDimsLayer.innerHTML = "";
+  for (let i=0;i<poly.length;i++){
+    const a=poly[i], b=poly[(i+1)%poly.length];
+    const mid={ x:(a.x+b.x)/2, y:(a.y+b.y)/2 };
+    const len=Math.hypot(b.x-a.x, b.y-a.y);
+    orthoDimsLayer.appendChild(svgEl("line",{ x1:a.x, y1:a.y, x2:b.x, y2:b.y }));
+    const t=svgEl("text",{ x:mid.x, y:mid.y, "text-anchor":"middle" });
+    t.textContent = `${len.toFixed(2)}u`;
+    orthoDimsLayer.appendChild(t);
+  }
+}
+
+function renderOrtho(){
+  if (APP_MODE!=="editor" || !ORTHO_ON) return;
+  const vb = orthoViewBox();
+  orthoMap.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  orthoMap.innerHTML = "";
+  orthoGuidesLayer = null;
+  orthoDimsLayer = null;
+
+  // zones
+  for (const z of layout.zones){
+    const path = svgEl("path",{ d: polyToPath(z.poly), class:`ortho-zone ${selected.type==="zone" && selected.id===z.id ? "selected":""}` });
+    orthoMap.appendChild(path);
+
+    const edgeHit = svgEl("path",{ d: polyToPath(z.poly), class:"edge-hit", "data-zone-id": z.id });
+    edgeHit.addEventListener("click",(ev)=>{
+      if (!EDIT_MODE) return;
+      if (!ORTHO_ADD_VTX) return;
+      ev.preventDefault(); ev.stopPropagation();
+      const zid=edgeHit.getAttribute("data-zone-id");
+      const zone=layout.zones.find(zz=>zz.id===zid);
+      if (!zone) return;
+      const p = getSVGPoint(orthoMap, ev);
+      const hit = nearestEdge(zone.poly, p);
+      if (hit.d > 1.15) return;
+      let np = snapPt(hit.proj);
+      np = alignSnapPoint(np, zone.id, 0.20);
+      zone.poly.splice(hit.i+1, 0, np);
+      pushHistory("add vertex");
+      saveLayout();
+      refreshAllRenders(true);
+      feedbackOK();
+    });
+    orthoMap.appendChild(edgeHit);
+
+    // zone label
+    const c = centroid(z.poly);
+    const t = svgEl("text",{ x:c.x, y:c.y, "text-anchor":"middle", "font-size":"2.8", "font-weight":"900", "font-family":"monospace",
+      fill: document.body.classList.contains("dark") ? "rgba(148,163,184,.85)" : "rgba(17,24,39,.55)" });
+    t.textContent = z.id;
+    orthoMap.appendChild(t);
+  }
+
+  // racks
+  if (ORTHO_SHOW_RACKS){
+    for (const r of layout.racks){
+      const rect = svgEl("rect",{ x:r.x, y:r.y, width:r.w, height:r.d, rx:0.4, class:"ortho-rack" });
+      rect.addEventListener("pointerdown",(ev)=>{
+        if (!EDIT_MODE) return;
+        if (TOOL!=="rack" && TOOL!=="select") return;
+        ev.preventDefault(); ev.stopPropagation();
+        selectItem("rack", r.id);
+        startDragOrtho(ev, "rack", r.id);
+      });
+      orthoMap.appendChild(rect);
+    }
+  }
+
+  // vertices for selected zone (or all when tool zone)
+  const activeZoneId = (selected.type==="zone" ? selected.id : null);
+  const zoneForVtx = activeZoneId ? layout.zones.find(z=>z.id===activeZoneId) : null;
+
+  if (zoneForVtx){
+    if (ORTHO_SHOW_DIMS) drawEdgeDimsForPoly(orthoMap, zoneForVtx.poly);
+
+    const VTX_HIT_R = 1.8;  // big hit
+    const VTX_R = 0.7;
+
+    zoneForVtx.poly.forEach((p, idx)=>{
+      const hit = svgEl("circle",{ cx:p.x, cy:p.y, r:VTX_HIT_R, class:"vtx-hit", "data-idx": idx });
+      const c = svgEl("circle",{ cx:p.x, cy:p.y, r:VTX_R, class:"vtx", "data-idx": idx });
+
+      const down = (ev)=>{
+        if (!EDIT_MODE) return;
+        ev.preventDefault(); ev.stopPropagation();
+
+        if (ORTHO_DEL_VTX){
+          if (zoneForVtx.poly.length <= 3) return;
+          zoneForVtx.poly.splice(idx, 1);
+          pushHistory("del vertex");
+          saveLayout();
+          refreshAllRenders(true);
+          feedbackOK();
+          return;
+        }
+
+        // default move vertex
+        startDragOrtho(ev, "vtx", { zoneId: zoneForVtx.id, idx });
+      };
+
+      hit.addEventListener("pointerdown", down);
+      c.addEventListener("pointerdown", down);
+
+      orthoMap.appendChild(hit);
+      orthoMap.appendChild(c);
+    });
+
+    // zone drag by clicking inside polygon
+    const hitFill = svgEl("path",{ d: polyToPath(zoneForVtx.poly), fill:"transparent", stroke:"transparent", "stroke-width":"0.4" });
+    hitFill.addEventListener("pointerdown",(ev)=>{
+      if (!EDIT_MODE) return;
+      if (TOOL!=="zone" && TOOL!=="select") return;
+      ev.preventDefault(); ev.stopPropagation();
+      const p = getSVGPoint(orthoMap, ev);
+      if (!pointInPoly(p, zoneForVtx.poly)) return;
+      startDragOrtho(ev, "zone", zoneForVtx.id);
+    });
+    orthoMap.appendChild(hitFill);
+  } else {
+    // no zone selected
+    orthoBadge.textContent = "Selecciona una zona";
+  }
+}
+
+let orthoRAF = null;
+function renderOrthoThrottled(){
+  if (!ORTHO_ON) return;
+  if (orthoRAF) return;
+  orthoRAF = requestAnimationFrame(()=>{
+    orthoRAF = null;
+    renderOrtho();
+  });
+}
+
+function startDragOrtho(ev, kind, payload){
+  const p0 = getSVGPoint(orthoMap, ev);
+  orthoDragging = true;
+  orthoDrag = { kind, payload, start:p0, moved:false };
+
+  if (kind==="rack"){
+    const r = layout.racks.find(r=>r.id===payload);
+    if (!r) return;
+    orthoDrag.r0 = { x:r.x, y:r.y };
+  }
+  if (kind==="zone"){
+    const z = layout.zones.find(z=>z.id===payload);
+    if (!z) return;
+    orthoDrag.poly0 = z.poly.map(p=>({x:p.x,y:p.y}));
+    orthoDrag.racks0 = layout.racks.filter(r=>r.zone===payload).map(r=>({id:r.id,x:r.x,y:r.y}));
+  }
+  if (kind==="vtx"){
+    const z = layout.zones.find(z=>z.id===payload.zoneId);
+    if (!z) return;
+    orthoDrag.v0 = { x:z.poly[payload.idx].x, y:z.poly[payload.idx].y };
+  }
+
+  orthoMap.setPointerCapture(ev.pointerId);
+}
+
+orthoMap.addEventListener("pointermove",(ev)=>{
+  if (!orthoDragging || !orthoDrag) return;
+  const p = getSVGPoint(orthoMap, ev);
+  const dx = p.x - orthoDrag.start.x;
+  const dy = p.y - orthoDrag.start.y;
+  if (Math.hypot(dx,dy) > 0.08) orthoDrag.moved = true;
+
+  if (orthoDrag.kind==="rack"){
+    const r = layout.racks.find(r=>r.id===orthoDrag.payload);
+    if (!r) return;
+    r.x = snapM(orthoDrag.r0.x + dx);
+    r.y = snapM(orthoDrag.r0.y + dy);
+    drawAlignmentGuides(orthoMap, {x:r.x, y:r.y});
+    drawIsometric();
+    renderOrthoThrottled();
+    return;
+  }
+
+  if (orthoDrag.kind==="zone"){
+    const z = layout.zones.find(z=>z.id===orthoDrag.payload);
+    if (!z) return;
+    const sx = snapM(dx);
+    const sy = snapM(dy);
+    z.poly = orthoDrag.poly0.map(q=>({x:q.x+sx,y:q.y+sy}));
+    for (const r0 of orthoDrag.racks0){
+      const rr = layout.racks.find(r=>r.id===r0.id);
+      if (rr){
+        rr.x = snapM(r0.x + sx);
+        rr.y = snapM(r0.y + sy);
+      }
+    }
+    drawAlignmentGuides(orthoMap, centroid(z.poly));
+    drawIsometric();
+    renderOrthoThrottled();
+    return;
+  }
+
+  if (orthoDrag.kind==="vtx"){
+    const { zoneId, idx } = orthoDrag.payload;
+    const z = layout.zones.find(z=>z.id===zoneId);
+    if (!z) return;
+    let np = { x: orthoDrag.v0.x + dx, y: orthoDrag.v0.y + dy };
+    np = snapPt(np);
+    np = alignSnapPoint(np, zoneId, 0.20);
+    z.poly[idx] = np;
+    drawAlignmentGuides(orthoMap, np);
+    drawIsometric();
+    renderOrthoThrottled();
+  }
+});
+
+orthoMap.addEventListener("pointerup",()=>{
+  if (!orthoDragging || !orthoDrag) return;
+  orthoDragging = false;
+  if (orthoDrag.moved){
+    pushHistory("ortho drag");
+    saveLayout();
+    feedbackOK();
+  }
+  orthoDrag = null;
+});
+
+orthoMap.addEventListener("pointercancel",()=>{
+  orthoDragging=false; orthoDrag=null;
+});
+
+/* =========================
+   Zone Modal Editor (per-zone)
+========================= */
+let ZM_OPEN = false;
+let ZM_ZONE_ID = null;
+let zmDraft = null;
+let ZM_SHOW_DIMS = false;
+let ZM_SHOW_RACKS = true;
+let zmDragging = false;
+let zmDrag = null;
+const zmHist = { stack:[], idx:-1 };
+
+function zmPush(label){
+  const snap = JSON.stringify({ draft: zmDraft, label, t:Date.now() });
+  zmHist.stack = zmHist.stack.slice(0, zmHist.idx+1);
+  zmHist.stack.push(snap);
+  zmHist.idx++;
+}
+function zmUndo(){
+  if (zmHist.idx <= 0) return;
+  zmHist.idx--;
+  const st = JSON.parse(zmHist.stack[zmHist.idx]);
+  zmDraft = JSON.parse(JSON.stringify(st.draft));
+  renderZoneModal();
+}
+function zmRedo(){
+  if (zmHist.idx >= zmHist.stack.length-1) return;
+  zmHist.idx++;
+  const st = JSON.parse(zmHist.stack[zmHist.idx]);
+  zmDraft = JSON.parse(JSON.stringify(st.draft));
+  renderZoneModal();
+}
+
+function openZoneEditor(zoneId){
+  const z = layout.zones.find(zz => zz.id === zoneId);
+  if (!z) return;
+
+  ZM_OPEN = true;
+  ZM_ZONE_ID = zoneId;
+
+  zmDraft = {
+    zone: JSON.parse(JSON.stringify(z)),
+    racks: JSON.parse(JSON.stringify(layout.racks))
+  };
+
+  zmHist.stack = [];
+  zmHist.idx = -1;
+  zmPush("open");
+
+  zoneModal.setAttribute("aria-hidden", "false");
+  zoneModalSub.textContent = `Zona seleccionada: ${zoneId} • Editor dedicado`;
+  updateZoneMiniInfo();
+  renderZoneModal();
+}
+
+function closeZoneEditor(){
+  ZM_OPEN = false;
+  ZM_ZONE_ID = null;
+  zmDraft = null;
+  zoneModal.setAttribute("aria-hidden", "true");
+}
+
+function updateZoneMiniInfo(){
+  zoneMiniInfo.textContent = `Modo: ${zoneTool.value} • Snap: ${zoneSnap.value}m • Align: ${zoneAlign.value}m`;
+}
+
+zoneModalBackdrop.addEventListener("click", closeZoneEditor);
+zoneModalCloseBtn.addEventListener("click", closeZoneEditor);
+document.addEventListener("keydown", (e)=>{
+  if (!ZM_OPEN) return;
+  if (e.key === "Escape") closeZoneEditor();
+});
+
+zoneToggleDims.addEventListener("click", ()=>{
+  ZM_SHOW_DIMS = !ZM_SHOW_DIMS;
+  zoneToggleDims.textContent = ZM_SHOW_DIMS ? "📏 Cotas: ON" : "📏 Cotas: OFF";
+  renderZoneModal();
+});
+zoneToggleRacks.addEventListener("click", ()=>{
+  ZM_SHOW_RACKS = !ZM_SHOW_RACKS;
+  zoneToggleRacks.textContent = ZM_SHOW_RACKS ? "🧱 Estantes: ON" : "🧱 Estantes: OFF";
+  renderZoneModal();
+});
+
+zoneUndoBtn.addEventListener("click", zmUndo);
+zoneRedoBtn.addEventListener("click", zmRedo);
+
+zoneTool.addEventListener("change", ()=>{ updateZoneMiniInfo(); renderZoneModal(); });
+zoneSnap.addEventListener("change", ()=> updateZoneMiniInfo());
+zoneAlign.addEventListener("change", ()=> updateZoneMiniInfo());
+
+zoneApply.addEventListener("click", ()=>{
+  if (!ZM_OPEN || !zmDraft) return;
+
+  const idx = layout.zones.findIndex(z => z.id === ZM_ZONE_ID);
+  if (idx >= 0){
+    layout.zones[idx] = JSON.parse(JSON.stringify(zmDraft.zone));
+  }
+
+  pushHistory("apply zone modal");
+  saveLayout();
+  refreshAllRenders(true);
+  feedbackOK();
+  closeZoneEditor();
+});
+
+zoneCancel.addEventListener("click", closeZoneEditor);
+
+function zmSnapM(n){
+  const s = parseFloat(zoneSnap.value);
+  if (!s || s<=0) return n;
+  return Math.round(n / s) * s;
+}
+function zmSnapPt(p){ return { x: zmSnapM(p.x), y: zmSnapM(p.y) }; }
+
+function zmApplyAlign(p, excludeZoneId){
+  const a = parseFloat(zoneAlign.value);
+  if (!a || a<=0) return p;
+  return alignSnapPoint(p, excludeZoneId, a);
+}
+
+function zoneViewBoxFor(poly){
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  for (const p of poly){
+    minX=Math.min(minX,p.x); minY=Math.min(minY,p.y);
+    maxX=Math.max(maxX,p.x); maxY=Math.max(maxY,p.y);
+  }
+  const pad = 6;
+  return { x:minX-pad, y:minY-pad, w:(maxX-minX)+pad*2, h:(maxY-minY)+pad*2 };
+}
+
+function zmInsertVertex(clickPt){
+  const z = zmDraft?.zone;
+  if (!z || z.poly.length < 3) return;
+
+  const hit = nearestEdge(z.poly, clickPt);
+  if (hit.d > 1.15) return;
+
+  let np = zmSnapPt(hit.proj);
+  np = zmApplyAlign(np, z.id);
+  z.poly.splice(hit.i+1, 0, np);
+
+  zmPush("add vertex");
+  renderZoneModal();
+}
+
+function renderZoneModal(){
+  if (!ZM_OPEN || !zmDraft) return;
+
+  const z = zmDraft.zone;
+  const vb = zoneViewBoxFor(z.poly);
+  zoneMap.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  zoneMap.innerHTML = "";
+
+  const isDark = document.body.classList.contains("dark");
+  zoneMap.appendChild(svgEl("rect",{x:vb.x,y:vb.y,width:vb.w,height:vb.h,rx:2,fill: isDark ? "#0b1220":"#ffffff"}));
+
+  const path = svgEl("path",{ d: polyToPath(z.poly), class:"ortho-zone selected" });
+  zoneMap.appendChild(path);
+
+  const edgeHit = svgEl("path",{ d: polyToPath(z.poly), class:"edge-hit" });
+  edgeHit.addEventListener("click",(ev)=>{
+    if (zoneTool.value !== "add-vertex") return;
+    ev.preventDefault(); ev.stopPropagation();
+    const pt = zmSnapPt(getSVGPoint(zoneMap, ev));
+    zmInsertVertex(pt);
+  });
+  zoneMap.appendChild(edgeHit);
+
+  if (ZM_SHOW_DIMS){
+    try{ drawEdgeDimsForPoly(zoneMap, z.poly); }catch(e){}
+  }
+
+  if (ZM_SHOW_RACKS){
+    const gR = svgEl("g",{});
+    for (const r of zmDraft.racks){
+      if (r.zone !== z.id) continue;
+      gR.appendChild(svgEl("rect",{x:r.x,y:r.y,width:r.w,height:r.d,rx:0.4,class:"ortho-rack"}));
+    }
+    zoneMap.appendChild(gR);
+  }
+
+  const VTX_HIT_R = 2.6;
+  const VTX_VISIBLE_R = 1.15;
+
+  z.poly.forEach((p, idx)=>{
+    const hit = svgEl("circle",{ cx:p.x, cy:p.y, r:VTX_HIT_R, class:"vtx-hit", "data-idx":idx });
+    const c = svgEl("circle",{ cx:p.x, cy:p.y, r:VTX_VISIBLE_R, class:"vtx", "data-idx":idx });
+
+    const down = (ev)=>{
+      ev.preventDefault(); ev.stopPropagation();
+
+      if (zoneTool.value === "del-vertex"){
+        if (z.poly.length <= 3) return;
+        z.poly.splice(idx,1);
+        zmPush("del vertex");
+        renderZoneModal();
+        return;
+      }
+
+      if (zoneTool.value !== "vtx-move") return;
+
+      zmDragging = true;
+      const start = getSVGPoint(zoneMap, ev);
+      zmDrag = { kind:"vtx", idx, start, p0:{x:p.x,y:p.y}, moved:false };
+      zoneMap.setPointerCapture(ev.pointerId);
+    };
+
+    hit.addEventListener("pointerdown", down);
+    c.addEventListener("pointerdown", down);
+
+    zoneMap.appendChild(hit);
+    zoneMap.appendChild(c);
+  });
+
+  path.addEventListener("pointerdown",(ev)=>{
+    if (zoneTool.value !== "move-zone") return;
+    ev.preventDefault(); ev.stopPropagation();
+    zmDragging = true;
+    const start = getSVGPoint(zoneMap, ev);
+    zmDrag = { kind:"zone", start, poly0: z.poly.map(q=>({x:q.x,y:q.y})), moved:false };
+    zoneMap.setPointerCapture(ev.pointerId);
+  });
+
+  const c = centroid(z.poly);
+  const t = svgEl("text",{ x:c.x, y:c.y, "text-anchor":"middle", "font-size":"2.6", "font-weight":"900", "font-family":"monospace",
+    fill: isDark ? "rgba(148,163,184,.85)" : "rgba(17,24,39,.55)" });
+  t.textContent = z.id;
+  zoneMap.appendChild(t);
+}
+
+zoneMap.addEventListener("pointermove",(ev)=>{
+  if (!zmDragging || !zmDrag || !zmDraft) return;
+  const z = zmDraft.zone;
+  const p = getSVGPoint(zoneMap, ev);
+
+  if (zmDrag.kind === "vtx"){
+    const dx = p.x - zmDrag.start.x;
+    const dy = p.y - zmDrag.start.y;
+    if (Math.hypot(dx,dy) > 0.35) zmDrag.moved = true;
+
+    let np = { x: zmDrag.p0.x + dx, y: zmDrag.p0.y + dy };
+    np = zmSnapPt(np);
+    np = zmApplyAlign(np, z.id);
+
+    z.poly[zmDrag.idx] = np;
+    renderZoneModal();
+    return;
+  }
+
+  if (zmDrag.kind === "zone"){
+    const dx = p.x - zmDrag.start.x;
+    const dy = p.y - zmDrag.start.y;
+    if (Math.hypot(dx,dy) > 0.35) zmDrag.moved = true;
+
+    const dxS = zmSnapM(dx);
+    const dyS = zmSnapM(dy);
+
+    let moved = zmDrag.poly0.map(q=>({ x:q.x+dxS, y:q.y+dyS }));
+
+    const cx = moved.reduce((a,q)=>a+q.x,0)/moved.length;
+    const cy = moved.reduce((a,q)=>a+q.y,0)/moved.length;
+    const c2 = zmApplyAlign({x:cx,y:cy}, z.id);
+    const ax = c2.x - cx;
+    const ay = c2.y - cy;
+    moved = moved.map(q=>({x:q.x+ax,y:q.y+ay}));
+
+    z.poly = moved;
+    renderZoneModal();
+  }
+});
+
+zoneMap.addEventListener("pointerup",()=>{
+  if (!zmDragging) return;
+  zmDragging = false;
+  if (zmDrag?.moved) zmPush("drag");
+  zmDrag = null;
+});
+zoneMap.addEventListener("pointercancel",()=>{ zmDragging=false; zmDrag=null; });
+
+/* open zone modal button */
+btnEditZoneModal.addEventListener("click", ()=>{
+  if (APP_MODE!=="editor" || !EDIT_MODE) return;
+  let zoneId = null;
+  if (selected.type==="zone" && selected.id) zoneId = selected.id;
+  else if (resultadosActuales.length){
+    const filaActiva = resultadosActuales[indiceActual];
+    const activo = (modo === "reducido" && filaActiva._representante) ? filaActiva._representante : filaActiva;
+    zoneId = activo?.mainLoc?.zonaId || null;
+  }
+  if (!zoneId) zoneId = "Z1";
+  openZoneEditor(zoneId);
+});
+
+/* =========================
+   Refresh all renders
+========================= */
+function refreshAllRenders(playFeedback=false){
+  drawIsometric();
+  if (ORTHO_ON) renderOrtho();
+  applySelectionHighlight();
+  if (resultadosActuales.length) aplicarResultadoActivo(false);
+  if (playFeedback) feedbackOK();
+}
+
+/* =========================
+   Start: default viewer
+========================= */
+setAppMode("viewer");
+setTool("select");
+setEditModeUI();
+
+/* Ensure isometric exists even before sheet loads */
+refreshAllRenders(false);
 </script>
 
 </body>
